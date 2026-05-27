@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Underline } from '@tiptap/extension-underline';
@@ -9,7 +9,7 @@ import { Color } from '@tiptap/extension-color';
 import { FontFamily } from '@tiptap/extension-font-family';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Link } from '@tiptap/extension-link';
-import { Image } from '@tiptap/extension-image';
+
 import { FontSize } from './FontSize';
 import MenuBar from './MenuBar';
 
@@ -68,27 +68,30 @@ const DEFAULT_CV_CONTENT = `
 `;
 
 export default function RichTextEditor({ initialContent, onChange }: RichTextEditorProps) {
+  const extensions = useMemo(() => [
+    StarterKit.configure({
+      history: {
+        depth: 100,
+        newGroupDelay: 500,
+      },
+    }),
+    Underline,
+    TextStyle,
+    Color,
+    FontFamily,
+    FontSize,
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+      alignments: ['left', 'center', 'right', 'justify'],
+    }),
+    Link.configure({
+      openOnClick: false,
+      autolink: true,
+    }),
+  ], []);
+
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure(),
-      Underline,
-      TextStyle,
-      Color,
-      FontFamily,
-      FontSize,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-        alignments: ['left', 'center', 'right', 'justify'],
-      }),
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-      }),
-      Image.configure({
-        inline: true,
-        allowBase64: true,
-      }),
-    ],
+    extensions,
     content: initialContent || DEFAULT_CV_CONTENT,
     onUpdate: ({ editor }) => {
       if (onChange) {
@@ -97,7 +100,7 @@ export default function RichTextEditor({ initialContent, onChange }: RichTextEdi
     },
     editorProps: {
       attributes: {
-        class: 'focus:outline-none min-h-[1120px] ProseMirror text-slate-800',
+        class: 'focus:outline-none min-h-[1120px] ProseMirror text-slate-800 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mt-1',
       },
     },
   });
