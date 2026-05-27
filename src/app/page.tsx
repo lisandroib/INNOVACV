@@ -68,7 +68,7 @@ export default function LandingPage() {
     <div className="landing-wrapper">
       {/* Cabecera / Navbar */}
       <header className="landing-header">
-        <div className="landing-logo">INNOVA<span>CV</span></div>
+        <Link href="/" className="landing-logo">INNOVA<span>CV</span></Link>
         <nav className="header-links">
           <Link href="/signin" className="link-signin">Sign in</Link>
           <Link href="/signup" className="link-signup">Sign Up</Link>
@@ -82,7 +82,7 @@ export default function LandingPage() {
           <p className="hero-subtitle">
             La plataforma inteligente que crea, personaliza y adapta tu currículum con ayuda de IA.
           </p>
-          <Link href="/chat" className="btn-gradient">Start Now</Link>
+          <Link href="/signup" className="btn-gradient">Start Now</Link>
         </div>
       </section>
 
@@ -243,7 +243,7 @@ export default function LandingPage() {
         <h2 className="cta-bottom-title">
           Dale forma a tu futuro profesional. Empezá hoy con un CV inteligente.
         </h2>
-        <Link href="/chat" className="btn-gradient">Start Now</Link>
+        <Link href="/signup" className="btn-gradient">Start Now</Link>
       </section>
     </div>
   );

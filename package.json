@@ -9,7 +9,18 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tiptap/extension-color": "^3.23.6",
+    "@tiptap/extension-font-family": "^3.23.6",
+    "@tiptap/extension-image": "^3.23.6",
+    "@tiptap/extension-link": "^3.23.6",
+    "@tiptap/extension-text-align": "^3.23.6",
+    "@tiptap/extension-text-style": "^3.23.6",
+    "@tiptap/extension-underline": "^3.23.6",
+    "@tiptap/pm": "^3.23.6",
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6",
     "@typebot.io/react": "^0.9.15",
+    "lucide-react": "^1.16.0",
     "mongodb": "^7.1.1",
     "next": "^16.2.1",
     "react": "19.2.0",

@@ -32,6 +32,7 @@
   font-weight: 800;
   color: #1B2559;
   letter-spacing: 0.5px;
+  text-decoration: none;
 }
 
 .logo-text span {
@@ -275,4 +276,20 @@
   .btn-submit {
     width: 100%;
   }
+}
+
+.forgot-password-link {
+  font-size: 11px;
+  color: #718096;
+  text-decoration: none;
+  display: block;
+  margin-top: -16px;
+  margin-bottom: 24px;
+  text-align: left;
+  transition: color 0.2s;
+  width: fit-content;
+}
+
+.forgot-password-link:hover {
+  color: #4a5568;
 }

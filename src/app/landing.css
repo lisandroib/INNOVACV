@@ -36,6 +36,7 @@ body {
   font-weight: 800;
   color: #1B2559;
   letter-spacing: 0.5px;
+  text-decoration: none;
 }
 
 .landing-logo span {

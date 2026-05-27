@@ -2,16 +2,15 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import './signup.css';
+import '../signup/signup.css';
 
-export default function SignUp() {
+export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Creando cuenta con:', { email, password });
+    console.log('Iniciando sesión con:', { email, password });
     // Aquí puedes enlazar tu endpoint de autenticación si lo tienes
   };
 
@@ -28,7 +27,7 @@ export default function SignUp() {
 
       {/* Área Principal */}
       <main className="signup-main">
-        <h1 className="signup-title">Crear Cuenta</h1>
+        <h1 className="signup-title">Iniciar Sesión</h1>
         
         <div className="signup-card">
           <form onSubmit={handleSubmit}>
@@ -46,7 +45,7 @@ export default function SignUp() {
             </div>
 
             {/* Input Contraseña */}
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: '16px' }}>
               <label htmlFor="password">Contraseña</label>
               <input 
                 type="password" 
@@ -58,22 +57,14 @@ export default function SignUp() {
               />
             </div>
 
-            {/* Input Repetir Contraseña */}
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Repetir Contraseña</label>
-              <input 
-                type="password" 
-                id="confirmPassword" 
-                placeholder="" 
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+            {/* Enlace Olvidaste tu Contraseña */}
+            <Link href="/recover" className="forgot-password-link">
+              ¿Olvidaste tu contraseña?
+            </Link>
 
             {/* Botón de Enviar */}
             <button type="submit" className="btn-submit">
-              Crear Cuenta
+              Iniciar Sesión
             </button>
           </form>
 
@@ -112,7 +103,7 @@ export default function SignUp() {
 
           {/* Enlace de redirección */}
           <div className="footer-text">
-            Ya tienes una cuenta? <Link href="/signin">Click aquí</Link>
+            No tenes una cuenta? <Link href="/signup">Click aquí</Link>
           </div>
         </div>
       </main>
