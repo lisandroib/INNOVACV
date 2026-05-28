@@ -1,0 +1,2057 @@
+'use client';
+
+import React, { useState, useRef, useEffect } from 'react';
+import Sidebar from '@/components/Sidebar';
+import './profile.css';
+
+export default function ProfilePage() {
+  const [activeTab, setActiveTab] = useState('personal');
+
+  // Estados de datos personales
+  const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400');
+  const [nombre, setNombre] = useState('Nombre');
+  const [apellido, setApellido] = useState('Apellido');
+  const [fechaNacimiento, setFechaNacimiento] = useState('dd/mm/aaaa');
+  const [ciudad, setCiudad] = useState('...');
+  const [mail, setMail] = useState('ejemplo@mail.com');
+  const [telefono, setTelefono] = useState('+11 111 111 1111');
+  const [linkedin, setLinkedin] = useState('...');
+
+  // Estado del modal de edición personal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Estados temporales del formulario personal
+  const [tempAvatarUrl, setTempAvatarUrl] = useState('');
+  const [tempNombre, setTempNombre] = useState('');
+  const [tempApellido, setTempApellido] = useState('');
+  const [tempFechaNacimiento, setTempFechaNacimiento] = useState('');
+  const [tempCiudad, setTempCiudad] = useState('');
+  const [tempMail, setTempMail] = useState('');
+  const [tempTelefono, setTempTelefono] = useState('');
+  const [tempLinkedin, setTempLinkedin] = useState('');
+
+  // Estados de errores para formularios
+  const [errorsProfile, setErrorsProfile] = useState<{ mail?: string; telefono?: string }>({});
+  const [errorsExp, setErrorsExp] = useState<{
+    position?: string;
+    company?: string;
+    desc?: string;
+    anioInicio?: string;
+    anioFin?: string;
+  }>({});
+
+  // Estados de Educación
+  const [formalEducation, setFormalEducation] = useState([
+    {
+      id: 'f1',
+      institucion: 'Universidad Tecnológica Nacional',
+      titulo: 'Ingeniería en Sistemas de Información',
+      anioInicio: '2020',
+      anioFin: 'actualidad'
+    },
+    {
+      id: 'f2',
+      institucion: 'Colegio Superior de Comercio',
+      titulo: 'Educación Secundaria Obligatoria',
+      anioInicio: '2015',
+      anioFin: '2019'
+    }
+  ]);
+
+  const [courses, setCourses] = useState([
+    {
+      id: 'c1',
+      titulo: 'Desarrollo Full Stack React & Node',
+      institucion: 'Educación IT',
+      anio: '2024'
+    },
+    {
+      id: 'c2',
+      titulo: 'Inglés Avanzado C1 EF SET',
+      institucion: 'EF Education First',
+      anio: '2023'
+    }
+  ]);
+
+  // Estados del modal de educación
+  const [isEduModalOpen, setIsEduModalOpen] = useState(false);
+  const [editingEduType, setEditingEduType] = useState<'formal' | 'course'>('formal');
+  const [editingEduId, setEditingEduId] = useState<string | null>(null);
+
+  // Estados temporales del formulario de educación
+  const [eduInstitucion, setEduInstitucion] = useState('');
+  const [eduTitulo, setEduTitulo] = useState('');
+  const [eduAnioInicio, setEduAnioInicio] = useState('');
+  const [eduAnioFin, setEduAnioFin] = useState('');
+
+  const [courseTitulo, setCourseTitulo] = useState('');
+  const [courseInstitucion, setCourseInstitucion] = useState('');
+  const [courseAnio, setCourseAnio] = useState('');
+
+  // Estado de errores para educación
+  const [errorsEdu, setErrorsEdu] = useState<{
+    eduInstitucion?: string;
+    eduTitulo?: string;
+    eduAnioInicio?: string;
+    eduAnioFin?: string;
+    courseTitulo?: string;
+    courseInstitucion?: string;
+    courseAnio?: string;
+  }>({});
+
+  // Carga e importación
+  const [isImporting, setIsImporting] = useState(false);
+  const docInputRef = useRef<HTMLInputElement>(null);
+
+  // Estados de Habilidades
+  const [skills, setSkills] = useState([
+    {
+      id: 's1',
+      nombre: 'React & Next.js',
+      descripcion: 'Experiencia'
+    },
+    {
+      id: 's2',
+      nombre: 'TypeScript',
+      descripcion: 'Educación'
+    },
+    {
+      id: 's3',
+      nombre: 'Diseño UX/UI',
+      descripcion: 'Curso'
+    },
+    {
+      id: 's4',
+      nombre: 'Metodologías Ágiles',
+      descripcion: 'Experiencia'
+    },
+    {
+      id: 's5',
+      nombre: 'Node.js & Express',
+      descripcion: 'Curso'
+    },
+    {
+      id: 's6',
+      nombre: 'Inglés Profesional',
+      descripcion: 'Educación'
+    }
+  ]);
+
+  // Estados de modal de habilidades
+  const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
+  const [editingSkillId, setEditingSkillId] = useState<string | null>(null);
+
+  // Estados temporales de formulario de habilidades
+  const [skillNombre, setSkillNombre] = useState('');
+  const [skillDescripcion, setSkillDescripcion] = useState('');
+
+  // Estados para el dropdown custom de habilidades
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Cerrar el dropdown al hacer click fuera o presionar Escape
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDropdownOpen]);
+
+  // Estado de errores para habilidades
+  const [errorsSkill, setErrorsSkill] = useState<{ nombre?: string; descripcion?: string }>({});
+
+  // --- ESTADOS PARA CONFIRMACIÓN DE ELIMINACIÓN CUSTOMIZADA (MEDIO DE LA PANTALLA) ---
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDeleteId, setItemToDeleteId] = useState<string | null>(null);
+  const [itemToDeleteName, setItemToDeleteName] = useState('');
+  const [itemToDeleteType, setItemToDeleteType] = useState<'skill' | 'formal' | 'course' | null>(null);
+
+  // --- ESTADOS Y CONSTANTES PARA EL DATE PICKER CUSTOMIZADO (FECHA NACIMIENTO) ---
+  const MONTHS_ES = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [navDate, setNavDate] = useState<Date>(new Date(1995, 0, 1));
+  const [isSelectingYear, setIsSelectingYear] = useState(false);
+  const calendarRef = useRef<HTMLDivElement>(null);
+
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (year: number, month: number) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const handlePrevMonth = () => {
+    setNavDate(new Date(navDate.getFullYear(), navDate.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setNavDate(new Date(navDate.getFullYear(), navDate.getMonth() + 1, 1));
+  };
+
+  const handlePrevYear = () => {
+    setNavDate(new Date(navDate.getFullYear() - 1, navDate.getMonth(), 1));
+  };
+
+  const handleNextYear = () => {
+    setNavDate(new Date(navDate.getFullYear() + 1, navDate.getMonth(), 1));
+  };
+
+  // Clics externos y tecla Escape para el Date Picker
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setIsCalendarOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsCalendarOpen(false);
+      }
+    }
+
+    if (isCalendarOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isCalendarOpen]);
+
+  // Estado del giro del avatar (Código QR)
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  // Referencia para la carga de archivos
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Formatear fecha AAAA-MM-DD a DD/MM/AAAA para mostrar en la tarjeta
+  const formatDisplayDate = (dateStr: string) => {
+    if (!dateStr || dateStr === 'dd/mm/aaaa' || dateStr.indexOf('-') === -1) {
+      return dateStr;
+    }
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
+  // Abrir modal personal y pre-cargar datos
+  const handleOpenModal = () => {
+    setTempAvatarUrl(avatarUrl);
+    setTempNombre('');
+    setTempApellido('');
+    
+    const validDate = fechaNacimiento !== 'dd/mm/aaaa' ? fechaNacimiento : '';
+    setTempFechaNacimiento(validDate);
+    setTempCiudad('');
+    setTempMail('');
+    setTempTelefono('');
+    setTempLinkedin('');
+    setIsCalendarOpen(false);
+    setIsSelectingYear(false);
+    setIsDeleteModalOpen(false);
+    setItemToDeleteId(null);
+    setItemToDeleteName('');
+    setItemToDeleteType(null);
+
+    // Inicializar navDate con la fecha actual o 1995-01-01
+    if (validDate && validDate.includes('-')) {
+      const [yr, mn, dy] = validDate.split('-').map(Number);
+      if (!isNaN(yr) && !isNaN(mn)) {
+        setNavDate(new Date(yr, mn - 1, 1));
+      } else {
+        setNavDate(new Date(1995, 0, 1));
+      }
+    } else {
+      setNavDate(new Date(1995, 0, 1));
+    }
+
+    setErrorsProfile({}); // Limpiar errores anteriores
+    setIsModalOpen(true);
+  };
+
+  // Cerrar modal personal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Guardar cambios del formulario personal (usa fallback si el input quedó en blanco)
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: typeof errorsProfile = {};
+
+    // Validar email si fue modificado
+    if (tempMail.trim() !== '') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(tempMail.trim())) {
+        newErrors.mail = "Por favor, ingrese una dirección de correo electrónico válida (ejemplo@mail.com).";
+      }
+    }
+
+    // Validar formato del teléfono argentino si fue modificado
+    if (tempTelefono.trim() !== '') {
+      const phoneRegex = /^[+]?[0-9\s()-]{7,20}$/;
+      if (!phoneRegex.test(tempTelefono.trim())) {
+        newErrors.telefono = "Formato de teléfono inválido (ej: +54 9 11 1234-5678, solo números y signos telefónicos).";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrorsProfile(newErrors);
+      return;
+    }
+
+    setAvatarUrl(tempAvatarUrl || avatarUrl);
+    setNombre(tempNombre.trim() || nombre);
+    setApellido(tempApellido.trim() || apellido);
+    setFechaNacimiento(tempFechaNacimiento.trim() || fechaNacimiento);
+    setCiudad(tempCiudad.trim() || ciudad);
+    setMail(tempMail.trim() || mail);
+    setTelefono(tempTelefono.trim() || telefono);
+    setLinkedin(tempLinkedin.trim() || linkedin);
+    setErrorsProfile({});
+    setIsModalOpen(false);
+  };
+
+  // Disparar input de archivo
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Manejar cambio de archivo (Importar imagen)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setTempAvatarUrl(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Manejar clic en avatar para girar 3D
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    // Si se hizo clic en el lápiz, ignorar el giro
+    if ((e.target as HTMLElement).closest('.btn-edit-avatar')) {
+      return;
+    }
+    setIsFlipped(!isFlipped);
+  };
+
+  // ----------------------------------------------------
+  // ESTADOS Y HANDLERS PARA EXPERIENCIA PROFESIONAL
+  // ----------------------------------------------------
+  const [experiences, setExperiences] = useState([
+    {
+      id: '1',
+      anioInicio: '2025',
+      anioFin: 'actualidad',
+      position: 'POSICIÓN',
+      company: 'Nombre de la empresa',
+      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
+    },
+    {
+      id: '2',
+      anioInicio: '2019',
+      anioFin: '2024',
+      position: 'POSICIÓN',
+      company: 'Nombre de la empresa',
+      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
+    },
+    {
+      id: '3',
+      anioInicio: '2016',
+      anioFin: '2019',
+      position: 'POSICIÓN',
+      company: 'Nombre de la empresa',
+      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
+    },
+    {
+      id: '4',
+      anioInicio: '2010',
+      anioFin: '2015',
+      position: 'POSICIÓN',
+      company: 'Nombre de la empresa',
+      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
+    }
+  ]);
+
+  // Estados del modal de experiencia
+  const [isExpModalOpen, setIsExpModalOpen] = useState(false);
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+
+  // Estados temporales del formulario de experiencia
+  const [expPosicion, setExpPosicion] = useState('');
+  const [expEmpresa, setExpEmpresa] = useState('');
+  const [expIndependiente, setExpIndependiente] = useState(false);
+  const [expDescripcion, setExpDescripcion] = useState('');
+  const [expAnioInicio, setExpAnioInicio] = useState('');
+  const [expAnioFin, setExpAnioFin] = useState('');
+
+  // Abrir modal de experiencia para agregar
+  const handleOpenAddExp = () => {
+    setEditingExpId(null);
+    setExpPosicion('');
+    setExpEmpresa('');
+    setExpIndependiente(false);
+    setExpDescripcion('');
+    setExpAnioInicio('');
+    setExpAnioFin('');
+    setErrorsExp({}); // Limpiar errores
+    setIsExpModalOpen(true);
+  };
+
+  // Abrir modal de experiencia para editar
+  const handleOpenEditExp = (id: string) => {
+    const exp = experiences.find((e) => e.id === id);
+    if (exp) {
+      setEditingExpId(id);
+      setExpPosicion(exp.position);
+      setExpEmpresa(exp.company === 'Independiente' ? '' : exp.company);
+      setExpIndependiente(exp.company === 'Independiente');
+      setExpDescripcion(exp.desc);
+      setExpAnioInicio(exp.anioInicio);
+      setExpAnioFin(exp.anioFin);
+      setErrorsExp({}); // Limpiar errores
+      setIsExpModalOpen(true);
+    }
+  };
+
+  // Guardar experiencia (Agregar o Editar)
+  const handleSaveExp = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors: typeof errorsExp = {};
+
+    if (!expPosicion.trim()) {
+      newErrors.position = "La posición es obligatoria.";
+    }
+    if (!expIndependiente && !expEmpresa.trim()) {
+      newErrors.company = "El nombre de la empresa es obligatorio.";
+    }
+    if (!expDescripcion.trim()) {
+      newErrors.desc = "La descripción de la posición es obligatoria.";
+    }
+
+    // Validar año de inicio (no puede ser en el futuro)
+    const currentYear = new Date().getFullYear();
+    const startYearNum = Number(expAnioInicio.trim());
+    if (!expAnioInicio.trim()) {
+      newErrors.anioInicio = "El año de inicio es obligatorio.";
+    } else if (isNaN(startYearNum) || startYearNum < 1900 || startYearNum > currentYear) {
+      newErrors.anioInicio = `Ingrese un año válido de 4 dígitos entre 1900 y ${currentYear} (no en el futuro).`;
+    }
+
+    // Validar año de finalización (no puede ser en el futuro, salvo 'actualidad')
+    const cleanAnioFin = expAnioFin.trim().toLowerCase();
+    let finalAnioFin = expAnioFin.trim();
+    let endYearNum: number = Infinity;
+
+    if (!expAnioFin.trim()) {
+      newErrors.anioFin = "El año de finalización es obligatorio.";
+    } else if (cleanAnioFin === 'actualidad' || cleanAnioFin === 'presente' || cleanAnioFin === 'hoy') {
+      finalAnioFin = 'actualidad';
+      endYearNum = Infinity;
+    } else {
+      endYearNum = Number(cleanAnioFin);
+      if (isNaN(endYearNum) || endYearNum < 1900 || endYearNum > currentYear) {
+        newErrors.anioFin = `Ingrese un año válido de 4 dígitos entre 1900 y ${currentYear} (no en el futuro) o escriba 'actualidad'.`;
+      } else if (!isNaN(startYearNum) && endYearNum < startYearNum) {
+        newErrors.anioFin = "El año de finalización no puede ser anterior al de inicio.";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrorsExp(newErrors);
+      return;
+    }
+
+    const finalCompany = expIndependiente ? 'Independiente' : expEmpresa.trim();
+
+    if (editingExpId === null) {
+      // Agregar al inicio de la lista
+      const newExp = {
+        id: String(Date.now()),
+        anioInicio: expAnioInicio.trim(),
+        anioFin: finalAnioFin,
+        position: expPosicion.trim(),
+        company: finalCompany,
+        desc: expDescripcion.trim()
+      };
+      setExperiences([newExp, ...experiences]);
+    } else {
+      // Editar existente
+      setExperiences(
+        experiences.map((exp) =>
+          exp.id === editingExpId
+            ? {
+                ...exp,
+                anioInicio: expAnioInicio.trim(),
+                anioFin: finalAnioFin,
+                position: expPosicion.trim(),
+                company: finalCompany,
+                desc: expDescripcion.trim()
+              }
+            : exp
+        )
+      );
+    }
+
+    setErrorsExp({});
+    setIsExpModalOpen(false);
+  };
+
+  // Controlar cambio en el checkbox independiente
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setExpIndependiente(e.target.checked);
+    if (e.target.checked) {
+      setExpEmpresa(''); // Limpiar empresa si se marca independiente
+    }
+  };
+
+  // Eliminar experiencia profesional con confirmación
+  const handleDeleteExp = (id: string, position: string, company: string) => {
+    const confirmDelete = window.confirm(`¿Estás seguro de que deseas eliminar la experiencia como "${position}" en "${company}"?`);
+    if (confirmDelete) {
+      setExperiences(experiences.filter((exp) => exp.id !== id));
+    }
+  };
+
+  // Obtener experiencias ordenadas (más actual primero)
+  const sortedExperiences = [...experiences].sort((a, b) => {
+    const yearA = a.anioFin === 'actualidad' ? Infinity : Number(a.anioFin);
+    const yearB = b.anioFin === 'actualidad' ? Infinity : Number(b.anioFin);
+
+    if (yearA !== yearB) {
+      return yearB - yearA; // Más reciente primero
+    }
+
+    const startA = Number(a.anioInicio);
+    const startB = Number(b.anioInicio);
+    return startB - startA;
+  });
+
+  // --- CONTROLADORES DE EDUCACIÓN ---
+
+  // Abrir modal de educación para agregar
+  const handleOpenAddEdu = () => {
+    setEditingEduId(null);
+    setEditingEduType('formal');
+    setEduInstitucion('');
+    setEduTitulo('');
+    setEduAnioInicio('');
+    setEduAnioFin('');
+    setCourseTitulo('');
+    setCourseInstitucion('');
+    setCourseAnio('');
+    setErrorsEdu({});
+    setIsEduModalOpen(true);
+  };
+
+  // Abrir modal de educación para editar
+  const handleOpenEditEdu = (id: string, type: 'formal' | 'course') => {
+    setEditingEduId(id);
+    setEditingEduType(type);
+    setErrorsEdu({});
+
+    if (type === 'formal') {
+      const edu = formalEducation.find((e) => e.id === id);
+      if (edu) {
+        setEduInstitucion(edu.institucion);
+        setEduTitulo(edu.titulo);
+        setEduAnioInicio(edu.anioInicio);
+        setEduAnioFin(edu.anioFin);
+      }
+    } else {
+      const c = courses.find((x) => x.id === id);
+      if (c) {
+        setCourseTitulo(c.titulo);
+        setCourseInstitucion(c.institucion);
+        setCourseAnio(c.anio);
+      }
+    }
+    setIsEduModalOpen(true);
+  };
+
+  // Eliminar educación con confirmación custom
+  const handleDeleteEdu = (id: string, type: 'formal' | 'course') => {
+    if (type === 'formal') {
+      const item = formalEducation.find(e => e.id === id);
+      if (item) {
+        setItemToDeleteId(id);
+        setItemToDeleteName(item.institucion);
+        setItemToDeleteType('formal');
+        setIsDeleteModalOpen(true);
+      }
+    } else {
+      const item = courses.find(c => c.id === id);
+      if (item) {
+        setItemToDeleteId(id);
+        setItemToDeleteName(item.titulo);
+        setItemToDeleteType('course');
+        setIsDeleteModalOpen(true);
+      }
+    }
+  };
+
+  // Guardar cambios del modal de educación
+  const handleSaveEdu = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: typeof errorsEdu = {};
+    const currentYear = new Date().getFullYear();
+
+    if (editingEduType === 'formal') {
+      if (!eduInstitucion.trim()) {
+        newErrors.eduInstitucion = "La institución es obligatoria.";
+      }
+      if (!eduTitulo.trim()) {
+        newErrors.eduTitulo = "El título/carrera es obligatorio.";
+      }
+
+      // Validar año de inicio formal
+      const startNum = Number(eduAnioInicio.trim());
+      if (!eduAnioInicio.trim()) {
+        newErrors.eduAnioInicio = "El año de inicio es obligatorio.";
+      } else if (isNaN(startNum) || startNum < 1900 || startNum > currentYear) {
+        newErrors.eduAnioInicio = `Ingrese un año válido entre 1900 y ${currentYear}.`;
+      }
+
+      // Validar año de finalización formal
+      const cleanFin = eduAnioFin.trim().toLowerCase();
+      let finalFin = eduAnioFin.trim();
+      let endNum = Infinity;
+
+      if (!eduAnioFin.trim()) {
+        newErrors.eduAnioFin = "El año de finalización es obligatorio.";
+      } else if (cleanFin === 'actualidad' || cleanFin === 'presente' || cleanFin === 'hoy') {
+        finalFin = 'actualidad';
+        endNum = Infinity;
+      } else {
+        endNum = Number(cleanFin);
+        if (isNaN(endNum) || endNum < 1900 || endNum > currentYear) {
+          newErrors.eduAnioFin = `Ingrese un año válido de 4 dígitos entre 1900 y ${currentYear} o escriba 'actualidad'.`;
+        } else if (!isNaN(startNum) && endNum < startNum) {
+          newErrors.eduAnioFin = "El año de finalización no puede ser anterior al de inicio.";
+        }
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrorsEdu(newErrors);
+        return;
+      }
+
+      if (editingEduId === null) {
+        // Agregar nuevo formal
+        const newEdu = {
+          id: String(Date.now()),
+          institucion: eduInstitucion.trim(),
+          titulo: eduTitulo.trim(),
+          anioInicio: eduAnioInicio.trim(),
+          anioFin: finalFin
+        };
+        setFormalEducation([newEdu, ...formalEducation]);
+      } else {
+        // Editar existente formal
+        setFormalEducation(
+          formalEducation.map((x) =>
+            x.id === editingEduId
+              ? {
+                  ...x,
+                  institucion: eduInstitucion.trim(),
+                  titulo: eduTitulo.trim(),
+                  anioInicio: eduAnioInicio.trim(),
+                  anioFin: finalFin
+                }
+              : x
+          )
+        );
+      }
+
+    } else {
+      // Validaciones para Curso/Certificación
+      if (!courseTitulo.trim()) {
+        newErrors.courseTitulo = "El nombre del curso/certificación es obligatorio.";
+      }
+      if (!courseInstitucion.trim()) {
+        newErrors.courseInstitucion = "La institución emisora es obligatoria.";
+      }
+
+      const yearNum = Number(courseAnio.trim());
+      if (!courseAnio.trim()) {
+        newErrors.courseAnio = "El año de obtención es obligatorio.";
+      } else if (isNaN(yearNum) || yearNum < 1900 || yearNum > currentYear) {
+        newErrors.courseAnio = `Ingrese un año válido de 4 dígitos entre 1900 y ${currentYear}.`;
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrorsEdu(newErrors);
+        return;
+      }
+
+      if (editingEduId === null) {
+        // Agregar nuevo curso
+        const newC = {
+          id: String(Date.now()),
+          titulo: courseTitulo.trim(),
+          institucion: courseInstitucion.trim(),
+          anio: courseAnio.trim()
+        };
+        setCourses([newC, ...courses]);
+      } else {
+        // Editar existente curso
+        setCourses(
+          courses.map((x) =>
+            x.id === editingEduId
+              ? {
+                  ...x,
+                  titulo: courseTitulo.trim(),
+                  institucion: courseInstitucion.trim(),
+                  anio: courseAnio.trim()
+                }
+              : x
+          )
+        );
+      }
+    }
+
+    setErrorsEdu({});
+    setIsEduModalOpen(false);
+  };
+
+  // Disparar input de archivo oculto para documentación
+  const triggerDocInput = () => {
+    docInputRef.current?.click();
+  };
+
+  // Simular la importación de documentación con loader
+  const handleImportDoc = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsImporting(true);
+      // Simular loader premium de 2 segundos
+      setTimeout(() => {
+        setIsImporting(false);
+        // Agregar un curso premium al inicio de la lista de cursos
+        const mockCert = {
+          id: String(Date.now()),
+          titulo: `Certificado de ${file.name.replace(/\.[^/.]+$/, "")}`,
+          institucion: 'Institución Analizada por IA',
+          anio: String(new Date().getFullYear())
+        };
+        setCourses((prev) => [mockCert, ...prev]);
+        alert(`¡Documento "${file.name}" analizado con éxito! Se ha añadido el curso correspondiente.`);
+      }, 2000);
+    }
+  };
+
+  // Obtener educación formal ordenada por fecha final descendente
+  const sortedFormalEducation = [...formalEducation].sort((a, b) => {
+    const valA = a.anioFin === 'actualidad' ? Infinity : Number(a.anioFin);
+    const valB = b.anioFin === 'actualidad' ? Infinity : Number(b.anioFin);
+
+    if (valA !== valB) {
+      return valB - valA;
+    }
+    return Number(b.anioInicio) - Number(a.anioInicio);
+  });
+
+  // Obtener cursos ordenados por año descendente
+  const sortedCourses = [...courses].sort((a, b) => Number(b.anio) - Number(a.anio));
+
+  // --- CONTROLADORES DE HABILIDADES ---
+
+  // Abrir modal de habilidad para agregar
+  const handleOpenAddSkill = () => {
+    setEditingSkillId(null);
+    setSkillNombre('');
+    setSkillDescripcion('');
+    setIsDropdownOpen(false);
+    setErrorsSkill({});
+    setIsSkillModalOpen(true);
+  };
+
+  // Abrir modal de habilidad para editar
+  const handleOpenEditSkill = (id: string) => {
+    const sk = skills.find((s) => s.id === id);
+    if (sk) {
+      setEditingSkillId(id);
+      setSkillNombre(sk.nombre);
+      setSkillDescripcion(sk.descripcion);
+      setIsDropdownOpen(false);
+      setErrorsSkill({});
+      setIsSkillModalOpen(true);
+    }
+  };
+
+  // Eliminar habilidad con confirmación custom
+  const handleDeleteSkill = (id: string) => {
+    const sk = skills.find((s) => s.id === id);
+    if (sk) {
+      setItemToDeleteId(id);
+      setItemToDeleteName(sk.nombre);
+      setItemToDeleteType('skill');
+      setIsDeleteModalOpen(true);
+    }
+  };
+
+  // Confirmar y realizar la eliminación general de elementos
+  const confirmDeleteGeneral = () => {
+    if (!itemToDeleteId || !itemToDeleteType) return;
+    
+    if (itemToDeleteType === 'skill') {
+      setSkills(skills.filter((s) => s.id !== itemToDeleteId));
+    } else if (itemToDeleteType === 'formal') {
+      setFormalEducation(formalEducation.filter((e) => e.id !== itemToDeleteId));
+    } else if (itemToDeleteType === 'course') {
+      setCourses(courses.filter((c) => c.id !== itemToDeleteId));
+    }
+    
+    setIsDeleteModalOpen(false);
+    setItemToDeleteId(null);
+    setItemToDeleteName('');
+    setItemToDeleteType(null);
+  };
+
+  // Guardar habilidad (Agregar o Editar)
+  const handleSaveSkill = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: typeof errorsSkill = {};
+
+    if (!skillNombre.trim()) {
+      newErrors.nombre = "El nombre de la habilidad es obligatorio.";
+    }
+    if (!skillDescripcion.trim()) {
+      newErrors.descripcion = "La descripción de la habilidad es obligatoria.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrorsSkill(newErrors);
+      return;
+    }
+
+    if (editingSkillId === null) {
+      // Agregar al inicio
+      const newSk = {
+        id: String(Date.now()),
+        nombre: skillNombre.trim(),
+        descripcion: skillDescripcion.trim()
+      };
+      setSkills([newSk, ...skills]);
+    } else {
+      // Editar
+      setSkills(
+        skills.map((s) =>
+          s.id === editingSkillId
+            ? {
+                ...s,
+                nombre: skillNombre.trim(),
+                descripcion: skillDescripcion.trim()
+              }
+            : s
+        )
+      );
+    }
+
+    setErrorsSkill({});
+    setIsSkillModalOpen(false);
+  };
+
+  return (
+    <div className="profile-page-container">
+      {/* 1. BARRA LATERAL REUTILIZABLE (Sidebar) */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {/* 2. COLUMNA CENTRAL (Contenido de Perfil) */}
+      <main className="profile-main-column">
+        {/* Renderizado dinámico según la pestaña seleccionada */}
+        {activeTab === 'personal' && (
+          <>
+            <h1 className="profile-title-centered">Datos personales</h1>
+
+            {/* Tarjeta de Perfil */}
+            <div className="profile-card">
+              {/* Avatar con Resplandor de Neón y Giro 3D */}
+              <div className="profile-avatar-wrapper">
+                <div className="profile-avatar-glow" />
+                
+                <div 
+                  className={`avatar-flip-card ${isFlipped ? 'flipped' : ''}`}
+                  onClick={handleAvatarClick}
+                  title="Haz clic para ver el código QR de compartir"
+                >
+                  {/* Frente: Foto de Perfil */}
+                  <div className="avatar-face avatar-front">
+                    <img
+                      src={avatarUrl}
+                      alt="Foto de perfil"
+                    />
+                  </div>
+
+                  {/* Reverso: Código QR */}
+                  <div className="avatar-face avatar-back">
+                    <svg viewBox="0 0 100 100" width="120" height="120" style={{ color: 'var(--color-primary)' }}>
+                      {/* Corner positioning squares */}
+                      <rect x="10" y="10" width="22" height="22" fill="var(--color-primary)" rx="4" />
+                      <rect x="14" y="14" width="14" height="14" fill="#ffffff" rx="2" />
+                      <rect x="17.5" y="17.5" width="7" height="7" fill="var(--color-primary)" rx="1.5" />
+
+                      <rect x="68" y="10" width="22" height="22" fill="var(--color-primary)" rx="4" />
+                      <rect x="72" y="14" width="14" height="14" fill="#ffffff" rx="2" />
+                      <rect x="75.5" y="17.5" width="7" height="7" fill="var(--color-primary)" rx="1.5" />
+
+                      <rect x="10" y="68" width="22" height="22" fill="var(--color-primary)" rx="4" />
+                      <rect x="14" y="72" width="14" height="14" fill="#ffffff" rx="2" />
+                      <rect x="17.5" y="75.5" width="7" height="7" fill="var(--color-primary)" rx="1.5" />
+
+                      {/* Stylized QR blocks */}
+                      <rect x="38" y="10" width="6" height="12" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="48" y="10" width="14" height="6" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="38" y="26" width="24" height="6" fill="var(--color-primary)" rx="1" />
+                      <rect x="10" y="38" width="12" height="6" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="26" y="38" width="6" height="18" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="68" y="38" width="12" height="6" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="84" y="38" width="6" height="12" fill="var(--color-primary)" rx="1" />
+                      <rect x="38" y="38" width="24" height="24" fill="var(--color-primary)" rx="2" />
+                      <rect x="44" y="44" width="12" height="12" fill="#ffffff" rx="1" />
+                      <rect x="47.5" y="47.5" width="5" height="5" fill="var(--color-primary)" rx="1.5" />
+                      
+                      <rect x="68" y="52" width="12" height="6" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="10" y="60" width="6" height="4" fill="var(--color-text-dark)" rx="1" />
+                      
+                      <rect x="38" y="68" width="6" height="12" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="48" y="68" width="14" height="6" fill="var(--color-primary)" rx="1" />
+                      <rect x="48" y="78" width="12" height="12" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="68" y="68" width="6" height="22" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="78" y="68" width="12" height="6" fill="var(--color-primary)" rx="1" />
+                      <rect x="78" y="78" width="6" height="12" fill="var(--color-text-dark)" rx="1" />
+                      <rect x="88" y="78" width="2" height="6" fill="var(--color-text-dark)" rx="1" />
+                    </svg>
+                    <span style={{ fontSize: '10px', marginTop: '6px', fontWeight: 600, color: 'var(--color-text-gray)' }}>
+                      ESCANEAR CV
+                    </span>
+                  </div>
+                </div>
+
+                <button 
+                  className="btn-edit-avatar" 
+                  onClick={handleOpenModal} 
+                  title="Editar datos personales"
+                >
+                  {/* Icono de lápiz */}
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Nombre y Apellido */}
+              <h2 className="profile-name">{nombre} {apellido}</h2>
+
+              {/* Lista de Detalles */}
+              <div className="profile-details-list">
+                <p className="profile-detail-item">
+                  <strong>Fecha de Nacimiento:</strong> {formatDisplayDate(fechaNacimiento)}
+                </p>
+                <p className="profile-detail-item">
+                  <strong>Ciudad:</strong> {ciudad}
+                </p>
+                <p className="profile-detail-item">
+                  <strong>Mail:</strong> {mail}
+                </p>
+                <p className="profile-detail-item">
+                  <strong>Teléfono:</strong> {telefono}
+                </p>
+                <p className="profile-detail-item">
+                  <strong>Perfil de LinkedIn:</strong>{' '}
+                  {linkedin !== '...' && linkedin !== '' ? (
+                    <a 
+                      href={linkedin.startsWith('http') ? linkedin : `https://${linkedin}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="linkedin-profile-link"
+                    >
+                      {linkedin}
+                    </a>
+                  ) : (
+                    '...'
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Input de archivo oculto para importar imagen */}
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+
+            {/* MODAL DE EDICIÓN GLASSMORPHIC DE PERFIL */}
+            {isModalOpen && (
+              <div className="modal-backdrop" onClick={handleCloseModal}>
+                <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header">
+                    <h2 className="modal-title">Edita tus datos personales</h2>
+                    <button className="btn-close-modal" onClick={handleCloseModal} title="Cerrar">
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 12c.29.29.29.77 0 1.06-.29.29-.77.29-1.06 0L12 13.06l-3.94 3.94c-.29.29-.77.29-1.06 0-.29-.29-.29-.77 0-1.06L10.94 12 7 8.06c-.29-.29-.29-.77 0-1.06.29-.29.77-.29 1.06 0L12 10.94l3.94-3.94c.29-.29.77-.29 1.06 0 .29.29.29.77 0 1.06L13.06 12 17 15.94z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSaveProfile} className="modal-form">
+                    {/* Foto de Perfil */}
+                    <div className="form-row">
+                      <label>Foto de Perfil</label>
+                      <button type="button" className="btn-import-img" onClick={triggerFileInput}>
+                        <span>Importar una imagen</span>
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Nombre */}
+                    <div className="form-row">
+                      <label htmlFor="nombre">Nombre</label>
+                      <input
+                        type="text"
+                        id="nombre"
+                        placeholder={nombre}
+                        value={tempNombre}
+                        onChange={(e) => setTempNombre(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Apellido */}
+                    <div className="form-row">
+                      <label htmlFor="apellido">Apellido</label>
+                      <input
+                        type="text"
+                        id="apellido"
+                        placeholder={apellido}
+                        value={tempApellido}
+                        onChange={(e) => setTempApellido(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Fecha de Nacimiento (Custom Popover style like image) */}
+                    <div className="form-row">
+                      <label htmlFor="fechaNacimiento">Fecha de Nacimiento</label>
+                      <div className="input-group-wrapper">
+                        <div className="custom-calendar-container" ref={calendarRef}>
+                          <button
+                            type="button"
+                            id="fechaNacimiento"
+                            className={`custom-calendar-trigger ${isCalendarOpen ? 'active' : ''}`}
+                            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                          >
+                            <div className="calendar-selected-value">
+                              <span className="calendar-trigger-icon">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                              </span>
+                              <span className="calendar-trigger-text">
+                                {tempFechaNacimiento ? formatDisplayDate(tempFechaNacimiento) : 'Seleccione una fecha'}
+                              </span>
+                            </div>
+                            <span className={`calendar-trigger-chevron ${isCalendarOpen ? 'rotated' : ''}`}>
+                              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                              </svg>
+                            </span>
+                          </button>
+
+                          {isCalendarOpen && (
+                            <div className="custom-calendar-popup">
+                              {/* Header navigations */}
+                              <div className="calendar-popup-header">
+                                <div className="calendar-nav-buttons-group">
+                                  <button
+                                    type="button"
+                                    className="calendar-nav-btn"
+                                    onClick={handlePrevYear}
+                                    title="Año anterior"
+                                    disabled={isSelectingYear}
+                                    style={{ visibility: isSelectingYear ? 'hidden' : 'visible' }}
+                                  >
+                                    &laquo;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="calendar-nav-btn"
+                                    onClick={handlePrevMonth}
+                                    title="Mes anterior"
+                                    disabled={isSelectingYear}
+                                    style={{ visibility: isSelectingYear ? 'hidden' : 'visible' }}
+                                  >
+                                    &lsaquo;
+                                  </button>
+                                </div>
+                                <span 
+                                  className={`calendar-month-year-label clickable ${isSelectingYear ? 'selecting-year' : ''}`}
+                                  onClick={() => setIsSelectingYear(!isSelectingYear)}
+                                  title={isSelectingYear ? "Volver al calendario" : "Hacer clic para cambiar año"}
+                                >
+                                  {isSelectingYear 
+                                    ? 'Seleccione Año' 
+                                    : `${MONTHS_ES[navDate.getMonth()]} ${navDate.getFullYear()}`
+                                  }
+                                </span>
+                                <div className="calendar-nav-buttons-group">
+                                  <button
+                                    type="button"
+                                    className="calendar-nav-btn"
+                                    onClick={handleNextMonth}
+                                    title="Mes siguiente"
+                                    disabled={isSelectingYear}
+                                    style={{ visibility: isSelectingYear ? 'hidden' : 'visible' }}
+                                  >
+                                    &rsaquo;
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="calendar-nav-btn"
+                                    onClick={handleNextYear}
+                                    title="Año siguiente"
+                                    disabled={isSelectingYear}
+                                    style={{ visibility: isSelectingYear ? 'hidden' : 'visible' }}
+                                  >
+                                    &raquo;
+                                  </button>
+                                </div>
+                              </div>
+
+                              {isSelectingYear ? (
+                                <div className="calendar-years-grid-view">
+                                  {Array.from({ length: new Date().getFullYear() - 1930 + 1 }).map((_, idx) => {
+                                    const y = new Date().getFullYear() - idx;
+                                    const isSelectedYear = navDate.getFullYear() === y;
+                                    return (
+                                      <button
+                                        key={`year-opt-${y}`}
+                                        type="button"
+                                        className={`calendar-year-cell ${isSelectedYear ? 'selected' : ''}`}
+                                        onClick={() => {
+                                          setNavDate(new Date(y, navDate.getMonth(), 1));
+                                          setIsSelectingYear(false);
+                                        }}
+                                      >
+                                        {y}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              ) : (
+                                <>
+                                  {/* Weekdays header */}
+                                  <div className="calendar-weekdays-row">
+                                    <span>Do</span>
+                                    <span>Lu</span>
+                                    <span>Ma</span>
+                                    <span>Mi</span>
+                                    <span>Ju</span>
+                                    <span>Vi</span>
+                                    <span>Sá</span>
+                                  </div>
+
+                                  {/* Days grid */}
+                                  <div className="calendar-days-grid">
+                                    {/* Empty placeholders for offset */}
+                                    {Array.from({ length: getFirstDayOfMonth(navDate.getFullYear(), navDate.getMonth()) }).map((_, idx) => (
+                                      <span key={`empty-${idx}`} className="calendar-day-cell empty"></span>
+                                    ))}
+                                    
+                                    {/* Real days */}
+                                    {Array.from({ length: getDaysInMonth(navDate.getFullYear(), navDate.getMonth()) }).map((_, idx) => {
+                                      const dayNum = idx + 1;
+                                      const yearStr = String(navDate.getFullYear());
+                                      const monthStr = String(navDate.getMonth() + 1).padStart(2, '0');
+                                      const dayStr = String(dayNum).padStart(2, '0');
+                                      const dateStr = `${yearStr}-${monthStr}-${dayStr}`;
+                                      
+                                      const isSelected = tempFechaNacimiento === dateStr;
+
+                                      return (
+                                        <button
+                                          key={`day-${dayNum}`}
+                                          type="button"
+                                          className={`calendar-day-cell day-button ${isSelected ? 'selected' : ''}`}
+                                          onClick={() => {
+                                            setTempFechaNacimiento(dateStr);
+                                            setIsCalendarOpen(false);
+                                          }}
+                                        >
+                                          {dayNum}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Ciudad */}
+                    <div className="form-row">
+                      <label htmlFor="ciudad">Ciudad</label>
+                      <input
+                        type="text"
+                        id="ciudad"
+                        placeholder={ciudad}
+                        value={tempCiudad}
+                        onChange={(e) => setTempCiudad(e.target.value)}
+                      />
+                    </div>
+
+                     {/* Mail */}
+                    <div className={`form-row ${errorsProfile.mail ? 'has-error' : ''}`}>
+                      <label htmlFor="mail">Mail</label>
+                      <div className="input-group-wrapper">
+                        <input
+                          type="email"
+                          id="mail"
+                          placeholder={mail}
+                          value={tempMail}
+                          onChange={(e) => {
+                            setTempMail(e.target.value);
+                            setErrorsProfile(prev => ({ ...prev, mail: undefined }));
+                          }}
+                        />
+                        {errorsProfile.mail && <span className="error-message">{errorsProfile.mail}</span>}
+                      </div>
+                    </div>
+
+                    {/* Teléfono */}
+                    <div className={`form-row ${errorsProfile.telefono ? 'has-error' : ''}`}>
+                      <label htmlFor="telefono">Teléfono</label>
+                      <div className="input-group-wrapper">
+                        <input
+                          type="tel"
+                          id="telefono"
+                          placeholder={telefono}
+                          value={tempTelefono}
+                          onChange={(e) => {
+                            setTempTelefono(e.target.value);
+                            setErrorsProfile(prev => ({ ...prev, telefono: undefined }));
+                          }}
+                        />
+                        {errorsProfile.telefono && <span className="error-message">{errorsProfile.telefono}</span>}
+                      </div>
+                    </div>
+
+                    {/* Perfil de LinkedIn */}
+                    <div className="form-row">
+                      <label htmlFor="linkedin">Perfil de LinkedIn</label>
+                      <input
+                        type="text"
+                        id="linkedin"
+                        placeholder={linkedin}
+                        value={tempLinkedin}
+                        onChange={(e) => setTempLinkedin(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Botón de Enviar */}
+                    <div className="modal-footer">
+                      <button type="submit" className="btn-save-profile">
+                        Guardar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTab === 'experience' && (
+          <>
+            <div className="profile-header-container">
+              <h1 className="profile-title-centered">Experiencia profesional</h1>
+              <button className="btn-add-experience" onClick={handleOpenAddExp}>
+                Agregar experiencia
+              </button>
+            </div>
+
+            {/* Lista de experiencias profesionales dinámica */}
+            <div className="experience-list">
+              {sortedExperiences.map((exp) => (
+                <div className="experience-card" key={exp.id}>
+                  <div className="experience-time-col">{exp.anioInicio} – {exp.anioFin}</div>
+                  <div className="experience-info-col">
+                    <h3 className="experience-position">{exp.position}</h3>
+                    <p className="experience-company">{exp.company}</p>
+                    <p className="experience-desc">{exp.desc}</p>
+                  </div>
+                  <div className="experience-card-actions">
+                    <button 
+                      className="btn-edit-experience" 
+                      title="Editar experiencia"
+                      onClick={() => handleOpenEditExp(exp.id)}
+                    >
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                      </svg>
+                    </button>
+                    <button 
+                      className="btn-delete-experience" 
+                      title="Eliminar experiencia"
+                      onClick={() => handleDeleteExp(exp.id, exp.position, exp.company)}
+                    >
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {activeTab === 'education' && (
+          <>
+            <h1 className="profile-title-centered">Educación</h1>
+
+            {/* Contenedor principal de Educación con doble columna */}
+            <div className="education-main-card">
+              <div className="education-columns-container">
+                {/* Columna Izquierda: Secundaria / Terciario / Universitario */}
+                <div className="education-column">
+                  <h2 className="education-column-title">Secundario/ Terciario / Universitario</h2>
+                  <div className="education-items-list">
+                    {sortedFormalEducation.map((edu) => (
+                      <div className="education-item-block" key={edu.id}>
+                        <div className="education-item-header">
+                          <h3 className="education-item-name">{edu.institucion}</h3>
+                          <div className="education-item-actions">
+                            <button 
+                              className="btn-edit-education-small" 
+                              title="Editar educación"
+                              onClick={() => handleOpenEditEdu(edu.id, 'formal')}
+                            >
+                              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                              </svg>
+                            </button>
+                            <button 
+                              className="btn-delete-education-small" 
+                              title="Eliminar educación"
+                              onClick={() => handleDeleteEdu(edu.id, 'formal')}
+                            >
+                              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        <p className="education-item-sub">{edu.titulo}</p>
+                        <p className="education-item-years">año {edu.anioInicio}–año {edu.anioFin}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Columna Derecha: Cursos y Certificaciones */}
+                <div className="education-column">
+                  <h2 className="education-column-title">Cursos y Certificaciones</h2>
+                  <div className="education-items-list">
+                    {sortedCourses.map((c) => (
+                      <div className="education-item-block" key={c.id}>
+                        <div className="education-item-header">
+                          <h3 className="education-item-name">{c.titulo}</h3>
+                          <div className="education-item-actions">
+                            <button 
+                              className="btn-edit-education-small" 
+                              title="Editar curso"
+                              onClick={() => handleOpenEditEdu(c.id, 'course')}
+                            >
+                              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                              </svg>
+                            </button>
+                            <button 
+                              className="btn-delete-education-small" 
+                              title="Eliminar curso"
+                              onClick={() => handleDeleteEdu(c.id, 'course')}
+                            >
+                              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        <p className="education-item-sub">{c.institucion}</p>
+                        <p className="education-item-years">Año {c.anio}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Botones inferiores */}
+              <div className="education-footer-buttons">
+                {/* Importar documentación */}
+                <button 
+                  className={`btn-edu-action btn-edu-import ${isImporting ? 'importing' : ''}`} 
+                  onClick={triggerDocInput}
+                  disabled={isImporting}
+                >
+                  <span>{isImporting ? 'Analizando documento...' : 'Importar documentación'}</span>
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                  </svg>
+                </button>
+                <input 
+                  type="file" 
+                  ref={docInputRef} 
+                  style={{ display: 'none' }} 
+                  accept=".pdf,image/*" 
+                  onChange={handleImportDoc} 
+                />
+
+                {/* Agregar educación manualmente */}
+                <button className="btn-edu-action btn-edu-manual" onClick={handleOpenAddEdu}>
+                  Agregar educación manualmente
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'skills' && (
+          <>
+            <div className="skills-header-container">
+              <h1 className="profile-title-centered">Habilidades</h1>
+              <button className="btn-add-skill-top" onClick={handleOpenAddSkill}>
+                Agregar habilidades
+              </button>
+            </div>
+
+            {/* Grilla dinámica de tarjetas de Habilidad */}
+            <div className="skills-grid">
+              {skills.map((sk) => (
+                <div className="skill-card" key={sk.id}>
+                  <div className="skill-card-actions">
+                    <button 
+                      className="btn-edit-skill-small" 
+                      title="Editar habilidad"
+                      onClick={() => handleOpenEditSkill(sk.id)}
+                    >
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                      </svg>
+                    </button>
+                    <button 
+                      className="btn-delete-skill-small" 
+                      title="Eliminar habilidad"
+                      onClick={() => handleDeleteSkill(sk.id)}
+                    >
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                      </svg>
+                    </button>
+                  </div>
+                  <h3 className="skill-name">{sk.nombre}</h3>
+                  <span className={`skill-badge badge-${sk.descripcion.toLowerCase() === 'educación' ? 'educacion' : sk.descripcion.toLowerCase()}`}>
+                    {sk.descripcion}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* MODAL DE AGREGAR / EDITAR EXPERIENCIA */}
+        {isExpModalOpen && (
+          <div className="modal-backdrop" onClick={() => setIsExpModalOpen(false)}>
+            <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2 className="modal-title">
+                  {editingExpId === null ? 'Agregar experiencia' : 'Editar experiencia'}
+                </h2>
+                <button className="btn-close-modal" onClick={() => setIsExpModalOpen(false)} title="Cerrar">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 12c.29.29.29.77 0 1.06-.29.29-.77.29-1.06 0L12 13.06l-3.94 3.94c-.29.29-.77.29-1.06 0-.29-.29-.29-.77 0-1.06L10.94 12 7 8.06c-.29-.29-.29-.77 0-1.06.29-.29.77-.29 1.06 0L12 10.94l3.94-3.94c.29-.29.77-.29 1.06 0 .29.29.29.77 0 1.06L13.06 12 17 15.94z" />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveExp} className="modal-form">
+                {/* Posición */}
+                <div className={`form-row ${errorsExp.position ? 'has-error' : ''}`}>
+                  <label htmlFor="expPosicion">Posición*</label>
+                  <div className="input-group-wrapper">
+                    <input 
+                      type="text" 
+                      id="expPosicion" 
+                      value={expPosicion} 
+                      onChange={(e) => {
+                        setExpPosicion(e.target.value);
+                        setErrorsExp(prev => ({ ...prev, position: undefined }));
+                      }}
+                    />
+                    {errorsExp.position && <span className="error-message">{errorsExp.position}</span>}
+                  </div>
+                </div>
+
+                {/* Nombre de la empresa */}
+                <div className={`form-row ${errorsExp.company ? 'has-error' : ''}`} style={{ flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}>
+                  <div className="form-row-header-layout">
+                    <label htmlFor="expEmpresa" style={{ flex: 'none' }}>Nombre de la empresa*</label>
+                    <label className="company-checkbox-wrapper">
+                      <input 
+                        type="checkbox" 
+                        checked={expIndependiente} 
+                        onChange={(e) => {
+                          handleCheckboxChange(e);
+                          setErrorsExp(prev => ({ ...prev, company: undefined }));
+                        }}
+                      />
+                      <span>Independiente</span>
+                    </label>
+                  </div>
+                  <div className="input-group-wrapper">
+                    <input 
+                      type="text" 
+                      id="expEmpresa" 
+                      value={expEmpresa} 
+                      onChange={(e) => {
+                        setExpEmpresa(e.target.value);
+                        setErrorsExp(prev => ({ ...prev, company: undefined }));
+                      }}
+                      disabled={expIndependiente}
+                      placeholder={expIndependiente ? 'Independiente' : ''}
+                      style={{ width: '100%' }}
+                    />
+                    {errorsExp.company && <span className="error-message">{errorsExp.company}</span>}
+                  </div>
+                </div>
+
+                {/* Descripción de la posición */}
+                <div className={`form-row ${errorsExp.desc ? 'has-error' : ''}`}>
+                  <label htmlFor="expDescripcion">Descripción de la posición*</label>
+                  <div className="input-group-wrapper">
+                    <input 
+                      type="text" 
+                      id="expDescripcion" 
+                      value={expDescripcion} 
+                      onChange={(e) => {
+                        setExpDescripcion(e.target.value);
+                        setErrorsExp(prev => ({ ...prev, desc: undefined }));
+                      }}
+                    />
+                    {errorsExp.desc && <span className="error-message">{errorsExp.desc}</span>}
+                  </div>
+                </div>
+
+                {/* Año de inicio */}
+                <div className={`form-row ${errorsExp.anioInicio ? 'has-error' : ''}`}>
+                  <label htmlFor="expAnioInicio">Año de inicio*</label>
+                  <div className="input-group-wrapper">
+                    <input 
+                      type="text" 
+                      id="expAnioInicio" 
+                      value={expAnioInicio} 
+                      onChange={(e) => {
+                        setExpAnioInicio(e.target.value);
+                        setErrorsExp(prev => ({ ...prev, anioInicio: undefined }));
+                      }}
+                      placeholder="Ej: 2024"
+                    />
+                    {errorsExp.anioInicio && <span className="error-message">{errorsExp.anioInicio}</span>}
+                  </div>
+                </div>
+
+                {/* Año de finalización */}
+                <div className={`form-row ${errorsExp.anioFin ? 'has-error' : ''}`}>
+                  <label htmlFor="expAnioFin">Año de finalización*</label>
+                  <div className="input-group-wrapper">
+                    <input 
+                      type="text" 
+                      id="expAnioFin" 
+                      value={expAnioFin} 
+                      onChange={(e) => {
+                        setExpAnioFin(e.target.value);
+                        setErrorsExp(prev => ({ ...prev, anioFin: undefined }));
+                      }}
+                      placeholder="Ej: actualidad o 2026"
+                    />
+                    {errorsExp.anioFin && <span className="error-message">{errorsExp.anioFin}</span>}
+                  </div>
+                </div>
+
+                {/* Botón de Enviar */}
+                <div className="modal-footer">
+                  <button type="submit" className="btn-save-profile">
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL DE AGREGAR / EDITAR EDUCACIÓN */}
+        {isEduModalOpen && (
+          <div className="modal-backdrop" onClick={() => setIsEduModalOpen(false)}>
+            <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2 className="modal-title">
+                  {editingEduId === null ? 'Agregar educación' : 'Editar educación'}
+                </h2>
+                <button className="btn-close-modal" onClick={() => setIsEduModalOpen(false)} title="Cerrar">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 12c.29.29.29.77 0 1.06-.29.29-.77.29-1.06 0L12 13.06l-3.94 3.94c-.29.29-.77.29-1.06 0-.29-.29-.29-.77 0-1.06L10.94 12 7 8.06c-.29-.29-.29-.77 0-1.06.29-.29.77-.29 1.06 0L12 10.94l3.94-3.94c.29-.29.77-.29 1.06 0 .29.29.29.77 0 1.06L13.06 12 17 15.94z" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Selector de pestañas dinámico dentro del modal (solo visible si se está agregando uno nuevo) */}
+              {editingEduId === null && (
+                <div className="edu-modal-tabs">
+                  <button 
+                    type="button" 
+                    className={`edu-tab-btn ${editingEduType === 'formal' ? 'active' : ''}`}
+                    onClick={() => {
+                      setEditingEduType('formal');
+                      setErrorsEdu({});
+                    }}
+                  >
+                    Educación Formal
+                  </button>
+                  <button 
+                    type="button" 
+                    className={`edu-tab-btn ${editingEduType === 'course' ? 'active' : ''}`}
+                    onClick={() => {
+                      setEditingEduType('course');
+                      setErrorsEdu({});
+                    }}
+                  >
+                    Curso / Certificación
+                  </button>
+                </div>
+              )}
+
+              <form onSubmit={handleSaveEdu} className="modal-form">
+                {editingEduType === 'formal' ? (
+                  <>
+                    {/* Institución */}
+                    <div className={`form-row ${errorsEdu.eduInstitucion ? 'has-error' : ''}`}>
+                      <label htmlFor="eduInstitucion">Institución*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="eduInstitucion" 
+                          value={eduInstitucion} 
+                          onChange={(e) => {
+                            setEduInstitucion(e.target.value);
+                            setErrorsEdu(prev => ({ ...prev, eduInstitucion: undefined }));
+                          }}
+                          placeholder="Ej: Universidad Nacional de Rosario"
+                        />
+                        {errorsEdu.eduInstitucion && <span className="error-message">{errorsEdu.eduInstitucion}</span>}
+                      </div>
+                    </div>
+
+                    {/* Título / Carrera */}
+                    <div className={`form-row ${errorsEdu.eduTitulo ? 'has-error' : ''}`}>
+                      <label htmlFor="eduTitulo">Título o Carrera*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="eduTitulo" 
+                          value={eduTitulo} 
+                          onChange={(e) => {
+                            setEduTitulo(e.target.value);
+                            setErrorsEdu(prev => ({ ...prev, eduTitulo: undefined }));
+                          }}
+                          placeholder="Ej: Licenciatura en Administración"
+                        />
+                        {errorsEdu.eduTitulo && <span className="error-message">{errorsEdu.eduTitulo}</span>}
+                      </div>
+                    </div>
+
+                    {/* Año de inicio */}
+                    <div className={`form-row ${errorsEdu.eduAnioInicio ? 'has-error' : ''}`}>
+                      <label htmlFor="eduAnioInicio">Año de inicio*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="eduAnioInicio" 
+                          value={eduAnioInicio} 
+                          onChange={(e) => {
+                            setEduAnioInicio(e.target.value);
+                            setErrorsEdu(prev => ({ ...prev, eduAnioInicio: undefined }));
+                          }}
+                          placeholder="Ej: 2020"
+                        />
+                        {errorsEdu.eduAnioInicio && <span className="error-message">{errorsEdu.eduAnioInicio}</span>}
+                      </div>
+                    </div>
+
+                    {/* Año de finalización */}
+                    <div className={`form-row ${errorsEdu.eduAnioFin ? 'has-error' : ''}`}>
+                      <label htmlFor="eduAnioFin">Año de finalización*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="eduAnioFin" 
+                          value={eduAnioFin} 
+                          onChange={(e) => {
+                            setEduAnioFin(e.target.value);
+                            setErrorsEdu(prev => ({ ...prev, eduAnioFin: undefined }));
+                          }}
+                          placeholder="Ej: 2024 o actualidad"
+                        />
+                        {errorsEdu.eduAnioFin && <span className="error-message">{errorsEdu.eduAnioFin}</span>}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Nombre del curso / certificación */}
+                    <div className={`form-row ${errorsEdu.courseTitulo ? 'has-error' : ''}`}>
+                      <label htmlFor="courseTitulo">Nombre del curso*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="courseTitulo" 
+                          value={courseTitulo} 
+                          onChange={(e) => {
+                            setCourseTitulo(e.target.value);
+                            setErrorsEdu(prev => ({ ...prev, courseTitulo: undefined }));
+                          }}
+                          placeholder="Ej: Curso UX/UI Avanzado"
+                        />
+                        {errorsEdu.courseTitulo && <span className="error-message">{errorsEdu.courseTitulo}</span>}
+                      </div>
+                    </div>
+
+                    {/* Institución emisora */}
+                    <div className={`form-row ${errorsEdu.courseInstitucion ? 'has-error' : ''}`}>
+                      <label htmlFor="courseInstitucion">Institución emisora*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="courseInstitucion" 
+                          value={courseInstitucion} 
+                          onChange={(e) => {
+                            setCourseInstitucion(e.target.value);
+                            setErrorsEdu(prev => ({ ...prev, courseInstitucion: undefined }));
+                          }}
+                          placeholder="Ej: Coursera / Google"
+                        />
+                        {errorsEdu.courseInstitucion && <span className="error-message">{errorsEdu.courseInstitucion}</span>}
+                      </div>
+                    </div>
+
+                    {/* Año de obtención */}
+                    <div className={`form-row ${errorsEdu.courseAnio ? 'has-error' : ''}`}>
+                      <label htmlFor="courseAnio">Año de obtención*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="courseAnio" 
+                          value={courseAnio} 
+                          onChange={(e) => {
+                            setCourseAnio(e.target.value);
+                            setErrorsEdu(prev => ({ ...prev, courseAnio: undefined }));
+                          }}
+                          placeholder="Ej: 2024"
+                        />
+                        {errorsEdu.courseAnio && <span className="error-message">{errorsEdu.courseAnio}</span>}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Botón de Enviar */}
+                <div className="modal-footer">
+                  <button type="submit" className="btn-save-profile">
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL DE AGREGAR / EDITAR HABILIDADES */}
+        {isSkillModalOpen && (
+          <div className="modal-backdrop" onClick={() => setIsSkillModalOpen(false)}>
+            <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2 className="modal-title">
+                  {editingSkillId === null ? 'Agregar habilidad' : 'Editar habilidad'}
+                </h2>
+                <button className="btn-close-modal" onClick={() => setIsSkillModalOpen(false)} title="Cerrar">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 12c.29.29.29.77 0 1.06-.29.29-.77.29-1.06 0L12 13.06l-3.94 3.94c-.29.29-.77.29-1.06 0-.29-.29-.29-.77 0-1.06L10.94 12 7 8.06c-.29-.29-.29-.77 0-1.06.29-.29.77-.29 1.06 0L12 10.94l3.94-3.94c.29-.29.77-.29 1.06 0 .29.29.29.77 0 1.06L13.06 12 17 15.94z" />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveSkill} className="modal-form">
+                {/* Nombre de la Habilidad */}
+                <div className={`form-row ${errorsSkill.nombre ? 'has-error' : ''}`}>
+                  <label htmlFor="skillNombre">Habilidad*</label>
+                  <div className="input-group-wrapper">
+                    <input 
+                      type="text" 
+                      id="skillNombre" 
+                      value={skillNombre} 
+                      onChange={(e) => {
+                        setSkillNombre(e.target.value);
+                        setErrorsSkill(prev => ({ ...prev, nombre: undefined }));
+                      }}
+                      placeholder="Ej: React, Python, Liderazgo"
+                    />
+                    {errorsSkill.nombre && <span className="error-message">{errorsSkill.nombre}</span>}
+                  </div>
+                </div>
+
+                {/* Dónde se aplicó esta habilidad */}
+                <div className={`form-row ${errorsSkill.descripcion ? 'has-error' : ''}`}>
+                  <label htmlFor="skillDescripcion">¿Dónde aplicó esta habilidad?*</label>
+                  <div className="input-group-wrapper">
+                    <div className="custom-dropdown-container" ref={dropdownRef}>
+                      <button
+                        type="button"
+                        id="skillDescripcion"
+                        className={`custom-dropdown-trigger ${isDropdownOpen ? 'active' : ''}`}
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      >
+                        <div className="trigger-selected-value">
+                          {skillDescripcion === 'Experiencia' && (
+                            <span className="trigger-icon icon-experiencia">
+                              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                              </svg>
+                            </span>
+                          )}
+                          {skillDescripcion === 'Educación' && (
+                            <span className="trigger-icon icon-educacion">
+                              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+                              </svg>
+                            </span>
+                          )}
+                          {skillDescripcion === 'Curso' && (
+                            <span className="trigger-icon icon-curso">
+                              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="8" r="7"></circle>
+                                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                              </svg>
+                            </span>
+                          )}
+                          {!skillDescripcion && (
+                            <span className="trigger-icon icon-placeholder">
+                              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                              </svg>
+                            </span>
+                          )}
+                          <span className="trigger-text">
+                            {skillDescripcion || 'Seleccione una opción'}
+                          </span>
+                        </div>
+                        <span className={`trigger-chevron ${isDropdownOpen ? 'rotated' : ''}`}>
+                          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </span>
+                      </button>
+
+                      {isDropdownOpen && (
+                        <div className="custom-dropdown-menu">
+                          <button
+                            type="button"
+                            className={`custom-dropdown-item item-experiencia ${skillDescripcion === 'Experiencia' ? 'selected' : ''}`}
+                            onClick={() => {
+                              setSkillDescripcion('Experiencia');
+                              setErrorsSkill(prev => ({ ...prev, descripcion: undefined }));
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            <span className="item-icon icon-experiencia">
+                              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                              </svg>
+                            </span>
+                            <div className="item-details">
+                              <span className="item-label">Experiencia</span>
+                              <span className="item-sub">Ámbito laboral y desarrollo profesional</span>
+                            </div>
+                            {skillDescripcion === 'Experiencia' && (
+                              <span className="item-check">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                              </span>
+                            )}
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`custom-dropdown-item item-educacion ${skillDescripcion === 'Educación' ? 'selected' : ''}`}
+                            onClick={() => {
+                              setSkillDescripcion('Educación');
+                              setErrorsSkill(prev => ({ ...prev, descripcion: undefined }));
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            <span className="item-icon icon-educacion">
+                              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+                              </svg>
+                            </span>
+                            <div className="item-details">
+                              <span className="item-label">Educación</span>
+                              <span className="item-sub">Estudios primarios, secundarios u universitarios</span>
+                            </div>
+                            {skillDescripcion === 'Educación' && (
+                              <span className="item-check">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                              </span>
+                            )}
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`custom-dropdown-item item-curso ${skillDescripcion === 'Curso' ? 'selected' : ''}`}
+                            onClick={() => {
+                              setSkillDescripcion('Curso');
+                              setErrorsSkill(prev => ({ ...prev, descripcion: undefined }));
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            <span className="item-icon icon-curso">
+                              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="8" r="7"></circle>
+                                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                              </svg>
+                            </span>
+                            <div className="item-details">
+                              <span className="item-label">Curso</span>
+                              <span className="item-sub">Certificaciones, bootcamps o cursos cortos</span>
+                            </div>
+                            {skillDescripcion === 'Curso' && (
+                              <span className="item-check">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                              </span>
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {errorsSkill.descripcion && <span className="error-message">{errorsSkill.descripcion}</span>}
+                  </div>
+                </div>
+
+                {/* Botón de Enviar */}
+                <div className="modal-footer">
+                  <button type="submit" className="btn-save-profile">
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL DE CONFIRMACIÓN DE ELIMINACIÓN CUSTOM (Centrado en pantalla) */}
+        {isDeleteModalOpen && (
+          <div className="modal-backdrop" onClick={() => setIsDeleteModalOpen(false)}>
+            <div className="delete-confirm-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="delete-confirm-icon-wrapper">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+              <h3 className="delete-confirm-title">
+                {itemToDeleteType === 'skill' ? '¿Eliminar habilidad?' : 
+                 itemToDeleteType === 'formal' ? '¿Eliminar educación?' : 
+                 '¿Eliminar certificación?'}
+              </h3>
+              <p className="delete-confirm-text">
+                {itemToDeleteType === 'skill' && (
+                  <>¿Estás seguro de que deseas eliminar la habilidad <strong>{itemToDeleteName}</strong>?</>
+                )}
+                {itemToDeleteType === 'formal' && (
+                  <>¿Estás seguro de que deseas eliminar la educación en <strong>{itemToDeleteName}</strong>?</>
+                )}
+                {itemToDeleteType === 'course' && (
+                  <>¿Estás seguro de que deseas eliminar la certificación/curso <strong>{itemToDeleteName}</strong>?</>
+                )}
+                {' '}Esta acción no se puede deshacer.
+              </p>
+              <div className="delete-confirm-actions">
+                <button 
+                  type="button" 
+                  className="btn-delete-cancel" 
+                  onClick={() => setIsDeleteModalOpen(false)}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-delete-confirm" 
+                  onClick={confirmDeleteGeneral}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}

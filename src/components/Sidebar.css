@@ -1,0 +1,313 @@
+/* Estilos Unificados para la Barra Lateral (Sidebar) de INNOVACV */
+
+:root {
+  --sidebar-expanded-width: 260px;
+  --sidebar-collapsed-width: 80px;
+  --color-primary: #6147FF;
+  --color-primary-hover: #5037e0;
+  --color-active-bg: #f5f3ff;
+  --color-border: #e2e8f0;
+  --color-bg-gray: #f8fafc;
+  --color-text-dark: #1b2559;
+  --color-text-gray: #718096;
+}
+
+/* 1. COLLAPSIBLE SIDEBAR CONTAINER */
+.app-sidebar {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  height: calc(100vh - 40px);
+  margin: 20px 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 20px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  flex-shrink: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.app-sidebar.expanded {
+  width: var(--sidebar-expanded-width);
+}
+
+.app-sidebar.collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+/* Sidebar Top Section */
+.sidebar-top-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  width: 100%;
+}
+
+.sidebar-logo-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.app-sidebar.collapsed .sidebar-logo-container {
+  justify-content: flex-start;
+  padding: 0 10px;
+}
+
+.sidebar-logo-link {
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 800;
+  color: #1B2559;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.sidebar-logo-link span {
+  font-weight: 300;
+  color: #4a5568;
+}
+
+.app-sidebar.collapsed .sidebar-logo-link {
+  font-size: 18px;
+}
+
+/* Collapse Toggle Button */
+.btn-toggle-sidebar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-toggle-sidebar:hover {
+  background: var(--color-bg-gray);
+  color: var(--color-primary);
+}
+
+.btn-toggle-sidebar svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Sidebar Menu */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.menu-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px;
+  border-radius: 12px;
+  color: var(--color-text-gray);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+  height: 48px;
+}
+
+.menu-link:hover {
+  background: var(--color-bg-gray);
+  color: var(--color-text-dark);
+}
+
+.menu-link.active {
+  background: var(--color-active-bg);
+  color: var(--color-primary);
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-icon svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.2s;
+}
+
+.menu-link:hover .menu-icon svg {
+  transform: scale(1.05);
+}
+
+/* Inline SVG fill coloring rules */
+.menu-link svg path {
+  fill: var(--color-text-gray);
+  transition: fill 0.2s;
+}
+
+.menu-link.active svg path {
+  fill: var(--color-primary);
+}
+
+.menu-link:hover svg path {
+  fill: var(--color-text-dark);
+}
+
+.menu-link.active:hover svg path {
+  fill: var(--color-primary);
+}
+
+/* Sidebar Profile Dropdown Submenu */
+.sidebar-submenu {
+  list-style: none;
+  padding: 4px 0 8px 54px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.app-sidebar.collapsed .sidebar-submenu {
+  display: none !important;
+}
+
+.submenu-item {
+  text-align: left;
+}
+
+.submenu-link {
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-gray);
+  transition: color 0.2s, font-weight 0.2s;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+}
+
+.submenu-link:hover {
+  color: var(--color-text-dark);
+}
+
+.submenu-link.active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.submenu-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--color-primary);
+  border-radius: 1px;
+}
+
+/* Sidebar Bottom (Logout) */
+.sidebar-bottom-wrapper {
+  width: 100%;
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px;
+  border-radius: 12px;
+  color: #ef4444;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.2s ease-in-out;
+  height: 48px;
+}
+
+.btn-logout:hover {
+  background: #fef2f2;
+}
+
+.btn-logout svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  transition: transform 0.2s;
+}
+
+.btn-logout:hover .menu-icon svg {
+  transform: scale(1.05);
+}
+
+.menu-link span,
+.btn-logout span {
+  white-space: nowrap;
+}
+
+/* RESPONSIVE DESIGN FOR SIDEBAR */
+@media (max-width: 1200px) {
+  .app-sidebar {
+    height: auto;
+    width: auto !important;
+    margin: 16px;
+    flex-direction: row;
+    padding: 16px 24px;
+    position: relative;
+    top: 0;
+  }
+  .sidebar-top-wrapper {
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+  }
+  .sidebar-menu {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .sidebar-submenu {
+    display: none !important;
+  }
+  .btn-toggle-sidebar {
+    display: none;
+  }
+}
