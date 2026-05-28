@@ -83,6 +83,21 @@ export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Cargar estado de modo oscuro desde localStorage de forma segura
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
   
   // Referencia del cajón para clics externos y Escape
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -111,6 +126,13 @@ export default function JobsPage() {
     };
   }, [selectedJob]);
 
+  // Manejador del movimiento del ratón para que el orbe interactivo siga al cursor
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const { clientX, clientY } = e;
+    document.documentElement.style.setProperty('--mouse-x', `${clientX}px`);
+    document.documentElement.style.setProperty('--mouse-y', `${clientY}px`);
+  };
+
   // Manejar el toggle de guardar empleo
   const handleToggleSave = (id: string) => {
     setJobs(prevJobs =>
@@ -134,14 +156,20 @@ export default function JobsPage() {
   });
 
   return (
-    <div className="jobs-layout-container">
+    <div className={`jobs-layout-container ${isDarkMode ? 'dark-theme' : ''}`} onMouseMove={handleMouseMove}>
       {/* 1. BARRA LATERAL (Sidebar) */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* 2. CONTENIDO PRINCIPAL */}
       <main className="jobs-main-column">
         {/* Gradientes decorativos de fondo al estilo premium del mockup */}
-        <div className="jobs-decor-backdrop" />
+        <div className="jobs-decor-backdrop">
+          <div className="aurora-orb orb-violet" />
+          <div className="aurora-orb orb-fuchsia" />
+          <div className="aurora-orb orb-cyan" />
+          <div className="aurora-orb orb-indigo" />
+          <div className="aurora-orb orb-interactive" />
+        </div>
         
         {/* Cabecera Superior */}
         <header className="jobs-top-header">
@@ -170,10 +198,24 @@ export default function JobsPage() {
               </svg>
             </button>
             
-            <button className="header-icon-btn" title="Alternar tema">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-              </svg>
+            <button className="header-icon-btn" title="Alternar tema" onClick={toggleDarkMode}>
+              {isDarkMode ? (
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="4.22" x2="19.78" y2="5.64"></line>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              )}
             </button>
             
             <button className="header-icon-btn" title="Información">
