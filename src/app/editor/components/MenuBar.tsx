@@ -41,16 +41,16 @@ const FONTS = [
 ];
 
 const FONT_SIZES = [
-  { label: '8pt', value: '8pt' },
-  { label: '9pt', value: '9pt' },
-  { label: '10pt', value: '10pt' },
-  { label: '11pt', value: '11pt' },
-  { label: '12pt', value: '12pt' },
-  { label: '14pt', value: '14pt' },
-  { label: '16pt', value: '16pt' },
-  { label: '18pt', value: '18pt' },
-  { label: '24pt', value: '24pt' },
-  { label: '30pt', value: '30pt' }
+  { label: '8', value: '8pt' },
+  { label: '9', value: '9pt' },
+  { label: '10', value: '10pt' },
+  { label: '11', value: '11pt' },
+  { label: '12', value: '12pt' },
+  { label: '14', value: '14pt' },
+  { label: '16', value: '16pt' },
+  { label: '18', value: '18pt' },
+  { label: '24', value: '24pt' },
+  { label: '30', value: '30pt' }
 ];
 
 const PRESET_COLORS = [
@@ -69,13 +69,64 @@ const PRESET_COLORS = [
 export default function MenuBar({ editor }: MenuBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
-  const [tempSize, setTempSize] = useState('12pt');
+  const [tempSize, setTempSize] = useState('12');
+  const [currentFont, setCurrentFont] = useState('Font');
+  const [currentSize, setCurrentSize] = useState('12');
+  const [currentBlockType, setCurrentBlockType] = useState('Normal text');
+  const [renderTrigger, setRenderTrigger] = useState(0);
 
-  // Sync tempSize with active font size from editor
-  const activeFontSize = editor.getAttributes('textStyle').fontSize || '12pt';
+  // Force MenuBar re-render and sync states on editor changes
   useEffect(() => {
-    setTempSize(activeFontSize);
-  }, [activeFontSize]);
+    if (!editor) return;
+
+    const updateMenu = () => {
+      if (!editor) return;
+
+      const textStyleAttrs = editor.getAttributes('textStyle');
+
+      // Block type & Default Font Sizes
+      let defaultSize = '12';
+      if (editor.isActive('heading', { level: 1 })) {
+        setCurrentBlockType('Título 1');
+        defaultSize = '24';
+      } else if (editor.isActive('heading', { level: 2 })) {
+        setCurrentBlockType('Título 2');
+        defaultSize = '18';
+      } else if (editor.isActive('heading', { level: 3 })) {
+        setCurrentBlockType('Título 3');
+        defaultSize = '16';
+      } else {
+        setCurrentBlockType('Normal text');
+        defaultSize = '12';
+      }
+
+      // Si no hay fuente aplicada, asume 'Arial' (o tu fuente por defecto)
+      setCurrentFont(textStyleAttrs?.fontFamily || 'Arial');
+
+      // Si hay tamaño aplicado explícitamente, úsalo, sino usa el tamaño por defecto del bloque
+      if (textStyleAttrs && textStyleAttrs.fontSize) {
+        const cleaned = textStyleAttrs.fontSize.replace(/[^0-9.]/g, '');
+        setCurrentSize(cleaned);
+        setTempSize(cleaned);
+      } else {
+        setCurrentSize(defaultSize);
+        setTempSize(defaultSize);
+      }
+
+      setRenderTrigger(prev => prev + 1);
+    };
+
+    editor.on('transaction', updateMenu);
+    editor.on('selectionUpdate', updateMenu);
+
+    // Initial sync
+    updateMenu();
+
+    return () => {
+      editor.off('transaction', updateMenu);
+      editor.off('selectionUpdate', updateMenu);
+    };
+  }, [editor]);
 
   // Close dropdowns on click outside
   useEffect(() => {
@@ -111,12 +162,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   };
 
-  const addImage = () => {
-    const url = window.prompt('URL de la imagen:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  };
+
 
   // Get active text alignment icon
   const getAlignIcon = () => {
@@ -126,30 +172,22 @@ export default function MenuBar({ editor }: MenuBarProps) {
     return <AlignLeft className="w-4 h-4 text-slate-700" />;
   };
 
-  // Get active block type label
-  const getBlockTypeLabel = () => {
-    if (editor.isActive('heading', { level: 1 })) return 'Título 1';
-    if (editor.isActive('heading', { level: 2 })) return 'Título 2';
-    if (editor.isActive('heading', { level: 3 })) return 'Título 3';
-    return 'Normal text';
-  };
-
-  // Get active Font Family label
-  const getFontFamilyLabel = () => {
-    const activeFont = editor.getAttributes('textStyle').fontFamily;
-    const found = FONTS.find(f => f.value === activeFont);
-    return found ? found.name : 'Font';
-  };
-
-  // Get active Font Size label
-  const getFontSizeLabel = () => {
-    const activeSize = editor.getAttributes('textStyle').fontSize;
-    return activeSize || 'Size';
-  };
-
   // Get active color
   const getActiveColor = () => {
     return editor.getAttributes('textStyle').color || '#000000';
+  };
+
+  // Helper to restrict input to numbers and dots only
+  const handleSizeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9.]/g, '');
+    setTempSize(value);
+  };
+
+  const handleSizeChange = (newSize: string) => {
+    if (!editor || !newSize) return;
+    const cleanNumber = newSize.replace(/[^0-9.]/g, '');
+    // MUY IMPORTANTE: Agregar 'pt' o 'px' al final
+    editor.chain().focus().setFontSize(`${cleanNumber}pt`).run(); 
   };
 
   return (
@@ -159,7 +197,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
       <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5">
         <button
           onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
+          onMouseDown={(e) => e.preventDefault()}
           className="p-2 rounded-lg hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
           title="Deshacer"
         >
@@ -167,7 +205,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
         </button>
         <button
           onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
+          onMouseDown={(e) => e.preventDefault()}
           className="p-2 rounded-lg hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
           title="Rehacer"
         >
@@ -180,34 +218,34 @@ export default function MenuBar({ editor }: MenuBarProps) {
         {/* Block Type Dropdown */}
         <div className="relative">
           <button
-            onClick={(e) => toggleDropdown(e, 'blockType')}
+            onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'blockType'); }}
             className="flex items-center justify-between gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer min-w-[100px]"
           >
-            <span>{getBlockTypeLabel()}</span>
+            <span>{currentBlockType}</span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
           {activeDropdown === 'blockType' && (
             <div className="absolute top-full left-0 mt-1 w-36 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">
               <button
-                onClick={() => { editor.chain().focus().setParagraph().run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().setParagraph().run(); setActiveDropdown(null); }}
                 className={`w-full text-left px-3 py-2 hover:bg-slate-50 ${!editor.isActive('heading') ? 'font-semibold text-violet-600 bg-slate-50' : ''}`}
               >
                 Normal text
               </button>
               <button
-                onClick={() => { editor.chain().focus().toggleHeading({ level: 1 }).run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleHeading({ level: 1 }).run(); setActiveDropdown(null); }}
                 className={`w-full text-left px-3 py-2 hover:bg-slate-50 ${editor.isActive('heading', { level: 1 }) ? 'font-semibold text-violet-600 bg-slate-50' : ''}`}
               >
                 Título 1
               </button>
               <button
-                onClick={() => { editor.chain().focus().toggleHeading({ level: 2 }).run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleHeading({ level: 2 }).run(); setActiveDropdown(null); }}
                 className={`w-full text-left px-3 py-2 hover:bg-slate-50 ${editor.isActive('heading', { level: 2 }) ? 'font-semibold text-violet-600 bg-slate-50' : ''}`}
               >
                 Título 2
               </button>
               <button
-                onClick={() => { editor.chain().focus().toggleHeading({ level: 3 }).run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleHeading({ level: 3 }).run(); setActiveDropdown(null); }}
                 className={`w-full text-left px-3 py-2 hover:bg-slate-50 ${editor.isActive('heading', { level: 3 }) ? 'font-semibold text-violet-600 bg-slate-50' : ''}`}
               >
                 Título 3
@@ -219,16 +257,17 @@ export default function MenuBar({ editor }: MenuBarProps) {
         {/* Font Family Dropdown */}
         <div className="relative">
           <button
-            onClick={(e) => toggleDropdown(e, 'fontFamily')}
+            onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'fontFamily'); }}
             className="flex items-center justify-between gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer min-w-[90px]"
           >
-            <span>{getFontFamilyLabel()}</span>
+            <span>{currentFont}</span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
           {activeDropdown === 'fontFamily' && (
             <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">
               <button
-                onClick={() => {
+                onMouseDown={(e) => {
+                  e.preventDefault();
                   editor.chain().focus().unsetFontFamily().run();
                   setActiveDropdown(null);
                 }}
@@ -239,7 +278,8 @@ export default function MenuBar({ editor }: MenuBarProps) {
               {FONTS.map(f => (
                 <button
                   key={f.name}
-                  onClick={() => {
+                  onMouseDown={(e) => {
+                    e.preventDefault();
                     editor.chain().focus().setFontFamily(f.value).run();
                     setActiveDropdown(null);
                   }}
@@ -258,29 +298,20 @@ export default function MenuBar({ editor }: MenuBarProps) {
           <input
             type="text"
             value={tempSize}
-            onChange={(e) => setTempSize(e.target.value)}
+            onChange={handleSizeInputChange}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                let size = tempSize.trim();
-                if (size) {
-                  if (/^\d+$/.test(size)) size = size + 'pt';
-                  editor.chain().focus().setFontSize(size).run();
-                }
+                handleSizeChange(tempSize);
+                editor.commands.focus();
               }
             }}
-            onBlur={() => {
-              let size = tempSize.trim();
-              if (size) {
-                if (/^\d+$/.test(size)) size = size + 'pt';
-                editor.chain().focus().setFontSize(size).run();
-              }
-            }}
+            onBlur={() => handleSizeChange(tempSize)}
             className="w-10 px-1 py-1.5 text-xs font-semibold text-center focus:outline-none border-r border-slate-200 rounded-l-lg bg-transparent"
             title="Tamaño de letra (escribe y presiona Enter)"
           />
           <button
-            onClick={(e) => toggleDropdown(e, 'fontSize')}
+            onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'fontSize'); }}
             className="px-1.5 py-1.5 hover:bg-slate-50 rounded-r-lg transition-colors cursor-pointer flex items-center"
             title="Elegir tamaño"
           >
@@ -289,7 +320,8 @@ export default function MenuBar({ editor }: MenuBarProps) {
           {activeDropdown === 'fontSize' && (
             <div className="absolute top-full left-0 mt-1 w-24 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs max-h-48 overflow-y-auto">
               <button
-                onClick={() => {
+                onMouseDown={(e) => {
+                  e.preventDefault();
                   editor.chain().focus().unsetFontSize().run();
                   setActiveDropdown(null);
                 }}
@@ -300,8 +332,9 @@ export default function MenuBar({ editor }: MenuBarProps) {
               {FONT_SIZES.map(sz => (
                 <button
                   key={sz.value}
-                  onClick={() => {
-                    editor.chain().focus().setFontSize(sz.value).run();
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSizeChange(sz.value);
                     setActiveDropdown(null);
                   }}
                   className="w-full text-left px-3 py-2 hover:bg-slate-50"
@@ -319,35 +352,35 @@ export default function MenuBar({ editor }: MenuBarProps) {
         {/* Alignment Dropdown */}
         <div className="relative">
           <button
-            onClick={(e) => toggleDropdown(e, 'alignment')}
+            onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'alignment'); }}
             className="flex items-center justify-between gap-1 px-2.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer"
             title="Alineación"
           >
             {getAlignIcon()}
-            <ChevronDown className="w-3 h-3 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
           {activeDropdown === 'alignment' && (
             <div className="absolute top-full left-0 mt-1 w-28 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">
               <button
-                onClick={() => { editor.chain().focus().setTextAlign('left').run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('left').run(); setActiveDropdown(null); }}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 hover:bg-slate-50"
               >
                 <AlignLeft className="w-3.5 h-3.5" /> Izquierda
               </button>
               <button
-                onClick={() => { editor.chain().focus().setTextAlign('center').run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('center').run(); setActiveDropdown(null); }}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 hover:bg-slate-50"
               >
                 <AlignCenter className="w-3.5 h-3.5" /> Centro
               </button>
               <button
-                onClick={() => { editor.chain().focus().setTextAlign('right').run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('right').run(); setActiveDropdown(null); }}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 hover:bg-slate-50"
               >
                 <AlignRight className="w-3.5 h-3.5" /> Derecha
               </button>
               <button
-                onClick={() => { editor.chain().focus().setTextAlign('justify').run(); setActiveDropdown(null); }}
+                onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('justify').run(); setActiveDropdown(null); }}
                 className="flex items-center gap-2 w-full text-left px-3 py-2 hover:bg-slate-50"
               >
                 <AlignJustify className="w-3.5 h-3.5" /> Justificado
@@ -359,7 +392,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
         {/* Text Color Picker */}
         <div className="relative">
           <button
-            onClick={(e) => toggleDropdown(e, 'textColor')}
+            onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'textColor'); }}
             className="flex items-center justify-between gap-1 px-2.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer"
             title="Color de texto"
           >
@@ -373,7 +406,8 @@ export default function MenuBar({ editor }: MenuBarProps) {
                 {PRESET_COLORS.map(c => (
                   <button
                     key={c}
-                    onClick={() => {
+                    onMouseDown={(e) => {
+                      e.preventDefault();
                       editor.chain().focus().setColor(c).run();
                       setActiveDropdown(null);
                     }}
@@ -396,7 +430,8 @@ export default function MenuBar({ editor }: MenuBarProps) {
               </div>
 
               <button
-                onClick={() => {
+                onMouseDown={(e) => {
+                  e.preventDefault();
                   editor.chain().focus().unsetColor().run();
                   setActiveDropdown(null);
                 }}
@@ -412,42 +447,43 @@ export default function MenuBar({ editor }: MenuBarProps) {
       {/* 4. Formato de Texto */}
       <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5">
         <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleBold().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('bold') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Negrita (Ctrl+B)"
         >
           <Bold className="w-4 h-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleItalic().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('italic') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Cursiva (Ctrl+I)"
         >
           <Italic className="w-4 h-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleUnderline().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('underline') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Subrayado (Ctrl+U)"
         >
           <Underline className="w-4 h-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleStrike().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleStrike().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('strike') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Tachado"
         >
           <Strikethrough className="w-4 h-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleCode().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleCode().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('code') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Código en línea"
         >
           <Code className="w-4 h-4" />
         </button>
         <button
-          onClick={() => {
+          onMouseDown={(e) => {
+            e.preventDefault();
             editor.chain().focus()
               .unsetAllMarks()
               .clearNodes()
@@ -466,49 +502,29 @@ export default function MenuBar({ editor }: MenuBarProps) {
       {/* 5. Listas y Elementos */}
       <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5">
         <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleBulletList().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('bulletList') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Lista de viñetas"
         >
           <List className="w-4 h-4" />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleOrderedList().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('orderedList') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Lista numerada"
         >
           <ListOrdered className="w-4 h-4" />
         </button>
         <button
-          onClick={setLink}
+          onMouseDown={(e) => { e.preventDefault(); setLink(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('link') ? 'bg-slate-100 text-violet-600' : ''}`}
           title="Insertar enlace"
         >
           <Link2 className="w-4 h-4" />
         </button>
+
         <button
-          onClick={addImage}
-          className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-          title="Insertar imagen"
-        >
-          <ImageIcon className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('codeBlock') ? 'bg-slate-100 text-violet-600' : ''}`}
-          title="Bloque de código"
-        >
-          <FileCode className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('blockquote') ? 'bg-slate-100 text-violet-600' : ''}`}
-          title="Cita"
-        >
-          <Quote className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().setHorizontalRule().run(); }}
           className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
           title="Línea horizontal"
         >
@@ -520,7 +536,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
       <div className="flex items-center gap-2 ml-auto">
         <div className="relative">
           <button
-            onClick={(e) => toggleDropdown(e, 'cvStyle')}
+            onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'cvStyle'); }}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200 rounded-lg transition-colors cursor-pointer"
           >
             <span>Estilo: Harvard (ATS)</span>
@@ -529,7 +545,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
           {activeDropdown === 'cvStyle' && (
             <div className="absolute top-full right-0 mt-1 w-44 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">
               <button
-                onClick={() => setActiveDropdown(null)}
+                onMouseDown={(e) => { e.preventDefault(); setActiveDropdown(null); }}
                 className="w-full text-left px-3 py-2 bg-slate-50 text-violet-700 font-semibold border-l-2 border-violet-600"
               >
                 Harvard Layout (ATS)
