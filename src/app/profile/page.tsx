@@ -180,7 +180,7 @@ export default function ProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<string | null>(null);
   const [itemToDeleteName, setItemToDeleteName] = useState('');
-  const [itemToDeleteType, setItemToDeleteType] = useState<'skill' | 'formal' | 'course' | null>(null);
+  const [itemToDeleteType, setItemToDeleteType] = useState<'skill' | 'formal' | 'course' | 'experience' | null>(null);
 
   // --- ESTADOS Y CONSTANTES PARA EL DATE PICKER CUSTOMIZADO (FECHA NACIMIENTO) ---
   const MONTHS_ES = [
@@ -533,12 +533,12 @@ export default function ProfilePage() {
     }
   };
 
-  // Eliminar experiencia profesional con confirmación
+  // Eliminar experiencia profesional con confirmación custom
   const handleDeleteExp = (id: string, position: string, company: string) => {
-    const confirmDelete = window.confirm(`¿Estás seguro de que deseas eliminar la experiencia como "${position}" en "${company}"?`);
-    if (confirmDelete) {
-      setExperiences(experiences.filter((exp) => exp.id !== id));
-    }
+    setItemToDeleteId(id);
+    setItemToDeleteName(`${position} en ${company}`);
+    setItemToDeleteType('experience');
+    setIsDeleteModalOpen(true);
   };
 
   // Obtener experiencias ordenadas (más actual primero)
@@ -828,6 +828,8 @@ export default function ProfilePage() {
       setFormalEducation(formalEducation.filter((e) => e.id !== itemToDeleteId));
     } else if (itemToDeleteType === 'course') {
       setCourses(courses.filter((c) => c.id !== itemToDeleteId));
+    } else if (itemToDeleteType === 'experience') {
+      setExperiences(experiences.filter((exp) => exp.id !== itemToDeleteId));
     }
     
     setIsDeleteModalOpen(false);
@@ -2018,6 +2020,7 @@ export default function ProfilePage() {
               <h3 className="delete-confirm-title">
                 {itemToDeleteType === 'skill' ? '¿Eliminar habilidad?' : 
                  itemToDeleteType === 'formal' ? '¿Eliminar educación?' : 
+                 itemToDeleteType === 'experience' ? '¿Eliminar experiencia?' : 
                  '¿Eliminar certificación?'}
               </h3>
               <p className="delete-confirm-text">
@@ -2029,6 +2032,9 @@ export default function ProfilePage() {
                 )}
                 {itemToDeleteType === 'course' && (
                   <>¿Estás seguro de que deseas eliminar la certificación/curso <strong>{itemToDeleteName}</strong>?</>
+                )}
+                {itemToDeleteType === 'experience' && (
+                  <>¿Estás seguro de que deseas eliminar la experiencia laboral de <strong>{itemToDeleteName}</strong>?</>
                 )}
                 {' '}Esta acción no se puede deshacer.
               </p>

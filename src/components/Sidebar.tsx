@@ -141,6 +141,28 @@ export default function Sidebar({ activeTab = 'personal', setActiveTab }: Sideba
               </div>
               {!isCollapsed && <span>Lista de Empleos</span>}
             </Link>
+
+            {/* Submenú de Empleos (Solo visible cuando empleos está activo y no está colapsado) */}
+            {!isCollapsed && isJobsActive && (
+              <ul className="sidebar-submenu">
+                <li className="submenu-item">
+                  <span 
+                    onClick={(e) => handleTabClick('positions', e)} 
+                    className={`submenu-link ${activeTab === 'positions' ? 'active' : ''}`}
+                  >
+                    Posiciones
+                  </span>
+                </li>
+                <li className="submenu-item">
+                  <span 
+                    onClick={(e) => handleTabClick('saved', e)} 
+                    className={`submenu-link ${activeTab === 'saved' ? 'active' : ''}`}
+                  >
+                    Guardados
+                  </span>
+                </li>
+              </ul>
+            )}
           </li>
         </ul>
       </div>
