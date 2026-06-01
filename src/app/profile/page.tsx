@@ -6,6 +6,28 @@ import './profile.css';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Cargar estado de modo oscuro desde localStorage de forma segura
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  // Manejador del movimiento del ratón para crear el efecto Aurora Glow Mesh en el perfil
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const { clientX, clientY } = e;
+    document.documentElement.style.setProperty('--mouse-x', `${clientX}px`);
+    document.documentElement.style.setProperty('--mouse-y', `${clientY}px`);
+  };
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
 
   // Estados de datos personales
   const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400');
@@ -102,6 +124,7 @@ export default function ProfilePage() {
   // Carga e importación
   const [isImporting, setIsImporting] = useState(false);
   const docInputRef = useRef<HTMLInputElement>(null);
+  const activeUploadIntervals = useRef<Record<string, NodeJS.Timeout>>({});
 
   // Estados de Habilidades
   const [skills, setSkills] = useState([
@@ -742,30 +765,134 @@ export default function ProfilePage() {
     setIsEduModalOpen(false);
   };
 
+  // Estados para el Modal de Carga de Archivos
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadFiles, setUploadFiles] = useState<Array<{
+    id: string;
+    name: string;
+    size: string;
+    progress: number;
+    status: 'uploading' | 'completed';
+    courseId?: string;
+  }>>([]);
+
   // Disparar input de archivo oculto para documentación
   const triggerDocInput = () => {
     docInputRef.current?.click();
   };
 
-  // Simular la importación de documentación con loader
+  // Simular la subida del archivo e importación por IA
+  const handleUploadFileSelect = (file: File) => {
+    const fileId = String(Date.now());
+    const fileSizeStr = file.size > 1024 * 1024 
+      ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+      : `${(file.size / 1024).toFixed(0)} KB`;
+
+    // Agregar el archivo a la lista en carga
+    const newUploadFile = {
+      id: fileId,
+      name: file.name,
+      size: fileSizeStr,
+      progress: 0,
+      status: 'uploading' as const
+    };
+
+    setUploadFiles(prev => [newUploadFile, ...prev]);
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.floor(Math.random() * 15) + 5;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        if (activeUploadIntervals.current[fileId]) {
+          delete activeUploadIntervals.current[fileId];
+        }
+
+        // Actualizar archivo a completado
+        setUploadFiles(prev =>
+          prev.map(f => f.id === fileId ? { ...f, progress: 100, status: 'completed' } : f)
+        );
+
+        // Simular análisis inteligente de IA e incorporar automáticamente a la educación formal/curso
+        setTimeout(() => {
+          // Agregar un curso/certificación de la "IA InnovaCV" al perfil
+          const mockCourses = [
+            { titulo: 'Certificación en JavaScript Moderno y ES6+', institucion: 'Udemy / IA Engine' },
+            { titulo: 'Especialización en Diseño de Experiencia de Usuario (UX)', institucion: 'Coursera / Google AI' },
+            { titulo: 'Desarrollador React Frontend Avanzado', institucion: 'Platzi / AI Analyzer' },
+            { titulo: 'Inglés Profesional y de Negocios C1', institucion: 'EF Education First' }
+          ];
+
+          // Elegir uno aleatorio o basado en el nombre del archivo
+          const cleanName = file.name.toLowerCase();
+          let matchedCourse = mockCourses[0];
+          if (cleanName.includes('ux') || cleanName.includes('design') || cleanName.includes('diseño')) {
+            matchedCourse = mockCourses[1];
+          } else if (cleanName.includes('react') || cleanName.includes('frontend') || cleanName.includes('web')) {
+            matchedCourse = mockCourses[2];
+          } else if (cleanName.includes('ingles') || cleanName.includes('english') || cleanName.includes('c1')) {
+            matchedCourse = mockCourses[3];
+          } else {
+            // Personalizado basado en el archivo
+            matchedCourse = {
+              titulo: `Certificación en ${file.name.replace(/\.[^/.]+$/, "")}`,
+              institucion: 'InnovaCV AI Engine'
+            };
+          }
+
+          const generatedCourseId = `c_ai_${Date.now()}`;
+          const mockCert = {
+            id: generatedCourseId,
+            titulo: matchedCourse.titulo,
+            institucion: matchedCourse.institucion,
+            anio: '2025'
+          };
+
+          // Agregar curso al perfil
+          setCourses((prev) => [mockCert, ...prev]);
+
+          // Vincular el curso creado al archivo cargado para permitir borrado simultáneo
+          setUploadFiles(prev =>
+            prev.map(f => f.id === fileId ? { ...f, courseId: generatedCourseId } : f)
+          );
+        }, 800);
+      } else {
+        // Actualizar progreso
+        setUploadFiles(prev =>
+          prev.map(f => f.id === fileId ? { ...f, progress } : f)
+        );
+      }
+    }, 150);
+
+    // Guardar referencia del temporizador por si se cancela la subida a mitad de camino
+    activeUploadIntervals.current[fileId] = interval;
+  };
+
+  // Manejar cambio en el input de archivo
   const handleImportDoc = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsImporting(true);
-      // Simular loader premium de 2 segundos
-      setTimeout(() => {
-        setIsImporting(false);
-        // Agregar un curso premium al inicio de la lista de cursos
-        const mockCert = {
-          id: String(Date.now()),
-          titulo: `Certificado de ${file.name.replace(/\.[^/.]+$/, "")}`,
-          institucion: 'Institución Analizada por IA',
-          anio: String(new Date().getFullYear())
-        };
-        setCourses((prev) => [mockCert, ...prev]);
-        alert(`¡Documento "${file.name}" analizado con éxito! Se ha añadido el curso correspondiente.`);
-      }, 2000);
+      handleUploadFileSelect(file);
     }
+  };
+
+  // Eliminar o cancelar archivo de la carga (y de los cursos si ya se importó)
+  const handleRemoveUploadFile = (id: string) => {
+    // 1. Limpiar el temporizador de subida en curso si existiera
+    if (activeUploadIntervals.current[id]) {
+      clearInterval(activeUploadIntervals.current[id]);
+      delete activeUploadIntervals.current[id];
+    }
+
+    // 2. Si el archivo ya se cargó y tiene un curso vinculado, removerlo del perfil
+    const fileToRemove = uploadFiles.find(f => f.id === id);
+    if (fileToRemove && fileToRemove.courseId) {
+      setCourses(prev => prev.filter(c => c.id !== fileToRemove.courseId));
+    }
+
+    // 3. Quitar el archivo del modal de carga
+    setUploadFiles(prev => prev.filter(f => f.id !== id));
   };
 
   // Obtener educación formal ordenada por fecha final descendente
@@ -828,6 +955,8 @@ export default function ProfilePage() {
       setFormalEducation(formalEducation.filter((e) => e.id !== itemToDeleteId));
     } else if (itemToDeleteType === 'course') {
       setCourses(courses.filter((c) => c.id !== itemToDeleteId));
+      // También desvincular o quitar el archivo de uploadFiles en el modal si ya se había cargado
+      setUploadFiles(prev => prev.filter((f) => f.courseId !== itemToDeleteId));
     } else if (itemToDeleteType === 'experience') {
       setExperiences(experiences.filter((exp) => exp.id !== itemToDeleteId));
     }
@@ -883,12 +1012,55 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="profile-page-container">
+    <div className={`profile-page-container ${isDarkMode ? 'dark-theme' : ''}`} onMouseMove={handleMouseMove}>
       {/* 1. BARRA LATERAL REUTILIZABLE (Sidebar) */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* 2. COLUMNA CENTRAL (Contenido de Perfil) */}
       <main className="profile-main-column">
+        {/* Fondo decorativo con Orbes de Luz Aurora Mesh */}
+        <div className="profile-decor-backdrop">
+          <div className="aurora-orb orb-violet" />
+          <div className="aurora-orb orb-fuchsia" />
+          <div className="aurora-orb orb-cyan" />
+          <div className="aurora-orb orb-indigo" />
+          <div className="aurora-orb orb-interactive" />
+        </div>
+
+        {/* Cabecera Superior Homologada con Lista de Empleos */}
+        <header className="profile-top-header">
+          <h1 className="profile-page-title">Mi Perfil</h1>
+          
+          <div className="profile-header-actions">
+            <button className="header-icon-btn" title="Alternar tema" onClick={toggleDarkMode}>
+              {isDarkMode ? (
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="4.22" x2="19.78" y2="5.64"></line>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              )}
+            </button>
+            
+            <div className="header-avatar-circle" title="Mi Cuenta" onClick={() => setActiveTab('personal')}>
+              <img 
+                src={avatarUrl} 
+                alt="Avatar usuario" 
+              />
+            </div>
+          </div>
+        </header>
+
         {/* Renderizado dinámico según la pestaña seleccionada */}
         {activeTab === 'personal' && (
           <>
@@ -1429,11 +1601,10 @@ export default function ProfilePage() {
               <div className="education-footer-buttons">
                 {/* Importar documentación */}
                 <button 
-                  className={`btn-edu-action btn-edu-import ${isImporting ? 'importing' : ''}`} 
-                  onClick={triggerDocInput}
-                  disabled={isImporting}
+                  className="btn-edu-action btn-edu-import" 
+                  onClick={() => setIsUploadModalOpen(true)}
                 >
-                  <span>{isImporting ? 'Analizando documento...' : 'Importar documentación'}</span>
+                  <span>Importar documentación</span>
                   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                   </svg>
@@ -2054,6 +2225,149 @@ export default function ProfilePage() {
                   Eliminar
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL PREMIUM DE CARGA DE ARCHIVOS (Importación de Educación) */}
+        {isUploadModalOpen && (
+          <div className="modal-backdrop" onClick={() => setIsUploadModalOpen(false)}>
+            <div className="upload-modal" onClick={(e) => e.stopPropagation()}>
+              {/* Cabecera del Modal */}
+              <div className="upload-modal-header">
+                <div className="upload-header-left">
+                  <div className="upload-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                  </div>
+                  <div className="upload-header-text">
+                    <h2 className="upload-modal-title">Cargar archivos</h2>
+                    <p className="upload-modal-subtitle">Selecciona y sube el certificado o diploma de tu elección</p>
+                  </div>
+                </div>
+                <button className="btn-close-upload" onClick={() => setIsUploadModalOpen(false)} title="Cerrar modal">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Zona de Arrastre Drag & Drop */}
+              <div 
+                className="upload-drag-zone" 
+                onClick={triggerDocInput}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.add('dragover');
+                }}
+                onDragLeave={(e) => {
+                  e.currentTarget.classList.remove('dragover');
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.remove('dragover');
+                  const file = e.dataTransfer.files?.[0];
+                  if (file) {
+                    handleUploadFileSelect(file);
+                  }
+                }}
+              >
+                <div className="drag-zone-content">
+                  <button type="button" className="btn-drag-upload">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '6px' }}>
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Subir archivo</span>
+                  </button>
+                  <p className="drag-zone-text-primary">Elige un archivo o arrástralo y suéltalo aquí</p>
+                  <p className="drag-zone-text-secondary">Tamaño máximo de archivo: 20 MB (PDF, JPG, PNG)</p>
+                </div>
+              </div>
+
+              {/* Lista de archivos en carga / completados */}
+              {uploadFiles.length > 0 && (
+                <div className="upload-files-list">
+                  {uploadFiles.map((file) => (
+                    <div className="upload-file-item" key={file.id}>
+                      {/* Icono de tipo de archivo (PDF/Doc) */}
+                      <div className="file-item-icon-wrapper">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"></path>
+                          <path d="M14 2v6h6"></path>
+                          <line x1="16" y1="13" x2="8" y2="13"></line>
+                          <line x1="16" y1="17" x2="8" y2="17"></line>
+                          <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                      </div>
+
+                      {/* Detalles e información */}
+                      <div className="file-item-details">
+                        <div className="file-item-header-info">
+                          <span className="file-item-name">{file.name}</span>
+                          {file.status === 'uploading' ? (
+                            <span className="file-item-percent">{file.progress}%</span>
+                          ) : (
+                            <span className="file-item-status-completed">
+                              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginRight: '4px' }}>
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                              Completado
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Progreso / Stats */}
+                        <div className="file-item-sub-info">
+                          <span>{file.size}</span>
+                          {file.status === 'uploading' && (
+                            <>
+                              <span className="info-dot">•</span>
+                              <span className="info-uploading-text">Cargando...</span>
+                            </>
+                          )}
+                        </div>
+
+                        {/* Barra de progreso con gradiente */}
+                        {file.status === 'uploading' && (
+                          <div className="file-item-progress-bar-container">
+                            <div 
+                              className="file-item-progress-bar-fill" 
+                              style={{ width: `${file.progress}%` }} 
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Botón de acción (Eliminar/Cancelar) */}
+                      <button 
+                        className="btn-cancel-file-upload" 
+                        onClick={() => handleRemoveUploadFile(file.id)}
+                        title={file.status === 'uploading' ? "Cancelar subida" : "Eliminar archivo"}
+                      >
+                        {file.status === 'uploading' ? (
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                        ) : (
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

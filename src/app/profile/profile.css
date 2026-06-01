@@ -27,10 +27,11 @@ body {
   width: 100vw;
   overflow: hidden;
   box-sizing: border-box;
+  background-color: #f8fafc;
 }
 
 /* 1. COLLAPSIBLE SIDEBAR */
-.profile-sidebar {
+.app-sidebar {
   background: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: 20px;
@@ -49,11 +50,11 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
-.profile-sidebar.expanded {
+.app-sidebar.expanded {
   width: var(--sidebar-expanded-width);
 }
 
-.profile-sidebar.collapsed {
+.app-sidebar.collapsed {
   width: var(--sidebar-collapsed-width);
 }
 
@@ -75,7 +76,7 @@ body {
   height: 40px;
 }
 
-.profile-sidebar.collapsed .sidebar-logo-container {
+.app-sidebar.collapsed .sidebar-logo-container {
   justify-content: flex-start;
   padding: 0 10px;
 }
@@ -95,7 +96,7 @@ body {
   color: #4a5568;
 }
 
-.profile-sidebar.collapsed .sidebar-logo-link {
+.app-sidebar.collapsed .sidebar-logo-link {
   font-size: 18px;
 }
 
@@ -213,7 +214,7 @@ body {
   transition: all 0.3s ease;
 }
 
-.profile-sidebar.collapsed .sidebar-submenu {
+.app-sidebar.collapsed .sidebar-submenu {
   display: none;
   /* Hide submenus when collapsed */
 }
@@ -308,10 +309,12 @@ body {
   flex-direction: column;
   padding: 40px;
   box-sizing: border-box;
-  background-color: var(--color-bg-gray);
+  background-color: transparent;
   height: 100vh;
   overflow-y: auto;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .profile-title-centered {
@@ -494,7 +497,7 @@ body {
     flex-direction: column;
   }
 
-  .profile-sidebar {
+  .app-sidebar {
     height: auto;
     width: auto !important;
     margin: 16px;
@@ -2077,4 +2080,1081 @@ body {
 
 .btn-delete-confirm:active {
   transform: translateY(0);
+}
+
+/* ==========================================================================
+   4. INTERACTIVE AURORA GLOW MESH BACKGROUND (Replicado de Lista de Empleos)
+   ========================================================================== */
+
+.profile-decor-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f8fafc;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Base de los orbes interactivos */
+.profile-decor-backdrop .aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+  opacity: 0.9;
+}
+
+/* Orbe Violeta - Superior Izquierdo a Derecho */
+.profile-decor-backdrop .orb-violet {
+  top: -10%;
+  left: 15%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(97, 71, 255, 0.32) 0%, rgba(131, 91, 245, 0.05) 70%, transparent 100%);
+  animation: driftSlow1 30s infinite alternate ease-in-out;
+}
+
+/* Orbe Fucsia/Cálido - Centro Derecho */
+.profile-decor-backdrop .orb-fuchsia {
+  top: 25%;
+  right: -5%;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.28) 0%, rgba(219, 39, 119, 0.04) 70%, transparent 100%);
+  animation: driftSlow2 35s infinite alternate ease-in-out;
+}
+
+/* Orbe Azul Turquesa - Inferior Izquierdo */
+.profile-decor-backdrop .orb-cyan {
+  bottom: -10%;
+  left: 20%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, rgba(6, 182, 212, 0.05) 70%, transparent 100%);
+  animation: driftSlow3 40s infinite alternate ease-in-out;
+}
+
+/* Orbe Índigo Profundo - Superior Derecho */
+.profile-decor-backdrop .orb-indigo {
+  top: -15%;
+  right: 5%;
+  width: 48vw;
+  height: 48vw;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.28) 0%, rgba(99, 102, 241, 0.04) 70%, transparent 100%);
+  animation: driftSlow4 45s infinite alternate ease-in-out;
+}
+
+/* Orbe Interactivo Principal - Sigue al cursor directamente */
+.profile-decor-backdrop .orb-interactive {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  top: 0;
+  left: 0;
+  margin-top: -250px;
+  margin-left: -250px;
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.32) 0%, rgba(56, 189, 248, 0.28) 45%, transparent 70%);
+  transform: translate(var(--mouse-x, 50vw), var(--mouse-y, 50vh));
+  /* Inercia física extremadamente fluida para acompañar al cursor */
+  transition: transform 0.18s cubic-bezier(0.1, 0.8, 0.2, 1);
+  z-index: 1;
+}
+
+/* Asegurar posicionamiento y z-index relativo de los contenedores de perfil */
+.profile-title-centered,
+.profile-card,
+.profile-section-card {
+  position: relative;
+  z-index: 2;
+}
+
+/* Custom scrollbars para perfil en general */
+.profile-main-column::-webkit-scrollbar {
+  width: 8px;
+}
+.profile-main-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+.profile-main-column::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 9999px;
+}
+.profile-main-column::-webkit-scrollbar-thumb:hover {
+  background: rgba(97, 71, 255, 0.4);
+}
+
+/* ==========================================================================
+   5. PREMIUM DARK THEME OVERRIDES FOR PROFILE (Modo Oscuro Integrado)
+   ========================================================================== */
+
+/* Contenedor General en Modo Oscuro */
+.profile-page-container.dark-theme {
+  background-color: #0b0f19;
+}
+
+/* Fondo decorativo con Orbes de Luz más brillantes en Modo Oscuro */
+.profile-page-container.dark-theme .profile-decor-backdrop {
+  background-color: #080c14;
+}
+
+.profile-page-container.dark-theme .orb-violet {
+  background: radial-gradient(circle, rgba(97, 71, 255, 0.38) 0%, rgba(131, 91, 245, 0.05) 70%, transparent 100%);
+}
+
+.profile-page-container.dark-theme .orb-fuchsia {
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.34) 0%, rgba(219, 39, 119, 0.04) 70%, transparent 100%);
+}
+
+.profile-page-container.dark-theme .orb-cyan {
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.42) 0%, rgba(6, 182, 212, 0.05) 70%, transparent 100%);
+}
+
+.profile-page-container.dark-theme .orb-indigo {
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.35) 0%, rgba(99, 102, 241, 0.04) 70%, transparent 100%);
+}
+
+.profile-page-container.dark-theme .orb-interactive {
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.38) 0%, rgba(56, 189, 248, 0.34) 45%, transparent 70%);
+}
+
+/* Sidebar de Perfil en Modo Oscuro */
+.profile-page-container.dark-theme .app-sidebar {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.profile-page-container.dark-theme .sidebar-logo-link {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .sidebar-logo-link span {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .menu-link {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .menu-link:hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .menu-link.active {
+  background: rgba(97, 71, 255, 0.18);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .menu-link svg path {
+  fill: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .menu-link.active svg path {
+  fill: #6147FF;
+}
+
+.profile-page-container.dark-theme .menu-link:hover svg path {
+  fill: #ffffff;
+}
+
+.profile-page-container.dark-theme .submenu-link {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .submenu-link:hover {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .submenu-link.active {
+  color: #6147FF;
+}
+
+.profile-page-container.dark-theme .btn-toggle-sidebar {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .btn-toggle-sidebar:hover {
+  background: #1b254b;
+  color: #6147FF;
+}
+
+.profile-page-container.dark-theme .btn-logout {
+  color: #ef4444;
+}
+
+.profile-page-container.dark-theme .btn-logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Títulos y Contenedores */
+.profile-page-container.dark-theme .profile-title-centered {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .profile-card,
+.profile-page-container.dark-theme .education-main-card,
+.profile-page-container.dark-theme .experience-card,
+.profile-page-container.dark-theme .skill-card {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.profile-page-container.dark-theme .profile-card:hover,
+.profile-page-container.dark-theme .education-main-card:hover,
+.profile-page-container.dark-theme .experience-card:hover,
+.profile-page-container.dark-theme .skill-card:hover {
+  border-color: rgba(97, 71, 255, 0.2);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35), 0 0 20px rgba(97, 71, 255, 0.08);
+}
+
+/* Botones de Agregar y Acción en Modo Oscuro */
+.profile-page-container.dark-theme .btn-add-experience,
+.profile-page-container.dark-theme .btn-add-skill-top,
+.profile-page-container.dark-theme .btn-add-education,
+.profile-page-container.dark-theme .btn-edu-action {
+  background: #111c44;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.profile-page-container.dark-theme .btn-add-experience:hover,
+.profile-page-container.dark-theme .btn-add-skill-top:hover,
+.profile-page-container.dark-theme .btn-add-education:hover,
+.profile-page-container.dark-theme .btn-edu-action:hover {
+  background: #1b254b;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .btn-edu-import.importing {
+  background: #131d35;
+  color: #8c9bb5;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Educación en Modo Oscuro */
+.profile-page-container.dark-theme .education-column-title {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .education-item-name {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .education-item-sub {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .education-item-years {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .btn-edit-education-small,
+.profile-page-container.dark-theme .btn-delete-education-small,
+.profile-page-container.dark-theme .btn-edit-course-small,
+.profile-page-container.dark-theme .btn-delete-course-small {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .btn-edit-education-small:hover,
+.profile-page-container.dark-theme .btn-delete-education-small:hover,
+.profile-page-container.dark-theme .btn-edit-course-small:hover,
+.profile-page-container.dark-theme .btn-delete-course-small:hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+/* Experiencia en Modo Oscuro */
+.profile-page-container.dark-theme .experience-time-col {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .experience-position {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .experience-company {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .experience-desc {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .btn-edit-experience,
+.profile-page-container.dark-theme .btn-delete-experience {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .btn-edit-experience:hover,
+.profile-page-container.dark-theme .btn-delete-experience:hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+/* Habilidades en Modo Oscuro */
+.profile-page-container.dark-theme .skill-name {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .btn-edit-skill-small,
+.profile-page-container.dark-theme .btn-delete-skill-small {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .btn-edit-skill-small:hover,
+.profile-page-container.dark-theme .btn-delete-skill-small:hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+/* Datos Personales en Modo Oscuro */
+.profile-page-container.dark-theme .profile-name {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .profile-detail-item {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .profile-detail-item strong {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .linkedin-profile-link {
+  color: #38bdf8;
+}
+
+.profile-page-container.dark-theme .profile-avatar-wrapper img {
+  border-color: #111c44;
+}
+
+.profile-page-container.dark-theme .profile-avatar-glow {
+  background: radial-gradient(circle, rgba(97, 71, 255, 0.4) 0%, transparent 70%);
+}
+
+.profile-page-container.dark-theme .btn-edit-avatar {
+  background: #6147FF;
+  color: #ffffff;
+}
+
+/* Modales de Edición en Modo Oscuro */
+.profile-page-container.dark-theme .modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.profile-page-container.dark-theme .profile-modal {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.profile-page-container.dark-theme .modal-title {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .btn-close-modal {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .btn-close-modal:hover {
+  color: #6147FF;
+}
+
+.profile-page-container.dark-theme .modal-form label {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .modal-form input,
+.profile-page-container.dark-theme .modal-form textarea {
+  background: #131d35;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .modal-form input:focus,
+.profile-page-container.dark-theme .modal-form textarea:focus {
+  border-color: #6147FF;
+  box-shadow: 0 4px 15px rgba(97, 71, 255, 0.25);
+}
+
+.profile-page-container.dark-theme .btn-import-img {
+  background: #131d35;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .btn-import-img:hover {
+  background: #1b254b;
+}
+
+/* Sección Habilidades, Educación y Experiencia */
+.profile-page-container.dark-theme .card-header-actions h2 {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .btn-add-item {
+  background: #6147FF;
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .card-item-title {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .card-item-subtitle {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .card-item-duration {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .card-item-desc {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .btn-edit-item,
+.profile-page-container.dark-theme .btn-delete-item {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .btn-edit-item:hover,
+.profile-page-container.dark-theme .btn-delete-item:hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+/* Elementos de Selección Customizados (Popover Datepicker y Dribbble Dropdown) */
+.profile-page-container.dark-theme .custom-popover-date-picker {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.profile-page-container.dark-theme .date-picker-header button {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .date-picker-header button:hover {
+  background: #1b254b;
+}
+
+.profile-page-container.dark-theme .day-name {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .day-cell:not(.empty-day):not(.selected):hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .day-cell.selected {
+  background: #ffffff;
+  color: #111c44;
+}
+
+.profile-page-container.dark-theme .year-cell:not(.selected):hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .year-cell.selected {
+  background: #ffffff;
+  color: #111c44;
+}
+
+/* Habilidades Dribbble Dropdown */
+.profile-page-container.dark-theme .custom-dropdown-trigger {
+  background: #131d35;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .custom-dropdown-menu {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.profile-page-container.dark-theme .custom-dropdown-item {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .custom-dropdown-item .item-label {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .custom-dropdown-item .item-sub {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .custom-dropdown-item.item-experiencia:hover,
+.profile-page-container.dark-theme .custom-dropdown-item.item-experiencia.selected {
+  background-color: rgba(56, 189, 248, 0.15);
+}
+
+.profile-page-container.dark-theme .custom-dropdown-item.item-educacion:hover,
+.profile-page-container.dark-theme .custom-dropdown-item.item-educacion.selected {
+  background-color: rgba(168, 85, 247, 0.15);
+}
+
+.profile-page-container.dark-theme .custom-dropdown-item.item-curso:hover,
+.profile-page-container.dark-theme .custom-dropdown-item.item-curso.selected {
+  background-color: rgba(45, 212, 191, 0.15);
+}
+
+/* Modal Tabs de Educación en Modo Oscuro */
+.profile-page-container.dark-theme .edu-modal-tabs {
+  background: #131d35;
+}
+
+.profile-page-container.dark-theme .edu-tab-btn {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .edu-tab-btn:hover {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .edu-tab-btn.active {
+  background: #111c44;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Modal de Confirmación de Eliminación Centrado */
+.profile-page-container.dark-theme .delete-confirm-modal {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+
+.profile-page-container.dark-theme .delete-confirm-title {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .delete-confirm-text {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .btn-delete-cancel {
+  background: #131d35;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .btn-delete-cancel:hover {
+  background: #1b254b;
+}
+
+/* ==========================================================================
+   7. ULTRA-PREMIUM UPLOAD FILES MODAL (Estilo de Referencia Maryna)
+   ========================================================================== */
+
+.upload-modal {
+  background: #ffffff;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 560px;
+  padding: 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(27, 37, 89, 0.15);
+  animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  font-family: 'Poppins', sans-serif;
+}
+
+.upload-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.upload-header-left {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.upload-icon-wrapper {
+  background: rgba(97, 71, 255, 0.08);
+  color: #6147FF;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.upload-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.upload-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.upload-modal-subtitle {
+  font-size: 12.5px;
+  color: var(--color-text-gray);
+  margin: 0;
+}
+
+.btn-close-upload {
+  background: none;
+  border: none;
+  color: var(--color-text-gray);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close-upload:hover {
+  background: var(--color-bg-gray);
+  color: var(--color-text-dark);
+}
+
+/* Zona de Arrastre Drag & Drop */
+.upload-drag-zone {
+  border: 2px dashed rgba(97, 71, 255, 0.25);
+  border-radius: 20px;
+  padding: 40px 24px;
+  text-align: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  background: #fafafc;
+  transition: all 0.25s ease-in-out;
+  width: 100%;
+}
+
+.upload-drag-zone:hover,
+.upload-drag-zone.dragover {
+  background: rgba(97, 71, 255, 0.02);
+  border-color: #6147FF;
+}
+
+.drag-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-drag-upload {
+  background: #ffffff;
+  color: var(--color-text-dark);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.upload-drag-zone:hover .btn-drag-upload {
+  border-color: rgba(97, 71, 255, 0.3);
+  color: #6147FF;
+  box-shadow: 0 6px 15px rgba(97, 71, 255, 0.08);
+}
+
+.drag-zone-text-primary {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.drag-zone-text-secondary {
+  font-size: 11px;
+  color: var(--color-text-gray);
+  margin: 0;
+}
+
+/* Lista de Archivos y Progreso */
+.upload-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.upload-file-item {
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(27, 37, 89, 0.01);
+  transition: border-color 0.2s;
+}
+
+.upload-file-item:hover {
+  border-color: var(--color-border);
+}
+
+.file-item-icon-wrapper {
+  background: rgba(97, 71, 255, 0.06);
+  color: #6147FF;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.file-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.file-item-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.file-item-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.file-item-percent {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.file-item-status-completed {
+  font-size: 12px;
+  font-weight: 700;
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+}
+
+.file-item-sub-info {
+  font-size: 11px;
+  color: var(--color-text-gray);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-dot {
+  color: rgba(0, 0, 0, 0.15);
+}
+
+.info-uploading-text {
+  color: #6147FF;
+  font-weight: 500;
+}
+
+/* Barra de Progreso con Gradiente Fucsia-Violeta */
+.file-item-progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.file-item-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #d946ef 0%, #6147ff 100%);
+  transition: width 0.15s ease-out;
+}
+
+.btn-cancel-file-upload {
+  background: none;
+  border: none;
+  color: var(--color-text-gray);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-cancel-file-upload:hover {
+  background: #f1f5f9;
+  color: #ef4444;
+}
+
+/* ==========================================================================
+   8. UPLOAD MODAL DARK MODE OVERRIDES
+   ========================================================================== */
+
+.profile-page-container.dark-theme .upload-modal {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+
+.profile-page-container.dark-theme .upload-modal-title {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .upload-modal-subtitle {
+  color: #a3b1cc;
+}
+
+.profile-page-container.dark-theme .btn-close-upload:hover {
+  background: #1b254b;
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .upload-drag-zone {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: #131d35;
+}
+
+.profile-page-container.dark-theme .upload-drag-zone:hover,
+.profile-page-container.dark-theme .upload-drag-zone.dragover {
+  border-color: #6147FF;
+  background: rgba(97, 71, 255, 0.04);
+}
+
+.profile-page-container.dark-theme .btn-drag-upload {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .upload-drag-zone:hover .btn-drag-upload {
+  border-color: rgba(97, 71, 255, 0.4);
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .drag-zone-text-primary {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .drag-zone-text-secondary {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .upload-file-item {
+  background: #131d35;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.profile-page-container.dark-theme .file-item-name {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .file-item-percent {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .file-item-sub-info {
+  color: #8c9bb5;
+}
+
+.profile-page-container.dark-theme .info-dot {
+  color: rgba(255, 255, 255, 0.1);
+}
+
+.profile-page-container.dark-theme .file-item-progress-bar-container {
+  background: #111c44;
+}
+
+.profile-page-container.dark-theme .btn-cancel-file-upload:hover {
+  background: #1b254b;
+  color: #ef4444;
+}
+
+/* Scrollbars Premium del Perfil en Modo Oscuro */
+.profile-page-container.dark-theme .profile-main-column {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+.profile-page-container.dark-theme .profile-main-column::-webkit-scrollbar {
+  width: 8px;
+}
+
+.profile-page-container.dark-theme .profile-main-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.profile-page-container.dark-theme .profile-main-column::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+}
+
+.profile-page-container.dark-theme .profile-main-column::-webkit-scrollbar-thumb:hover {
+  background: rgba(97, 71, 255, 0.4);
+}
+
+/* ==========================================================================
+   6. UNIFIED TOP HEADER FOR PROFILE & DRIFT KEYFRAMES (Homologación con Lista de Empleos)
+   ========================================================================== */
+
+.profile-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: 1000px;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.profile-page-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  letter-spacing: -1px;
+  margin: 0;
+}
+
+.profile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-header-actions .header-icon-btn {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-dark);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-header-actions .header-icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(97, 71, 255, 0.1);
+  border-color: rgba(97, 71, 255, 0.3);
+  color: var(--color-primary);
+}
+
+.profile-header-actions .header-avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.profile-header-actions .header-avatar-circle:hover {
+  transform: scale(1.05);
+}
+
+.profile-header-actions .header-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Modo Oscuro Overrides para Cabecera de Perfil */
+.profile-page-container.dark-theme .profile-top-header .profile-page-title {
+  color: #ffffff;
+}
+
+.profile-page-container.dark-theme .profile-header-actions .header-icon-btn {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #a3b1cc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-page-container.dark-theme .profile-header-actions .header-icon-btn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.profile-page-container.dark-theme .profile-header-actions .header-avatar-circle {
+  border-color: #111c44;
+}
+
+/* Keyframes de deriva lenta replicados */
+@keyframes driftSlow1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(120px, 80px) scale(1.1); }
+  100% { transform: translate(-60px, 140px) scale(0.95); }
+}
+
+@keyframes driftSlow2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-100px, -60px) scale(0.9); }
+  100% { transform: translate(80px, 60px) scale(1.15); }
+}
+
+@keyframes driftSlow3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(90px, -120px) scale(1.05); }
+  100% { transform: translate(-80px, 60px) scale(0.95); }
+}
+
+@keyframes driftSlow4 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-80px, 100px) scale(0.95); }
+  100% { transform: translate(100px, -80px) scale(1.1); }
 }
