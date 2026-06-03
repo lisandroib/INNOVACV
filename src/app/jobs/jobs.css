@@ -3,7 +3,7 @@
 .jobs-layout-container {
   display: flex;
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   overflow: hidden;
   box-sizing: border-box;
   background-color: #f8fafc;
@@ -17,6 +17,7 @@
   box-sizing: border-box;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   z-index: 1;
 }
@@ -286,7 +287,7 @@
 
 .jobs-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 36px;
   width: 100%;
   max-width: 1200px;
@@ -625,6 +626,23 @@
   padding: 30px;
   overflow-y: auto;
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+.drawer-content::-webkit-scrollbar {
+  width: 6px;
+}
+.drawer-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.drawer-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+}
+.drawer-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(97, 71, 255, 0.45);
 }
 
 .drawer-meta-section {
@@ -1117,4 +1135,257 @@
 
 .jobs-layout-container.dark-theme .jobs-main-column::-webkit-scrollbar-thumb:hover {
   background: rgba(97, 71, 255, 0.4); /* Brillo violeta premium al pasar el ratón */
+}
+
+/* ==========================================
+   3. UNIFIED FLOATING SEARCH & LOADING ANIMATION STYLES
+   ========================================== */
+
+.floating-search-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  width: 100%;
+  transition: top 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
+              left 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
+              right 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.floating-search-wrapper > * {
+  pointer-events: auto;
+}
+
+.floating-search-wrapper.state-compact {
+  top: 40px; 
+  left: 50%;
+  right: auto; 
+  transform: translate(-50%, 0);
+  width: auto;
+}
+
+.jobs-hero-title {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 32px;
+  text-align: center;
+  letter-spacing: -1px;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.floating-search-wrapper.state-compact .jobs-hero-title {
+  opacity: 0;
+  transform: scale(0.9) translateY(-20px);
+  margin-bottom: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.jobs-hero-search-box {
+  display: flex;
+  background: #ffffff;
+  border-radius: 9999px;
+  padding: 8px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  width: 700px;
+  max-width: 90vw;
+  border: 1px solid var(--color-border);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.floating-search-wrapper.state-compact .jobs-hero-search-box {
+  width: 240px;
+  padding: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.floating-search-wrapper.state-compact .jobs-hero-search-box:focus-within {
+  width: 280px;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 15px rgba(97, 71, 255, 0.1);
+}
+
+.jobs-layout-container.dark-theme .jobs-hero-search-box {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.jobs-layout-container.dark-theme .jobs-hero-title {
+  color: #ffffff;
+}
+
+.hero-input-group {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  position: relative;
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+
+.floating-search-wrapper.state-compact .hero-input-group.secondary-input {
+  flex: 0;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+}
+
+.hero-input-group:first-child::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  height: 60%;
+  width: 1px;
+  background: var(--color-border);
+  transition: opacity 0.3s ease;
+}
+
+.floating-search-wrapper.state-compact .hero-input-group:first-child::after {
+  opacity: 0;
+}
+
+.jobs-layout-container.dark-theme .hero-input-group:first-child::after {
+  background: rgba(255,255,255,0.1);
+}
+
+.hero-search-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 16px 20px 16px 48px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-text-dark);
+  outline: none;
+  transition: all 0.4s ease;
+}
+
+.floating-search-wrapper.state-compact .hero-search-input {
+  padding: 8px 16px 8px 40px;
+  font-size: 13.5px;
+}
+
+.jobs-layout-container.dark-theme .hero-search-input {
+  color: #ffffff;
+}
+
+.hero-search-input::placeholder {
+  color: var(--color-text-gray);
+  transition: opacity 0.2s;
+}
+
+.floating-search-wrapper.state-compact .hero-search-input::placeholder {
+  /* Opcional: Podríamos cambiar el placeholder aquí o mediante JS */
+}
+
+.hero-input-icon {
+  position: absolute;
+  left: 20px;
+  color: var(--color-text-gray);
+  stroke-width: 2.5;
+  transition: all 0.4s ease;
+}
+
+.floating-search-wrapper.state-compact .hero-input-icon {
+  left: 16px;
+  width: 18px;
+  height: 18px;
+}
+
+.hero-search-btn {
+  background: linear-gradient(135deg, #6147FF 0%, #8A70FF 100%);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  padding: 0 32px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: 'Poppins', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.floating-search-wrapper.state-compact .hero-search-btn {
+  padding: 0;
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(97, 71, 255, 0.3);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) translate(-50%, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translate(-50%, -50%);
+  }
+}
+
+.jobs-loading-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  width: 100%;
+  animation: fadeInDown 0.3s ease-out;
+  z-index: 10;
+}
+
+.jobs-loading-state p {
+  color: var(--color-text-dark);
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.jobs-layout-container.dark-theme .jobs-loading-state p {
+  color: #ffffff;
+}
+
+/* Scroll Transition para el contenido de los empleos */
+.jobs-content-transition {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.jobs-content-transition.state-hero {
+  opacity: 0;
+  transform: translateY(60vh);
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+}
+
+.jobs-content-transition.state-compact {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  position: relative;
+  margin-top: 30px;
 }

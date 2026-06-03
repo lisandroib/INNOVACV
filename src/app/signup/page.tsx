@@ -9,13 +9,35 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Creando cuenta con:', { email, password });
-    // Aquí puedes enlazar tu endpoint de autenticación si lo tienes
-    router.push('/profile');
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    setError('');
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        setError(data.error || 'Error al crear la cuenta');
+        return;
+      }
+      
+      // Auto-login funciona en el backend, redirigir directo al chatbot
+      router.push('/chat');
+    } catch (err) {
+      setError('Error de conexión con el servidor');
+    }
   };
 
   return (
@@ -34,6 +56,7 @@ export default function SignUp() {
         <h1 className="signup-title">Crear Cuenta</h1>
         
         <div className="signup-card">
+          {error && <div className="error-message" style={{ color: '#ef4444', marginBottom: '15px', fontSize: '14px', textAlign: 'center' }}>{error}</div>}
           <form onSubmit={handleSubmit}>
             {/* Input Email */}
             <div className="form-group">

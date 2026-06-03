@@ -8,13 +8,30 @@ import '../signup/signup.css';
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Iniciando sesión con:', { email, password });
-    // Aquí puedes enlazar tu endpoint de autenticación si lo tienes
-    router.push('/profile');
+    setError('');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        setError(data.error || 'Error al iniciar sesión');
+        return;
+      }
+      
+      router.push('/profile');
+    } catch (err) {
+      setError('Error de conexión con el servidor');
+    }
   };
 
   return (
@@ -33,6 +50,7 @@ export default function SignIn() {
         <h1 className="signup-title">Iniciar Sesión</h1>
 
         <div className="signup-card">
+          {error && <div className="error-message" style={{ color: '#ef4444', marginBottom: '15px', fontSize: '14px', textAlign: 'center' }}>{error}</div>}
           <form onSubmit={handleSubmit}>
             {/* Input Email */}
             <div className="form-group">

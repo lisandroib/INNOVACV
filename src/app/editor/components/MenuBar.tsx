@@ -219,10 +219,10 @@ export default function MenuBar({ editor }: MenuBarProps) {
         <div className="relative">
           <button
             onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'blockType'); }}
-            className="flex items-center justify-between gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer min-w-[100px]"
+            className="flex items-center justify-between gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer w-28"
           >
-            <span>{currentBlockType}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <span className="truncate text-left flex-1">{currentBlockType}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
           </button>
           {activeDropdown === 'blockType' && (
             <div className="absolute top-full left-0 mt-1 w-36 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">
@@ -258,10 +258,10 @@ export default function MenuBar({ editor }: MenuBarProps) {
         <div className="relative">
           <button
             onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'fontFamily'); }}
-            className="flex items-center justify-between gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer min-w-[90px]"
+            className="flex items-center justify-between gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm transition-colors cursor-pointer w-32"
           >
-            <span>{currentFont}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <span className="truncate text-left flex-1">{currentFont}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
           </button>
           {activeDropdown === 'fontFamily' && (
             <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">

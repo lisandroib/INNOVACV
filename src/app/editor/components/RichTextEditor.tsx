@@ -16,6 +16,7 @@ import MenuBar from './MenuBar';
 interface RichTextEditorProps {
   initialContent?: string;
   onChange?: (html: string) => void;
+  onSectionChange?: (section: string, textContext: string) => void;
 }
 
 const DEFAULT_CV_CONTENT = `
@@ -67,7 +68,7 @@ const DEFAULT_CV_CONTENT = `
   </ul>
 `;
 
-export default function RichTextEditor({ initialContent, onChange }: RichTextEditorProps) {
+export default function RichTextEditor({ initialContent, onChange, onSectionChange }: RichTextEditorProps) {
   const extensions = useMemo(() => [
     StarterKit.configure({
       history: {
@@ -93,6 +94,7 @@ export default function RichTextEditor({ initialContent, onChange }: RichTextEdi
   const editor = useEditor({
     extensions,
     content: initialContent || DEFAULT_CV_CONTENT,
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       if (onChange) {
         onChange(editor.getHTML());
@@ -104,6 +106,49 @@ export default function RichTextEditor({ initialContent, onChange }: RichTextEdi
       },
     },
   });
+
+  // Track active section and send debounced content updates to parent
+  React.useEffect(() => {
+    if (!editor) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const handleUpdate = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const { state } = editor;
+        const { selection } = state;
+        const { $from } = selection;
+
+        let nearestHeading = 'General';
+        state.doc.nodesBetween(0, $from.pos, (node) => {
+          if (node.type.name === 'heading') {
+            nearestHeading = node.textContent;
+          }
+        });
+
+        const activeSectionName = nearestHeading.replace(/\[Note:.*?\]/gi, '').trim() || 'General';
+        const textContext = state.doc.textBetween(
+          Math.max(0, $from.pos - 500),
+          Math.min(state.doc.content.size, $from.pos + 500),
+          ' '
+        );
+
+        if (onSectionChange) {
+          onSectionChange(activeSectionName, textContext);
+        }
+      }, 1500);
+    };
+
+    editor.on('update', handleUpdate);
+    editor.on('selectionUpdate', handleUpdate);
+
+    return () => {
+      editor.off('update', handleUpdate);
+      editor.off('selectionUpdate', handleUpdate);
+      clearTimeout(timeoutId);
+    };
+  }, [editor, onSectionChange]);
 
   if (!editor) {
     return (
