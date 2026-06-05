@@ -3,10 +3,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import './profile.css';
+import { GooeyLoader } from '@/components/GooeyLoader';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Cargar estado de modo oscuro desde localStorage de forma segura
   useEffect(() => {
@@ -14,6 +16,87 @@ export default function ProfilePage() {
     if (savedTheme === 'dark') {
       setIsDarkMode(true);
     }
+  }, []);
+
+  // Cargar perfil desde MongoDB
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch('/api/perfil');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data) {
+            const dbData = json.data;
+            
+            if (dbData.datos_personales) {
+              const full = dbData.datos_personales.nombre_completo || '';
+              const parts = full.split(' ');
+              if (parts[0]) setNombre(parts[0]);
+              if (parts.length > 1) setApellido(parts.slice(1).join(' '));
+              
+              if (dbData.datos_personales.fecha_nacimiento) setFechaNacimiento(dbData.datos_personales.fecha_nacimiento);
+              if (dbData.datos_personales.telefono) setTelefono(dbData.datos_personales.telefono);
+              if (dbData.datos_personales.linkedin) setLinkedin(dbData.datos_personales.linkedin);
+              
+              if (dbData.datos_personales.ubicacion) {
+                const ciudad = dbData.datos_personales.ubicacion.ciudad || '';
+                const prov = dbData.datos_personales.ubicacion.provincia || '';
+                const ub = `${ciudad}${ciudad && prov ? ', ' : ''}${prov}`;
+                if (ub) setCiudad(ub);
+              }
+            }
+            if (dbData.email_registro) setMail(dbData.email_registro);
+
+            if (dbData.experiencia_laboral && dbData.experiencia_laboral.trabajo_actual) {
+              const ta = dbData.experiencia_laboral.trabajo_actual;
+              if (ta.empresa && ta.puesto) {
+                setExperiences([{
+                  id: 'db_actual',
+                  anioInicio: ta.fecha_inicio || '',
+                  anioFin: ta.fecha_fin || 'actualidad',
+                  position: ta.puesto,
+                  company: ta.empresa,
+                  desc: ta.descripcion || ''
+                }]);
+              }
+            }
+
+            if (dbData.habilidades) {
+              let newSkills = [];
+              if (dbData.habilidades.duras) {
+                newSkills.push(...dbData.habilidades.duras.split(',').map((s: string, i: number) => ({ id: `d${i}`, nombre: s.trim(), descripcion: 'Habilidad Dura' })));
+              }
+              if (dbData.habilidades.blandas) {
+                newSkills.push(...dbData.habilidades.blandas.split(',').map((s: string, i: number) => ({ id: `b${i}`, nombre: s.trim(), descripcion: 'Habilidad Blanda' })));
+              }
+              if (newSkills.length > 0) setSkills(newSkills.filter((s: any) => s.nombre));
+            }
+            
+            if (dbData.educacion) {
+              let edu = [];
+              if (dbData.educacion.grado && dbData.educacion.grado.titulo) {
+                edu.push({ id: 'g1', institucion: dbData.educacion.grado.institucion || '', titulo: dbData.educacion.grado.carrera || dbData.educacion.grado.titulo, anioInicio: dbData.educacion.grado.ano_inicio || '', anioFin: dbData.educacion.grado.ano_fin || '' });
+              }
+              if (dbData.educacion.terciario && dbData.educacion.terciario.titulo) {
+                edu.push({ id: 't1', institucion: dbData.educacion.terciario.institucion || '', titulo: dbData.educacion.terciario.carrera || dbData.educacion.terciario.titulo, anioInicio: dbData.educacion.terciario.ano_inicio || '', anioFin: dbData.educacion.terciario.ano_fin || '' });
+              }
+              if (dbData.educacion.secundario && dbData.educacion.secundario.titulo) {
+                edu.push({ id: 's1', institucion: dbData.educacion.secundario.institucion || '', titulo: dbData.educacion.secundario.titulo, anioInicio: '', anioFin: dbData.educacion.secundario.ultimo_ano || '' });
+              }
+              if (edu.length > 0) setFormalEducation(edu);
+            }
+          } else {
+            // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
+            window.location.href = '/chat';
+          }
+        }
+      } catch (err) {
+        console.error("Error cargando perfil", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProfile();
   }, []);
 
   // Manejador del movimiento del ratón para crear el efecto Aurora Glow Mesh en el perfil
@@ -1010,6 +1093,33 @@ export default function ProfilePage() {
     setErrorsSkill({});
     setIsSkillModalOpen(false);
   };
+
+  // Renderizado del contenido principal basado en el tab activo
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'personal':
+        return renderPersonal();
+      case 'educacion':
+        return renderEducation();
+      case 'habilidades':
+        return renderSkills();
+      case 'experiencia':
+        return renderExperience();
+      case 'exportar':
+        return renderExport();
+      default:
+        return renderPersonal();
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc' }}>
+        <GooeyLoader />
+        <p style={{ marginTop: '20px', fontFamily: 'Inter, sans-serif', color: isDarkMode ? '#e2e8f0' : '#475569', fontWeight: 500 }}>Sincronizando perfil con la base de datos...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`profile-page-container ${isDarkMode ? 'dark-theme' : ''}`} onMouseMove={handleMouseMove}>

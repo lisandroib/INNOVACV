@@ -4,6 +4,19 @@ import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { ObjectId } from 'mongodb';
 
+// 1. Configurar los encabezados CORS reutilizables
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://typebot.io', // Permite solo a Typebot (más seguro)
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, bypass-tunnel-reminder',
+  'Access-Control-Allow-Credentials': 'true', // OBLIGATORIO para leer el auth_token
+};
+
+// 2. Manejar la consulta de seguridad (Preflight) que hace el navegador
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 200, headers: corsHeaders });
+}
+
 export async function POST(req: Request) {
   try {
     // 1. Obtener los datos enviados por Typebot
@@ -31,20 +44,22 @@ export async function POST(req: Request) {
     const client = await clientPromise;
     const db = client.db('innovacv_db');
 
-    // 4. Preparar el documento
+    // 4. Preparar el documento (usar el userId de la cookie, o si falla, el que nos devuelve Typebot)
+    const finalUserId = userId || data.usuario_id;
+    
     const documentoPerfil = {
       ...data,
-      usuario_id: userId ? new ObjectId(userId) : null,
-      email_registro: userEmail,
+      usuario_id: finalUserId ? new ObjectId(finalUserId) : null,
+      email_registro: userEmail || data.email, // Por si acaso también recolectas el email en Typebot
       updatedAt: new Date(),
       origen: 'typebot'
     };
 
     let result;
     // Si sabemos quién es el usuario, actualizamos su perfil único o lo creamos si no existe (upsert)
-    if (userId) {
+    if (finalUserId) {
       result = await db.collection('perfiles').updateOne(
-        { usuario_id: new ObjectId(userId) },
+        { usuario_id: new ObjectId(finalUserId) },
         { 
           $set: documentoPerfil,
           $setOnInsert: { createdAt: new Date() } 
@@ -57,10 +72,16 @@ export async function POST(req: Request) {
       result = await db.collection('perfiles').insertOne(documentoPerfil);
     }
 
-    return NextResponse.json({ success: true, message: 'Perfil guardado exitosamente', result }, { status: 200 });
+    return NextResponse.json(
+      { success: true, message: 'Perfil guardado exitosamente', result }, 
+      { status: 200, headers: corsHeaders }
+    );
 
   } catch (error: any) {
     console.error('Error en /api/guardar-perfil:', error);
-    return NextResponse.json({ error: 'Error interno del servidor al procesar el webhook' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error interno del servidor al procesar el webhook' }, 
+      { status: 500, headers: corsHeaders }
+    );
   }
 }
