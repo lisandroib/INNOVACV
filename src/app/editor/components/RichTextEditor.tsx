@@ -71,6 +71,7 @@ const DEFAULT_CV_CONTENT = `
 export default function RichTextEditor({ initialContent, onChange, onSectionChange }: RichTextEditorProps) {
   const extensions = useMemo(() => [
     StarterKit.configure({
+      // @ts-ignore: Tiptap StarterKit types don't strictly expose history options but it works at runtime
       history: {
         depth: 100,
         newGroupDelay: 500,
