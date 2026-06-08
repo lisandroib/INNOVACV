@@ -1094,23 +1094,6 @@ export default function ProfilePage() {
     setIsSkillModalOpen(false);
   };
 
-  // Renderizado del contenido principal basado en el tab activo
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'personal':
-        return renderPersonal();
-      case 'educacion':
-        return renderEducation();
-      case 'habilidades':
-        return renderSkills();
-      case 'experiencia':
-        return renderExperience();
-      case 'exportar':
-        return renderExport();
-      default:
-        return renderPersonal();
-    }
-  };
 
   if (isLoading) {
     return (
