@@ -1,30 +1,21 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import './profile.css';
 import { GooeyLoader } from '@/components/GooeyLoader';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined' && (window as any).__hydrated) {
-      return localStorage.getItem('theme') === 'dark';
-    }
-    return false;
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Cargar estado de modo oscuro desde localStorage de forma segura
-  useLayoutEffect(() => {
+  useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       setIsDarkMode(true);
     }
-    (window as any).__hydrated = true;
-    requestAnimationFrame(() => {
-      document.documentElement.classList.remove('theme-loading');
-    });
   }, []);
 
   // Cargar perfil desde MongoDB
@@ -95,8 +86,8 @@ export default function ProfilePage() {
               if (edu.length > 0) setFormalEducation(edu);
             }
           } else {
-            // Si el usuario no tiene perfil guardado en Mongo, se queda en la página de perfil con datos por defecto
-            console.log('No se encontró perfil en Mongo, el usuario puede completar sus datos manualmente.');
+            // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
+            window.location.href = '/chat';
           }
         }
       } catch (err) {
@@ -1104,7 +1095,14 @@ export default function ProfilePage() {
   };
 
 
-  // The loader will be rendered inside the main column instead of replacing the entire page
+  if (isLoading) {
+    return (
+      <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc' }}>
+        <GooeyLoader />
+        <p style={{ marginTop: '20px', fontFamily: 'Inter, sans-serif', color: isDarkMode ? '#e2e8f0' : '#475569', fontWeight: 500 }}>Sincronizando perfil con la base de datos...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`profile-page-container ${isDarkMode ? 'dark-theme' : ''}`} onMouseMove={handleMouseMove}>
@@ -1156,15 +1154,8 @@ export default function ProfilePage() {
           </div>
         </header>
 
-        {isLoading ? (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <GooeyLoader />
-            <p style={{ marginTop: '20px', fontFamily: 'Inter, sans-serif', color: isDarkMode ? '#e2e8f0' : '#475569', fontWeight: 500 }}>Sincronizando perfil con la base de datos...</p>
-          </div>
-        ) : (
-          <>
-            {/* Renderizado dinámico según la pestaña seleccionada */}
-            {activeTab === 'personal' && (
+        {/* Renderizado dinámico según la pestaña seleccionada */}
+        {activeTab === 'personal' && (
           <>
             <h1 className="profile-title-centered">Datos personales</h1>
 
@@ -2472,8 +2463,6 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
-        )}
-        </>
         )}
       </main>
     </div>

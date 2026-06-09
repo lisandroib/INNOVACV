@@ -29,14 +29,14 @@ function parseMarkdown(text: string) {
         </h4>
       );
     }
-    
+
     // Check for bold text (**text**)
     let parts: React.ReactNode[] = [];
     let currentText = cleanLine;
     let boldRegex = /\*\*(.*?)\*\*/g;
     let match;
     let lastIndex = 0;
-    
+
     // Handle list items
     const isBullet = cleanLine.startsWith('*') || cleanLine.startsWith('-');
     if (isBullet) {
@@ -50,7 +50,7 @@ function parseMarkdown(text: string) {
       parts.push(<strong key={match.index} className="font-bold opacity-100">{match[1]}</strong>);
       lastIndex = boldRegex.lastIndex;
     }
-    
+
     if (lastIndex < currentText.length) {
       parts.push(currentText.substring(lastIndex));
     }
@@ -84,7 +84,7 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of messages
@@ -124,7 +124,7 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
       }
 
       const data = await response.json();
-      
+
       if (data.error) {
         throw new Error(data.error);
       }
@@ -162,11 +162,10 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
             placeholder="Ej: Frontend Developer, Contador, etc."
             value={targetJob}
             onChange={(e) => setTargetJob(e.target.value)}
-            className={`w-full text-xs px-2.5 py-1.5 rounded-lg outline-none transition-all font-semibold border ${
-              isDarkMode 
-                ? 'bg-[#1b254b] border-white/10 text-white focus:border-violet-500 focus:bg-[#111c44] placeholder-slate-500' 
-                : 'bg-slate-50 border-slate-200 focus:border-violet-500 focus:bg-white'
-            }`}
+            className={`w-full text-xs px-2.5 py-1.5 rounded-lg outline-none transition-all font-semibold border ${isDarkMode
+              ? 'bg-[#1b254b] border-white/10 text-white focus:border-violet-500 focus:bg-[#111c44] placeholder-slate-500'
+              : 'bg-slate-50 border-slate-200 focus:border-violet-500 focus:bg-white'
+              }`}
           />
           <Sparkles className="absolute right-2.5 top-2 w-3.5 h-3.5 text-violet-400 pointer-events-none" />
         </div>
@@ -180,16 +179,15 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
             Sección activa: <span className="font-bold">{activeSection}</span>
           </span>
         </div>
-        
+
         {/* Quick Suggestion Button */}
         {activeSection !== 'General' && (
           <button
             onClick={triggerQuickAction}
-            className={`px-2 py-0.5 rounded-md font-semibold text-[10px] cursor-pointer shadow-2xs active:scale-95 transition-all flex-shrink-0 border ${
-              isDarkMode 
-                ? 'bg-[#111c44] text-violet-300 hover:bg-[#2b3564] border-white/10' 
-                : 'bg-white text-violet-700 hover:bg-violet-100 border-violet-200'
-            }`}
+            className={`px-2 py-0.5 rounded-md font-semibold text-[10px] cursor-pointer shadow-2xs active:scale-95 transition-all flex-shrink-0 border ${isDarkMode
+              ? 'bg-[#111c44] text-violet-300 hover:bg-[#2b3564] border-white/10'
+              : 'bg-white text-violet-700 hover:bg-violet-100 border-violet-200'
+              }`}
           >
             Sugerir
           </button>
@@ -205,15 +203,14 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
                 <Bot className="w-3.5 h-3.5" />
               </div>
             )}
-            
+
             <div
-              className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs shadow-3xs ${
-                msg.role === 'user'
-                  ? 'bg-violet-600 text-white rounded-tr-none'
-                  : isDarkMode 
-                    ? 'bg-[#1b254b] text-white border border-white/10 rounded-tl-none' 
-                    : 'bg-white text-slate-800 border border-slate-200/60 rounded-tl-none'
-              }`}
+              className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs shadow-3xs ${msg.role === 'user'
+                ? 'bg-violet-600 text-white rounded-tr-none'
+                : isDarkMode
+                  ? 'bg-[#1b254b] text-white border border-white/10 rounded-tl-none'
+                  : 'bg-white text-slate-800 border border-slate-200/60 rounded-tl-none'
+                }`}
             >
               {msg.role === 'user' ? (
                 <p className="leading-relaxed">{msg.content}</p>
@@ -249,7 +246,7 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
             <p className="flex-1">{error}</p>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -267,11 +264,10 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isLoading}
-          className={`flex-1 text-xs px-3 py-2 rounded-xl outline-none transition-all disabled:opacity-50 border ${
-            isDarkMode 
-              ? 'bg-[#1b254b] border-white/10 text-white focus:border-violet-500 focus:bg-[#111c44] placeholder-slate-500' 
-              : 'bg-slate-50 border-slate-200 focus:border-violet-500 focus:bg-white'
-          }`}
+          className={`flex-1 text-xs px-3 py-2 rounded-xl outline-none transition-all disabled:opacity-50 border ${isDarkMode
+            ? 'bg-[#1b254b] border-white/10 text-white focus:border-violet-500 focus:bg-[#111c44] placeholder-slate-500'
+            : 'bg-slate-50 border-slate-200 focus:border-violet-500 focus:bg-white'
+            }`}
         />
         <button
           type="submit"
