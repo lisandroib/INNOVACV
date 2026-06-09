@@ -33,8 +33,8 @@ export default function SignUp() {
         return;
       }
       
-      // Auto-login funciona en el backend, redirigir directo al chatbot
-      router.push('/chat');
+      // Auto-login funciona en el backend, redirigir directo al perfil
+      router.push('/profile');
     } catch (err) {
       setError('Error de conexión con el servidor');
     }

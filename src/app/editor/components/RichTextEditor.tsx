@@ -162,13 +162,13 @@ export default function RichTextEditor({ initialContent, onChange, onSectionChan
   return (
     <div className="flex flex-col h-full w-full">
       {/* Barra de Herramientas */}
-      <div className="sticky top-0 z-30 bg-[#f1f5f9] pb-3 border-b border-slate-200">
+      <div className="sticky top-0 z-30 pb-3 border-b toolbar-sticky-container">
         <MenuBar editor={editor} />
       </div>
 
       {/* Contenedor de la Hoja A4 Scrollable */}
       <div className="document-scroll-container">
-        <div className="a4-sheet mt-4">
+        <div className="a4-sheet">
           <EditorContent editor={editor} />
         </div>
       </div>
