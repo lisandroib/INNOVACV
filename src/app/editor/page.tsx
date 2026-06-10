@@ -1,9 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-'use client';
-
-import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import RichTextEditor from './components/RichTextEditor';
 import ChatAssistant from './components/ChatAssistant';
