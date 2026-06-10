@@ -26,8 +26,12 @@ import {
   Palette
 } from 'lucide-react';
 
+import { getAllTemplates, getTemplateById } from '@/lib/cv-templates';
+
 interface MenuBarProps {
   editor: Editor;
+  selectedTemplateId?: string;
+  onTemplateChange?: (templateId: string) => void;
 }
 
 const FONTS = [
@@ -66,7 +70,7 @@ const PRESET_COLORS = [
   '#805ad5'  // Violeta/Púrpura
 ];
 
-export default function MenuBar({ editor }: MenuBarProps) {
+export default function MenuBar({ editor, selectedTemplateId, onTemplateChange }: MenuBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
   const [tempSize, setTempSize] = useState('12');
@@ -539,18 +543,29 @@ export default function MenuBar({ editor }: MenuBarProps) {
             onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'cvStyle'); }}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200 rounded-lg transition-colors cursor-pointer"
           >
-            <span>Estilo: Harvard (ATS)</span>
+            <span>Estilo: {selectedTemplateId ? getTemplateById(selectedTemplateId).name : 'Seleccionar'}</span>
             <ChevronDown className="w-3.5 h-3.5 text-violet-500" />
           </button>
           {activeDropdown === 'cvStyle' && (
-            <div className="absolute top-full right-0 mt-1 w-44 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">
-              <button
-                onMouseDown={(e) => { e.preventDefault(); setActiveDropdown(null); }}
-                className="w-full text-left px-3 py-2 bg-slate-50 text-violet-700 font-semibold border-l-2 border-violet-600"
-              >
-                Harvard Layout (ATS)
-              </button>
-              <div className="px-3 py-1.5 text-[10px] text-slate-400">
+            <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 text-xs">
+              {getAllTemplates().map((template) => (
+                <button
+                  key={template.id}
+                  onMouseDown={(e) => { 
+                    e.preventDefault(); 
+                    if (onTemplateChange) onTemplateChange(template.id);
+                    setActiveDropdown(null); 
+                  }}
+                  className={`w-full text-left px-3 py-2 hover:bg-slate-50 transition-colors ${
+                    selectedTemplateId === template.id 
+                      ? 'bg-slate-50 text-violet-700 font-semibold border-l-2 border-violet-600' 
+                      : 'text-slate-700'
+                  }`}
+                >
+                  {template.name}
+                </button>
+              ))}
+              <div className="px-3 py-1.5 text-[10px] text-slate-400 mt-1 border-t border-slate-100">
                 Próximamente más estilos...
               </div>
             </div>

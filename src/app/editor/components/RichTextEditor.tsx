@@ -12,11 +12,43 @@ import { Link } from '@tiptap/extension-link';
 
 import { FontSize } from './FontSize';
 import MenuBar from './MenuBar';
+import { Extension } from '@tiptap/react';
+
+const GlobalStyle = Extension.create({
+  name: 'globalStyle',
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['paragraph', 'heading', 'textStyle', 'div'],
+        attributes: {
+          style: {
+            default: null,
+            parseHTML: element => element.getAttribute('style'),
+            renderHTML: attributes => {
+              if (!attributes.style) return {};
+              return { style: attributes.style };
+            },
+          },
+          class: {
+            default: null,
+            parseHTML: element => element.getAttribute('class'),
+            renderHTML: attributes => {
+              if (!attributes.class) return {};
+              return { class: attributes.class };
+            },
+          }
+        },
+      },
+    ];
+  },
+});
 
 interface RichTextEditorProps {
   initialContent?: string;
   onChange?: (html: string) => void;
   onSectionChange?: (section: string, textContext: string) => void;
+  selectedTemplateId?: string;
+  onTemplateChange?: (templateId: string) => void;
 }
 
 const DEFAULT_CV_CONTENT = `
@@ -68,7 +100,13 @@ const DEFAULT_CV_CONTENT = `
   </ul>
 `;
 
-export default function RichTextEditor({ initialContent, onChange, onSectionChange }: RichTextEditorProps) {
+export default function RichTextEditor({ 
+  initialContent, 
+  onChange, 
+  onSectionChange,
+  selectedTemplateId,
+  onTemplateChange
+}: RichTextEditorProps) {
   const extensions = useMemo(() => [
     StarterKit.configure({
       // @ts-ignore: Tiptap StarterKit types don't strictly expose history options but it works at runtime
@@ -77,6 +115,7 @@ export default function RichTextEditor({ initialContent, onChange, onSectionChan
         newGroupDelay: 500,
       },
     }),
+    GlobalStyle,
     Underline,
     TextStyle,
     Color,
@@ -107,6 +146,13 @@ export default function RichTextEditor({ initialContent, onChange, onSectionChan
       },
     },
   });
+
+  // Escuchar cambios en initialContent desde afuera (e.g. al cambiar de plantilla)
+  React.useEffect(() => {
+    if (editor && initialContent !== undefined && initialContent !== editor.getHTML()) {
+      editor.commands.setContent(initialContent, false);
+    }
+  }, [editor, initialContent]);
 
   // Track active section and send debounced content updates to parent
   React.useEffect(() => {
@@ -163,7 +209,11 @@ export default function RichTextEditor({ initialContent, onChange, onSectionChan
     <div className="flex flex-col h-full w-full">
       {/* Barra de Herramientas */}
       <div className="sticky top-0 z-30 bg-[#f1f5f9] pb-3 border-b border-slate-200">
-        <MenuBar editor={editor} />
+        <MenuBar 
+          editor={editor} 
+          selectedTemplateId={selectedTemplateId} 
+          onTemplateChange={onTemplateChange} 
+        />
       </div>
 
       {/* Contenedor de la Hoja A4 Scrollable */}
