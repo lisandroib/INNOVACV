@@ -112,6 +112,120 @@ export default function ProfilePage() {
     localStorage.setItem('theme', newMode ? 'dark' : 'light');
   };
 
+  const saveProfileToDB = async (overrides: {
+    nextNombre?: string;
+    nextApellido?: string;
+    nextFechaNacimiento?: string;
+    nextCiudad?: string;
+    nextMail?: string;
+    nextTelefono?: string;
+    nextLinkedin?: string;
+    nextAvatarUrl?: string;
+    nextExperiences?: any[];
+    nextFormalEducation?: any[];
+    nextCourses?: any[];
+    nextSkills?: any[];
+  } = {}) => {
+    const finalNombre = overrides.nextNombre !== undefined ? overrides.nextNombre : nombre;
+    const finalApellido = overrides.nextApellido !== undefined ? overrides.nextApellido : apellido;
+    const finalFechaNacimiento = overrides.nextFechaNacimiento !== undefined ? overrides.nextFechaNacimiento : fechaNacimiento;
+    const finalCiudad = overrides.nextCiudad !== undefined ? overrides.nextCiudad : ciudad;
+    const finalMail = overrides.nextMail !== undefined ? overrides.nextMail : mail;
+    const finalTelefono = overrides.nextTelefono !== undefined ? overrides.nextTelefono : telefono;
+    const finalLinkedin = overrides.nextLinkedin !== undefined ? overrides.nextLinkedin : linkedin;
+    const finalExperiences = overrides.nextExperiences !== undefined ? overrides.nextExperiences : experiences;
+    const finalFormalEducation = overrides.nextFormalEducation !== undefined ? overrides.nextFormalEducation : formalEducation;
+    const finalSkills = overrides.nextSkills !== undefined ? overrides.nextSkills : skills;
+
+    const cleanCiudad = finalCiudad.split(',')[0]?.trim() || '';
+    const cleanProvincia = finalCiudad.split(',')[1]?.trim() || '';
+
+    const ta = finalExperiences.find(e => e.anioFin === 'actualidad' || e.id === 'db_actual');
+    const hist = finalExperiences.filter(e => e !== ta);
+
+    const findEdu = (id: string, keyword: string) => {
+      let found = finalFormalEducation.find(e => e.id === id);
+      if (!found) {
+        found = finalFormalEducation.find(e => e.titulo.toLowerCase().includes(keyword) || e.institucion.toLowerCase().includes(keyword));
+      }
+      return found;
+    };
+
+    const gradoObj = findEdu('g1', 'grad') || findEdu('g1', 'ingenier') || findEdu('g1', 'licenci') || finalFormalEducation.find(e => e.id !== 't1' && e.id !== 's1' && !e.titulo.toLowerCase().includes('secundar') && !e.titulo.toLowerCase().includes('terciar'));
+    const terciarioObj = findEdu('t1', 'terciar') || findEdu('t1', 'tecnic') || finalFormalEducation.find(e => e.id === 't1');
+    const secundarioObj = findEdu('s1', 'secundar') || findEdu('s1', 'colegio') || finalFormalEducation.find(e => e.id === 's1');
+
+    const durasArr = finalSkills.filter((s: any) => s.descripcion?.toLowerCase().includes('dura') || s.descripcion?.toLowerCase().includes('experiencia') || s.descripcion?.toLowerCase().includes('curso')).map((s: any) => s.nombre);
+    const blandasArr = finalSkills.filter((s: any) => s.descripcion?.toLowerCase().includes('blanda') || s.descripcion?.toLowerCase().includes('educación') || s.descripcion?.toLowerCase().includes('metodologías')).map((s: any) => s.nombre);
+
+    const payload = {
+      datos_personales: {
+        nombre_completo: `${finalNombre} ${finalApellido}`.trim(),
+        fecha_nacimiento: finalFechaNacimiento,
+        telefono: finalTelefono,
+        linkedin: finalLinkedin,
+        ubicacion: {
+          ciudad: cleanCiudad,
+          provincia: cleanProvincia
+        }
+      },
+      email_registro: finalMail,
+      experiencia_laboral: {
+        trabajo_actual: ta ? {
+          empresa: ta.company,
+          puesto: ta.position,
+          fecha_inicio: ta.anioInicio,
+          fecha_fin: ta.anioFin,
+          descripcion: ta.desc
+        } : null,
+        historial: hist.map(h => ({
+          empresa: h.company,
+          puesto: h.position,
+          fecha_inicio: h.anioInicio,
+          fecha_fin: h.anioFin,
+          descripcion: h.desc
+        }))
+      },
+      educacion: {
+        secundario: secundarioObj ? {
+          institucion: secundarioObj.institucion,
+          titulo: secundarioObj.titulo,
+          ultimo_ano: secundarioObj.anioFin
+        } : null,
+        terciario: terciarioObj ? {
+          institucion: terciarioObj.institucion,
+          carrera: terciarioObj.titulo,
+          titulo: terciarioObj.titulo,
+          ano_inicio: terciarioObj.anioInicio,
+          ano_fin: terciarioObj.anioFin
+        } : null,
+        grado: gradoObj ? {
+          institucion: gradoObj.institucion,
+          carrera: gradoObj.titulo,
+          titulo: gradoObj.titulo,
+          ano_inicio: gradoObj.anioInicio,
+          ano_fin: gradoObj.anioFin
+        } : null
+      },
+      habilidades: {
+        duras: durasArr.join(', '),
+        blandas: blandasArr.join(', ')
+      }
+    };
+
+    try {
+      await fetch('/api/perfil', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      console.error('Error al guardar perfil en la base de datos:', err);
+    }
+  };
+
   // Estados de datos personales
   const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400');
   const [nombre, setNombre] = useState('Nombre');
@@ -428,16 +542,36 @@ export default function ProfilePage() {
       return;
     }
 
-    setAvatarUrl(tempAvatarUrl || avatarUrl);
-    setNombre(tempNombre.trim() || nombre);
-    setApellido(tempApellido.trim() || apellido);
-    setFechaNacimiento(tempFechaNacimiento.trim() || fechaNacimiento);
-    setCiudad(tempCiudad.trim() || ciudad);
-    setMail(tempMail.trim() || mail);
-    setTelefono(tempTelefono.trim() || telefono);
-    setLinkedin(tempLinkedin.trim() || linkedin);
+    const nextNombre = tempNombre.trim() || nombre;
+    const nextApellido = tempApellido.trim() || apellido;
+    const nextFechaNacimiento = tempFechaNacimiento.trim() || fechaNacimiento;
+    const nextCiudad = tempCiudad.trim() || ciudad;
+    const nextMail = tempMail.trim() || mail;
+    const nextTelefono = tempTelefono.trim() || telefono;
+    const nextLinkedin = tempLinkedin.trim() || linkedin;
+    const nextAvatarUrl = tempAvatarUrl || avatarUrl;
+
+    setAvatarUrl(nextAvatarUrl);
+    setNombre(nextNombre);
+    setApellido(nextApellido);
+    setFechaNacimiento(nextFechaNacimiento);
+    setCiudad(nextCiudad);
+    setMail(nextMail);
+    setTelefono(nextTelefono);
+    setLinkedin(nextLinkedin);
     setErrorsProfile({});
     setIsModalOpen(false);
+
+    saveProfileToDB({
+      nextNombre,
+      nextApellido,
+      nextFechaNacimiento,
+      nextCiudad,
+      nextMail,
+      nextTelefono,
+      nextLinkedin,
+      nextAvatarUrl
+    });
   };
 
   // Disparar input de archivo
@@ -563,13 +697,19 @@ export default function ProfilePage() {
       newErrors.desc = "La descripción de la posición es obligatoria.";
     }
 
+    // Función helper para extraer el año de 4 dígitos de un string
+    const extractYear = (str: string) => {
+      const match = str.match(/\b(19\d{2}|20\d{2})\b/);
+      return match ? Number(match[1]) : NaN;
+    };
+
     // Validar año de inicio (no puede ser en el futuro)
     const currentYear = new Date().getFullYear();
-    const startYearNum = Number(expAnioInicio.trim());
+    const startYearNum = extractYear(expAnioInicio.trim());
     if (!expAnioInicio.trim()) {
-      newErrors.anioInicio = "El año de inicio es obligatorio.";
+      newErrors.anioInicio = "El año/mes de inicio es obligatorio.";
     } else if (isNaN(startYearNum) || startYearNum < 1900 || startYearNum > currentYear) {
-      newErrors.anioInicio = `Ingrese un año válido de 4 dígitos entre 1900 y ${currentYear} (no en el futuro).`;
+      newErrors.anioInicio = `Ingrese un texto que contenga un año válido de 4 dígitos entre 1900 y ${currentYear} (ej: marzo 2024).`;
     }
 
     // Validar año de finalización (no puede ser en el futuro, salvo 'actualidad')
@@ -578,14 +718,14 @@ export default function ProfilePage() {
     let endYearNum: number = Infinity;
 
     if (!expAnioFin.trim()) {
-      newErrors.anioFin = "El año de finalización es obligatorio.";
-    } else if (cleanAnioFin === 'actualidad' || cleanAnioFin === 'presente' || cleanAnioFin === 'hoy') {
+      newErrors.anioFin = "El año/mes de finalización es obligatorio.";
+    } else if (cleanAnioFin === 'actualidad' || cleanAnioFin === 'presente' || cleanAnioFin === 'hoy' || cleanAnioFin === 'actual') {
       finalAnioFin = 'actualidad';
       endYearNum = Infinity;
     } else {
-      endYearNum = Number(cleanAnioFin);
+      endYearNum = extractYear(cleanAnioFin);
       if (isNaN(endYearNum) || endYearNum < 1900 || endYearNum > currentYear) {
-        newErrors.anioFin = `Ingrese un año válido de 4 dígitos entre 1900 y ${currentYear} (no en el futuro) o escriba 'actualidad'.`;
+        newErrors.anioFin = `Ingrese un texto que contenga un año válido de 4 dígitos entre 1900 y ${currentYear} (ej: septiembre 2024) o escriba 'actualidad'.`;
       } else if (!isNaN(startYearNum) && endYearNum < startYearNum) {
         newErrors.anioFin = "El año de finalización no puede ser anterior al de inicio.";
       }
@@ -598,6 +738,7 @@ export default function ProfilePage() {
 
     const finalCompany = expIndependiente ? 'Independiente' : expEmpresa.trim();
 
+    let nextExperiences = [...experiences];
     if (editingExpId === null) {
       // Agregar al inicio de la lista
       const newExp = {
@@ -608,27 +749,28 @@ export default function ProfilePage() {
         company: finalCompany,
         desc: expDescripcion.trim()
       };
-      setExperiences([newExp, ...experiences]);
+      nextExperiences = [newExp, ...experiences];
+      setExperiences(nextExperiences);
     } else {
       // Editar existente
-      setExperiences(
-        experiences.map((exp) =>
-          exp.id === editingExpId
-            ? {
-                ...exp,
-                anioInicio: expAnioInicio.trim(),
-                anioFin: finalAnioFin,
-                position: expPosicion.trim(),
-                company: finalCompany,
-                desc: expDescripcion.trim()
-              }
-            : exp
-        )
+      nextExperiences = experiences.map((exp) =>
+        exp.id === editingExpId
+          ? {
+              ...exp,
+              anioInicio: expAnioInicio.trim(),
+              anioFin: finalAnioFin,
+              position: expPosicion.trim(),
+              company: finalCompany,
+              desc: expDescripcion.trim()
+            }
+          : exp
       );
+      setExperiences(nextExperiences);
     }
 
     setErrorsExp({});
     setIsExpModalOpen(false);
+    saveProfileToDB({ nextExperiences });
   };
 
   // Controlar cambio en el checkbox independiente
@@ -770,6 +912,7 @@ export default function ProfilePage() {
         return;
       }
 
+      let nextFormalEducation = [...formalEducation];
       if (editingEduId === null) {
         // Agregar nuevo formal
         const newEdu = {
@@ -779,23 +922,26 @@ export default function ProfilePage() {
           anioInicio: eduAnioInicio.trim(),
           anioFin: finalFin
         };
-        setFormalEducation([newEdu, ...formalEducation]);
+        nextFormalEducation = [newEdu, ...formalEducation];
+        setFormalEducation(nextFormalEducation);
       } else {
         // Editar existente formal
-        setFormalEducation(
-          formalEducation.map((x) =>
-            x.id === editingEduId
-              ? {
-                  ...x,
-                  institucion: eduInstitucion.trim(),
-                  titulo: eduTitulo.trim(),
-                  anioInicio: eduAnioInicio.trim(),
-                  anioFin: finalFin
-                }
-              : x
-          )
+        nextFormalEducation = formalEducation.map((x) =>
+          x.id === editingEduId
+            ? {
+                ...x,
+                institucion: eduInstitucion.trim(),
+                titulo: eduTitulo.trim(),
+                anioInicio: eduAnioInicio.trim(),
+                anioFin: finalFin
+              }
+            : x
         );
+        setFormalEducation(nextFormalEducation);
       }
+      setErrorsEdu({});
+      setIsEduModalOpen(false);
+      saveProfileToDB({ nextFormalEducation });
 
     } else {
       // Validaciones para Curso/Certificación
@@ -818,6 +964,7 @@ export default function ProfilePage() {
         return;
       }
 
+      let nextCourses = [...courses];
       if (editingEduId === null) {
         // Agregar nuevo curso
         const newC = {
@@ -826,26 +973,26 @@ export default function ProfilePage() {
           institucion: courseInstitucion.trim(),
           anio: courseAnio.trim()
         };
-        setCourses([newC, ...courses]);
+        nextCourses = [newC, ...courses];
+        setCourses(nextCourses);
       } else {
         // Editar existente curso
-        setCourses(
-          courses.map((x) =>
-            x.id === editingEduId
-              ? {
-                  ...x,
-                  titulo: courseTitulo.trim(),
-                  institucion: courseInstitucion.trim(),
-                  anio: courseAnio.trim()
-                }
-              : x
-          )
+        nextCourses = courses.map((x) =>
+          x.id === editingEduId
+            ? {
+                ...x,
+                titulo: courseTitulo.trim(),
+                institucion: courseInstitucion.trim(),
+                anio: courseAnio.trim()
+              }
+            : x
         );
+        setCourses(nextCourses);
       }
+      setErrorsEdu({});
+      setIsEduModalOpen(false);
+      saveProfileToDB({ nextCourses });
     }
-
-    setErrorsEdu({});
-    setIsEduModalOpen(false);
   };
 
   // Estados para el Modal de Carga de Archivos
@@ -1028,20 +1175,27 @@ export default function ProfilePage() {
     }
   };
 
-  // Confirmar y realizar la eliminación general de elementos
   const confirmDeleteGeneral = () => {
     if (!itemToDeleteId || !itemToDeleteType) return;
     
     if (itemToDeleteType === 'skill') {
-      setSkills(skills.filter((s) => s.id !== itemToDeleteId));
+      const nextSkills = skills.filter((s) => s.id !== itemToDeleteId);
+      setSkills(nextSkills);
+      saveProfileToDB({ nextSkills });
     } else if (itemToDeleteType === 'formal') {
-      setFormalEducation(formalEducation.filter((e) => e.id !== itemToDeleteId));
+      const nextFormalEducation = formalEducation.filter((e) => e.id !== itemToDeleteId);
+      setFormalEducation(nextFormalEducation);
+      saveProfileToDB({ nextFormalEducation });
     } else if (itemToDeleteType === 'course') {
-      setCourses(courses.filter((c) => c.id !== itemToDeleteId));
+      const nextCourses = courses.filter((c) => c.id !== itemToDeleteId);
+      setCourses(nextCourses);
+      saveProfileToDB({ nextCourses });
       // También desvincular o quitar el archivo de uploadFiles en el modal si ya se había cargado
       setUploadFiles(prev => prev.filter((f) => f.courseId !== itemToDeleteId));
     } else if (itemToDeleteType === 'experience') {
-      setExperiences(experiences.filter((exp) => exp.id !== itemToDeleteId));
+      const nextExperiences = experiences.filter((exp) => exp.id !== itemToDeleteId);
+      setExperiences(nextExperiences);
+      saveProfileToDB({ nextExperiences });
     }
     
     setIsDeleteModalOpen(false);
@@ -1067,6 +1221,7 @@ export default function ProfilePage() {
       return;
     }
 
+    let nextSkills = [...skills];
     if (editingSkillId === null) {
       // Agregar al inicio
       const newSk = {
@@ -1074,24 +1229,25 @@ export default function ProfilePage() {
         nombre: skillNombre.trim(),
         descripcion: skillDescripcion.trim()
       };
-      setSkills([newSk, ...skills]);
+      nextSkills = [newSk, ...skills];
+      setSkills(nextSkills);
     } else {
       // Editar
-      setSkills(
-        skills.map((s) =>
-          s.id === editingSkillId
-            ? {
-                ...s,
-                nombre: skillNombre.trim(),
-                descripcion: skillDescripcion.trim()
-              }
-            : s
-        )
+      nextSkills = skills.map((s) =>
+        s.id === editingSkillId
+          ? {
+              ...s,
+              nombre: skillNombre.trim(),
+              descripcion: skillDescripcion.trim()
+            }
+          : s
       );
+      setSkills(nextSkills);
     }
 
     setErrorsSkill({});
     setIsSkillModalOpen(false);
+    saveProfileToDB({ nextSkills });
   };
 
 
@@ -1847,7 +2003,7 @@ export default function ProfilePage() {
 
                 {/* Año de inicio */}
                 <div className={`form-row ${errorsExp.anioInicio ? 'has-error' : ''}`}>
-                  <label htmlFor="expAnioInicio">Año de inicio*</label>
+                  <label htmlFor="expAnioInicio">Fecha de inicio*</label>
                   <div className="input-group-wrapper">
                     <input 
                       type="text" 
@@ -1857,7 +2013,7 @@ export default function ProfilePage() {
                         setExpAnioInicio(e.target.value);
                         setErrorsExp(prev => ({ ...prev, anioInicio: undefined }));
                       }}
-                      placeholder="Ej: 2024"
+                      placeholder="Ej: marzo 2024 o 2024"
                     />
                     {errorsExp.anioInicio && <span className="error-message">{errorsExp.anioInicio}</span>}
                   </div>
@@ -1865,7 +2021,7 @@ export default function ProfilePage() {
 
                 {/* Año de finalización */}
                 <div className={`form-row ${errorsExp.anioFin ? 'has-error' : ''}`}>
-                  <label htmlFor="expAnioFin">Año de finalización*</label>
+                  <label htmlFor="expAnioFin">Fecha de finalización*</label>
                   <div className="input-group-wrapper">
                     <input 
                       type="text" 
@@ -1875,7 +2031,7 @@ export default function ProfilePage() {
                         setExpAnioFin(e.target.value);
                         setErrorsExp(prev => ({ ...prev, anioFin: undefined }));
                       }}
-                      placeholder="Ej: actualidad o 2026"
+                      placeholder="Ej: actualidad o septiembre 2024"
                     />
                     {errorsExp.anioFin && <span className="error-message">{errorsExp.anioFin}</span>}
                   </div>
