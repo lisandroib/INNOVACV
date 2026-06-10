@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Suppress all transitions during initial theme application to prevent flash */
+html.theme-loading,
+html.theme-loading *,
+html.theme-loading *::before,
+html.theme-loading *::after {
+  transition: none !important;
+  animation: none !important;
+}

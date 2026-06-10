@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
 import { GooeyLoader } from '@/components/GooeyLoader';
 import './jobs.css';
@@ -89,7 +89,12 @@ export default function JobsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined' && (window as any).__hydrated) {
+      return localStorage.getItem('theme') === 'dark';
+    }
+    return false;
+  });
 
   const mainRef = useRef<HTMLElement>(null);
   const lastWheelTime = useRef<number>(0);
@@ -164,11 +169,15 @@ export default function JobsPage() {
 
 
   // Cargar estado de modo oscuro desde localStorage de forma segura
-  useEffect(() => {
+  useLayoutEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       setIsDarkMode(true);
     }
+    (window as any).__hydrated = true;
+    requestAnimationFrame(() => {
+      document.documentElement.classList.remove('theme-loading');
+    });
   }, []);
 
   // Obtener ubicación automáticamente por IP
