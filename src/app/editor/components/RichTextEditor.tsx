@@ -150,7 +150,7 @@ export default function RichTextEditor({
   // Escuchar cambios en initialContent desde afuera (e.g. al cambiar de plantilla)
   React.useEffect(() => {
     if (editor && initialContent !== undefined && initialContent !== editor.getHTML()) {
-      editor.commands.setContent(initialContent, false);
+      editor.commands.setContent(initialContent, { emitUpdate: false });
     }
   }, [editor, initialContent]);
 
@@ -218,7 +218,7 @@ export default function RichTextEditor({
 
       {/* Contenedor de la Hoja A4 Scrollable */}
       <div className="document-scroll-container">
-        <div className="a4-sheet mt-4">
+        <div className="a4-sheet">
           <EditorContent editor={editor} />
         </div>
       </div>
