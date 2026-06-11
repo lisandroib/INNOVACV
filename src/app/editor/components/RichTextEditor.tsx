@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Underline } from '@tiptap/extension-underline';
@@ -49,6 +49,10 @@ interface RichTextEditorProps {
   onSectionChange?: (section: string, textContext: string) => void;
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
+}
+
+export interface RichTextEditorRef {
+  insertText: (text: string) => void;
 }
 
 const DEFAULT_CV_CONTENT = `
@@ -100,13 +104,13 @@ const DEFAULT_CV_CONTENT = `
   </ul>
 `;
 
-export default function RichTextEditor({ 
+const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({ 
   initialContent, 
   onChange, 
   onSectionChange,
   selectedTemplateId,
   onTemplateChange
-}: RichTextEditorProps) {
+}, ref) => {
   const extensions = useMemo(() => [
     StarterKit.configure({
       // @ts-ignore: Tiptap StarterKit types don't strictly expose history options but it works at runtime
@@ -146,6 +150,15 @@ export default function RichTextEditor({
       },
     },
   });
+
+  useImperativeHandle(ref, () => ({
+    insertText: (text: string) => {
+      if (editor) {
+        const formattedText = text.replace(/\n/g, '<br>');
+        editor.chain().focus().insertContent(formattedText).run();
+      }
+    }
+  }));
 
   // Escuchar cambios en initialContent desde afuera (e.g. al cambiar de plantilla)
   React.useEffect(() => {
@@ -224,4 +237,8 @@ export default function RichTextEditor({
       </div>
     </div>
   );
-}
+});
+
+RichTextEditor.displayName = 'RichTextEditor';
+
+export default RichTextEditor;

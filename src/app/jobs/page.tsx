@@ -369,12 +369,12 @@ export default function JobsPage() {
 
         {/* LOADING O CONTENIDO GRID */}
         {isLoading ? (
-          <div className="jobs-loading-state">
+          <div key="loading" className="jobs-loading-state">
             <GooeyLoader className="mb-4" />
             <p>Buscando las mejores oportunidades para ti...</p>
           </div>
         ) : (
-          <div className={`jobs-content-transition state-${viewState}`}>
+          <div key="content" className={`jobs-content-transition state-${viewState}`}>
             {/* Tab Selectors de Sección */}
             <div className="jobs-section-tabs">
               <button
