@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       Ejemplo de formato de respuesta exacta: ["Habilidad 1", "Habilidad 2", "Habilidad 3"]`,
     });
 
-    const textoRespuesta = response.text.trim();
+    const textoRespuesta = (response.text || "").trim();
     
     // Parseamos la respuesta para asegurar que viaja como un Array limpio hacia Typebot
     const habilidadesArray = JSON.parse(textoRespuesta);
