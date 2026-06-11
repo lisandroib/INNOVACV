@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
-import RichTextEditor from './components/RichTextEditor';
+import RichTextEditor, { RichTextEditorRef } from './components/RichTextEditor';
 import ChatAssistant from './components/ChatAssistant';
 import './editor.css';
 
@@ -41,6 +41,14 @@ export default function EditorPage() {
   const [selectedTemplateId, setSelectedTemplateId] = useState('harvard');
   const [initialContent, setInitialContent] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGeneratingProfile, setIsGeneratingProfile] = useState(false);
+  const editorRef = useRef<RichTextEditorRef>(null);
+
+  const handleApplySuggestion = (text: string) => {
+    if (editorRef.current) {
+      editorRef.current.insertText(text);
+    }
+  };
 
   useEffect(() => {
     async function loadProfile() {
@@ -49,8 +57,43 @@ export default function EditorPage() {
         if (res.ok) {
           const { data } = await res.json();
           if (data) {
-            setUserData(data);
-            setInitialContent(getTemplateById('harvard').generateHTML(data));
+            let finalData = { ...data };
+
+            if (!finalData.sobre_mi && !finalData.resumen) {
+              const rolObjetivo = finalData.perfil_profesional?.rol_objetivo || 'profesional';
+              setIsGeneratingProfile(true);
+
+              try {
+                const chatRes = await fetch('/api/chat', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    messages: [{ role: 'user', content: `Actúa como un redactor experto de currículums. Escribe un ÚNICO párrafo persuasivo (máximo 4 líneas) para mi 'Perfil Profesional'. Debe estar redactado en primera persona, sonar natural y profesional. IMPORTANTE: Entrega SOLO el texto del párrafo listo para usar en el CV. NO me des múltiples opciones, NO incluyas títulos, NO incluyas saludos ni explicaciones. Mi rol objetivo es: ${rolObjetivo}.` }],
+                  })
+                });
+
+                if (chatRes.ok) {
+                  const chatData = await chatRes.json();
+                  const generatedText = chatData.choices?.[0]?.message?.content;
+                  if (generatedText) {
+                    finalData.sobre_mi = generatedText.replace(/^"|"$/g, '').trim(); // Eliminar comillas si la IA las pone
+
+                    await fetch('/api/perfil', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ sobre_mi: finalData.sobre_mi })
+                    });
+                  }
+                }
+              } catch (genErr) {
+                console.error('Error generando perfil automáticamente:', genErr);
+              } finally {
+                setIsGeneratingProfile(false);
+              }
+            }
+
+            setUserData(finalData);
+            setInitialContent(getTemplateById('harvard').generateHTML(finalData));
           }
         }
       } catch (err) {
@@ -72,12 +115,12 @@ export default function EditorPage() {
     setInitialContent(getTemplateById(templateId).generateHTML(userData));
   };
 
-  if (isLoading) {
+  if (isLoading || isGeneratingProfile) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-[#f8fafc]">
         <div className="text-slate-500 flex flex-col items-center">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p>Cargando tus datos del perfil...</p>
+          <p>{isGeneratingProfile ? 'Generando tu perfil profesional con IA...' : 'Cargando tus datos del perfil...'}</p>
         </div>
       </div>
     );
@@ -114,15 +157,22 @@ export default function EditorPage() {
         </div>
 
         <div className="flex-1 min-h-0">
-          <ChatAssistant activeSection={activeSection} resumeContext={resumeContext} isDarkMode={isDarkMode} />
+          <ChatAssistant
+            activeSection={activeSection}
+            resumeContext={resumeContext}
+            isDarkMode={isDarkMode}
+            onApplySuggestion={handleApplySuggestion}
+            initialTargetJob={userData?.perfil_profesional?.rol_objetivo || ''}
+          />
         </div>
       </section>
 
       {/* 3. COLUMNA DERECHA (Editor Tiptap de Documento) */}
       <section className="right-column px-6 py-4">
-        <RichTextEditor 
-          initialContent={initialContent} 
-          onSectionChange={handleSectionChange} 
+        <RichTextEditor
+          ref={editorRef}
+          initialContent={initialContent}
+          onSectionChange={handleSectionChange}
           selectedTemplateId={selectedTemplateId}
           onTemplateChange={handleTemplateChange}
         />

@@ -69,7 +69,7 @@ export const harvardTemplate: CVTemplate = {
 
     const habilidades = data.habilidades || {};
     
-    const sobreMi = (data.perfil_profesional && data.perfil_profesional.rol_objetivo) || data.sobre_mi || data.resumen || '';
+    const sobreMi = data.sobre_mi || data.resumen || '';
 
     const formatHabilidades = (habilidades: any) => {
       if (typeof habilidades === 'string') return `<p>${habilidades.replace(/\n/g, '<br/>')}</p>`;
