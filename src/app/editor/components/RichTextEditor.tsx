@@ -221,7 +221,7 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
   return (
     <div className="flex flex-col h-full w-full">
       {/* Barra de Herramientas */}
-      <div className="sticky top-0 z-30 bg-[#f1f5f9] pb-3 border-b border-slate-200">
+      <div className="toolbar-sticky-container sticky top-0 z-30 pb-3 border-b">
         <MenuBar 
           editor={editor} 
           selectedTemplateId={selectedTemplateId} 

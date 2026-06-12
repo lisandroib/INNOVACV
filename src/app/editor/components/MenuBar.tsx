@@ -195,7 +195,7 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange }
   };
 
   return (
-    <div ref={menuBarRef} className="flex flex-wrap items-center gap-1.5 p-2.5 bg-white border border-slate-200 rounded-xl shadow-xs w-full text-slate-700">
+    <div ref={menuBarRef} className="menu-bar-container flex flex-wrap items-center gap-1.5 p-2.5 bg-white border border-slate-200 rounded-xl shadow-xs w-full text-slate-700">
       
       {/* 1. Historial */}
       <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5">
