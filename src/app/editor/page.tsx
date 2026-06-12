@@ -50,9 +50,31 @@ export default function EditorPage() {
     }
   };
 
+  // Estados de guardado
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [cvName, setCvName] = useState('');
+  const [cvRole, setCvRole] = useState('');
+  const [currentHtmlToSave, setCurrentHtmlToSave] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
   useEffect(() => {
-    async function loadProfile() {
+    async function loadData() {
       try {
+        // Intentar cargar el último borrador del usuario primero
+        const draftRes = await fetch('/api/cv/guardar');
+        if (draftRes.ok) {
+          const { data } = await draftRes.json();
+          if (data && data.html_content) {
+            setInitialContent(data.html_content);
+            if (data.nombre_cv) setCvName(data.nombre_cv);
+            if (data.rol_aplicado) setCvRole(data.rol_aplicado);
+            if (data.template_id) setSelectedTemplateId(data.template_id);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Si no hay borrador, auto-generar de perfil
         const res = await fetch('/api/perfil');
         if (res.ok) {
           const { data } = await res.json();
@@ -97,12 +119,12 @@ export default function EditorPage() {
           }
         }
       } catch (err) {
-        console.error('Error loading profile:', err);
+        console.error('Error loading data:', err);
       } finally {
         setIsLoading(false);
       }
     }
-    loadProfile();
+    loadData();
   }, []);
 
   const handleSectionChange = (section: string, text: string) => {
@@ -113,6 +135,44 @@ export default function EditorPage() {
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplateId(templateId);
     setInitialContent(getTemplateById(templateId).generateHTML(userData));
+  };
+
+  const handleSaveCV = (html: string) => {
+    setCurrentHtmlToSave(html);
+    setShowSaveModal(true);
+  };
+
+  const confirmSaveCV = async () => {
+    if (!cvName.trim()) {
+      alert("Por favor ingresa un nombre para el CV");
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/cv/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre_cv: cvName,
+          rol_aplicado: cvRole,
+          html_content: currentHtmlToSave,
+          template_id: selectedTemplateId
+        })
+      });
+      
+      if (response.ok) {
+        alert("¡Currículum guardado exitosamente!");
+        setShowSaveModal(false);
+      } else {
+        alert("Error al guardar el currículum");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error al conectar con el servidor");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (isLoading || isGeneratingProfile) {
@@ -175,8 +235,57 @@ export default function EditorPage() {
           onSectionChange={handleSectionChange}
           selectedTemplateId={selectedTemplateId}
           onTemplateChange={handleTemplateChange}
+          onSaveCV={handleSaveCV}
         />
       </section>
+
+      {/* MODAL DE GUARDADO */}
+      {showSaveModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className={`w-full max-w-md p-6 rounded-2xl shadow-xl ${isDarkMode ? 'bg-[#111c44] text-white border border-white/10' : 'bg-white text-slate-800'}`}>
+            <h3 className="text-lg font-bold mb-4">Guardar Currículum</h3>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-1">Nombre del CV</label>
+              <input 
+                type="text" 
+                value={cvName} 
+                onChange={e => setCvName(e.target.value)} 
+                placeholder="Ej: Mi CV Principal" 
+                className={`w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-[#0b1437] border-white/10' : 'bg-white border-slate-200'}`}
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-semibold mb-1">Rol a aplicar (Opcional)</label>
+              <input 
+                type="text" 
+                value={cvRole} 
+                onChange={e => setCvRole(e.target.value)} 
+                placeholder="Ej: Desarrollador Frontend" 
+                className={`w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-[#0b1437] border-white/10' : 'bg-white border-slate-200'}`}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button 
+                onClick={() => setShowSaveModal(false)}
+                disabled={isSaving}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${isDarkMode ? 'hover:bg-white/10 text-slate-300' : 'hover:bg-slate-100 text-slate-600'}`}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmSaveCV}
+                disabled={isSaving}
+                className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold transition-colors shadow-md disabled:opacity-50"
+              >
+                {isSaving ? 'Guardando...' : 'Guardar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

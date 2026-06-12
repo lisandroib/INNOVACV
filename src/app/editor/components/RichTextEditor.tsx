@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useMemo, forwardRef, useImperativeHandle } from 'react';
+import React, { useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Underline } from '@tiptap/extension-underline';
@@ -49,6 +50,7 @@ interface RichTextEditorProps {
   onSectionChange?: (section: string, textContext: string) => void;
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
+  onSaveCV?: (html: string) => void;
 }
 
 export interface RichTextEditorRef {
@@ -109,8 +111,15 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
   onChange, 
   onSectionChange,
   selectedTemplateId,
-  onTemplateChange
+  onTemplateChange,
+  onSaveCV
 }, ref) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  
+  const handlePrint = useReactToPrint({
+    contentRef: contentRef,
+    documentTitle: 'Curriculum_Vitae',
+  });
   const extensions = useMemo(() => [
     StarterKit.configure({
       // @ts-ignore: Tiptap StarterKit types don't strictly expose history options but it works at runtime
@@ -226,12 +235,14 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
           editor={editor} 
           selectedTemplateId={selectedTemplateId} 
           onTemplateChange={onTemplateChange} 
+          onSaveCV={onSaveCV}
+          onDownloadPDF={handlePrint as () => void}
         />
       </div>
 
       {/* Contenedor de la Hoja A4 Scrollable */}
       <div className="document-scroll-container">
-        <div className="a4-sheet">
+        <div className="a4-sheet" ref={contentRef}>
           <EditorContent editor={editor} />
         </div>
       </div>
