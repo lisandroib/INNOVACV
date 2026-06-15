@@ -368,3 +368,68 @@ body {
   background: rgba(97, 71, 255, 0.4);
 }
 
+/* ==========================================================================
+   6. PRINT OPTIMIZATIONS (react-to-print / ATS PDF)
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4;
+    margin: 0; /* Al poner margen 0, el navegador oculta automáticamente la fecha, nombre de archivo y URLs */
+  }
+
+  body {
+    background: transparent !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .a4-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    min-height: auto !important;
+    height: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    /* Movemos el margen de la hoja al interior de la hoja como padding para que el texto no toque el borde del papel */
+    padding: 15mm 15mm !important; 
+    margin: 0 !important;
+  }
+
+  /* Anulamos cualquier alto mínimo que venga por clases de Tailwind en el editor (ej. min-h-[1120px]) */
+  .ProseMirror {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  /* Evitar saltos de página incómodos en medio de la información */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+    margin-top: 10px !important; /* Reducimos espacios para ayudar a que quepa en 1 hoja */
+  }
+
+  .cv-contact-info {
+    margin-bottom: 12px !important; /* Reducimos espacio para compactar en 1 hoja */
+  }
+
+  /* Los bloques de texto y listas no deben cortarse por la mitad si es posible */
+  p, ul, li, div, span {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
+/* Slide in from right animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -13,7 +13,8 @@ interface ChatAssistantProps {
   resumeContext: string;
   isDarkMode?: boolean;
   onApplySuggestion?: (text: string) => void;
-  initialTargetJob?: string;
+  targetJob: string;
+  onTargetJobChange: (job: string) => void;
 }
 
 // Simple helper to parse basic markdown to React elements
@@ -75,14 +76,13 @@ function parseMarkdown(text: string) {
   });
 }
 
-export default function ChatAssistant({ activeSection, resumeContext, isDarkMode = false, onApplySuggestion, initialTargetJob = '' }: ChatAssistantProps) {
+export default function ChatAssistant({ activeSection, resumeContext, isDarkMode = false, onApplySuggestion, targetJob, onTargetJobChange }: ChatAssistantProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
       content: '¡Hola! Escribe el **puesto objetivo** al que deseas aplicar arriba para poder darte sugerencias alineadas. Luego, puedes preguntarme lo que quieras o pedirme que analice tu currículum.',
     },
   ]);
-  const [targetJob, setTargetJob] = useState(initialTargetJob);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -191,7 +191,7 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
             type="text"
             placeholder="Ej: Frontend Developer, Contador, etc."
             value={targetJob}
-            onChange={(e) => setTargetJob(e.target.value)}
+            onChange={(e) => onTargetJobChange(e.target.value)}
             className={`w-full text-xs px-2.5 py-1.5 rounded-lg outline-none transition-all font-semibold border ${isDarkMode
               ? 'bg-[#1b254b] border-white/10 text-white focus:border-violet-500 focus:bg-[#111c44] placeholder-slate-500'
               : 'bg-slate-50 border-slate-200 focus:border-violet-500 focus:bg-white'

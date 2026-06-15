@@ -4,6 +4,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
 import RichTextEditor, { RichTextEditorRef } from './components/RichTextEditor';
 import ChatAssistant from './components/ChatAssistant';
+import { Trash2, Copy, Clock, FileText, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
 import './editor.css';
 
 import { getTemplateById } from '@/lib/cv-templates';
@@ -56,6 +57,104 @@ export default function EditorPage() {
   const [cvRole, setCvRole] = useState('');
   const [currentHtmlToSave, setCurrentHtmlToSave] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  // Estados de Mis CVs
+  const [showMyCVsModal, setShowMyCVsModal] = useState(false);
+  const [savedCVs, setSavedCVs] = useState<any[]>([]);
+  const [isLoadingCVs, setIsLoadingCVs] = useState(false);
+  const [cvToDelete, setCvToDelete] = useState<{ id: string, name: string } | null>(null);
+
+  // Notificaciones flotantes
+  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const loadMyCVs = async () => {
+    setIsLoadingCVs(true);
+    try {
+      const res = await fetch('/api/cv/lista');
+      if (res.ok) {
+        const { data } = await res.json();
+        setSavedCVs(data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoadingCVs(false);
+    }
+  };
+
+  const handleShowMyCVs = () => {
+    setShowMyCVsModal(true);
+    loadMyCVs();
+  };
+
+  const handleLoadCV = async (id: string) => {
+    try {
+      const res = await fetch(`/api/cv/cargar?id=${id}`);
+      if (res.ok) {
+        const { data } = await res.json();
+        if (data && data.html_content) {
+          setInitialContent(data.html_content);
+          if (data.nombre_cv) setCvName(data.nombre_cv);
+          if (data.rol_aplicado) setCvRole(data.rol_aplicado);
+          if (data.template_id) setSelectedTemplateId(data.template_id);
+          setShowMyCVsModal(false);
+        }
+      } else {
+        showNotification("Error al cargar el currículum", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification("Error de conexión al cargar", "error");
+    }
+  };
+
+  const handleDeleteCV = (id: string, name: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCvToDelete({ id, name });
+  };
+
+  const confirmDeleteCV = async () => {
+    if (!cvToDelete) return;
+    try {
+      const res = await fetch(`/api/cv/eliminar?id=${cvToDelete.id}`, { method: 'DELETE' });
+      if (res.ok) {
+        loadMyCVs();
+        showNotification("Currículum eliminado", "success");
+      } else {
+        showNotification("Error al eliminar el currículum", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification("Error de conexión", "error");
+    } finally {
+      setCvToDelete(null);
+    }
+  };
+
+  const handleDuplicateCV = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch('/api/cv/duplicar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.ok) {
+        loadMyCVs();
+        showNotification("Currículum duplicado exitosamente", "success");
+      } else {
+        showNotification("Error al duplicar el currículum", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification("Error de conexión", "error");
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -114,6 +213,10 @@ export default function EditorPage() {
               }
             }
 
+            if (!cvRole && finalData.perfil_profesional?.rol_objetivo) {
+              setCvRole(finalData.perfil_profesional.rol_objetivo);
+            }
+
             setUserData(finalData);
             setInitialContent(getTemplateById('harvard').generateHTML(finalData));
           }
@@ -144,7 +247,7 @@ export default function EditorPage() {
 
   const confirmSaveCV = async () => {
     if (!cvName.trim()) {
-      alert("Por favor ingresa un nombre para el CV");
+      showNotification("Por favor ingresa un nombre para el CV", "error");
       return;
     }
     
@@ -162,14 +265,14 @@ export default function EditorPage() {
       });
       
       if (response.ok) {
-        alert("¡Currículum guardado exitosamente!");
+        showNotification("¡Currículum guardado exitosamente!", "success");
         setShowSaveModal(false);
       } else {
-        alert("Error al guardar el currículum");
+        showNotification("Error al guardar el currículum", "error");
       }
     } catch (err) {
       console.error(err);
-      alert("Error al conectar con el servidor");
+      showNotification("Error al conectar con el servidor", "error");
     } finally {
       setIsSaving(false);
     }
@@ -222,7 +325,8 @@ export default function EditorPage() {
             resumeContext={resumeContext}
             isDarkMode={isDarkMode}
             onApplySuggestion={handleApplySuggestion}
-            initialTargetJob={userData?.perfil_profesional?.rol_objetivo || ''}
+            targetJob={cvRole}
+            onTargetJobChange={setCvRole}
           />
         </div>
       </section>
@@ -236,6 +340,7 @@ export default function EditorPage() {
           selectedTemplateId={selectedTemplateId}
           onTemplateChange={handleTemplateChange}
           onSaveCV={handleSaveCV}
+          onShowMyCVs={handleShowMyCVs}
         />
       </section>
 
@@ -283,6 +388,155 @@ export default function EditorPage() {
                 {isSaving ? 'Guardando...' : 'Guardar'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* PANEL LATERAL DE MIS CVS */}
+      {showMyCVsModal && (
+        <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex justify-end p-4 sm:p-5">
+          <div 
+            className={`w-full max-w-md h-full flex flex-col p-6 shadow-2xl animate-slide-in-right rounded-3xl border
+            ${isDarkMode ? 'bg-[#111c44] text-white border-white/10' : 'bg-[#f8fafc] text-slate-800 border-slate-200'}`}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <FileText className="w-6 h-6 text-violet-500" />
+                Mis Currículums
+              </h3>
+              <button 
+                onClick={() => setShowMyCVsModal(false)}
+                className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-slate-400 hover:text-white' : 'hover:bg-slate-200 text-slate-500 hover:text-slate-800'}`}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+              {isLoadingCVs ? (
+                <div className="flex justify-center items-center py-10">
+                  <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : savedCVs.length === 0 ? (
+                <div className="text-center py-10 text-slate-400">
+                  No tienes currículums guardados todavía.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {savedCVs.map((cv) => (
+                    <div 
+                      key={cv._id} 
+                      onClick={() => handleLoadCV(cv._id)}
+                      className="group relative flex items-stretch gap-6 py-4 cursor-pointer transition-all"
+                    >
+                      {/* Miniatura del CV real - Más grande */}
+                      <div className={`w-[200px] h-[282px] rounded-lg flex-shrink-0 border shadow-sm overflow-hidden relative pointer-events-none select-none
+                        ${isDarkMode ? 'border-white/20' : 'border-slate-300'}`}
+                      >
+                        <div className="absolute top-0 left-0 w-[800px] h-[1128px] origin-top-left bg-white" style={{ transform: 'scale(0.25)' }}>
+                          <div 
+                            className="ProseMirror w-full h-full p-8 text-black"
+                            dangerouslySetInnerHTML={{ __html: cv.html_content || '' }} 
+                          />
+                        </div>
+                      </div>
+
+                      {/* Detalles del CV */}
+                      <div className="flex flex-col flex-1 min-w-0 py-1 justify-between">
+                        <div>
+                          <h4 className="font-bold text-lg truncate mb-2 leading-tight">{cv.nombre_cv}</h4>
+                          <div className="flex flex-col gap-2 text-sm text-slate-500">
+                            {cv.rol_aplicado && (
+                              <span className={`inline-block truncate w-fit max-w-full px-2.5 py-1 rounded-md font-medium text-xs
+                                ${isDarkMode ? 'bg-violet-500/20 text-violet-300' : 'bg-violet-50 text-violet-700'}`}
+                              >
+                                {cv.rol_aplicado}
+                              </span>
+                            )}
+                            <span className="flex items-center gap-1.5 mt-1">
+                              <Clock className="w-4 h-4" />
+                              {new Date(cv.updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Acciones */}
+                        <div className="flex items-center gap-2 mt-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={(e) => handleDuplicateCV(cv._id, e)}
+                          className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-white/10 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-800'}`}
+                          title="Duplicar CV"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={(e) => handleDeleteCV(cv._id, cv.nombre_cv, e)}
+                          className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-red-500/20 text-slate-400 hover:text-red-400' : 'hover:bg-red-50 text-slate-500 hover:text-red-600'}`}
+                          title="Eliminar CV"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMACIÓN DE ELIMINAR CV */}
+      {cvToDelete && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className={`w-full max-w-sm p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center transform transition-all ${isDarkMode ? 'bg-[#111c44] border border-white/10' : 'bg-white'}`}>
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-6">
+              <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+            
+            <h3 className={`text-xl font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
+              ¿Eliminar currículum?
+            </h3>
+            
+            <p className={`text-sm mb-8 leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+              ¿Estás seguro de que deseas eliminar el currículum <strong className={isDarkMode ? 'text-white' : 'text-slate-800'}>{cvToDelete.name}</strong>? Esta acción no se puede deshacer.
+            </p>
+            
+            <div className="flex w-full gap-3">
+              <button 
+                onClick={() => setCvToDelete(null)}
+                className={`flex-1 py-3 px-4 rounded-xl font-bold transition-colors ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmDeleteCV}
+                className="flex-1 py-3 px-4 rounded-xl font-bold bg-red-500 hover:bg-red-600 text-white transition-colors shadow-lg shadow-red-500/25"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NOTIFICACIÓN TOAST FLOTANTE */}
+      {notification && (
+        <div className="fixed bottom-6 right-6 z-[300] animate-slide-in-right">
+          <div className={`flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border ${
+            notification.type === 'success' 
+              ? (isDarkMode ? 'bg-[#0f2922] border-emerald-500/30 text-emerald-100' : 'bg-emerald-50 border-emerald-200 text-emerald-800')
+              : (isDarkMode ? 'bg-[#3b1212] border-red-500/30 text-red-100' : 'bg-red-50 border-red-200 text-red-800')
+          }`}>
+            {notification.type === 'success' ? (
+              <CheckCircle2 className={`w-6 h-6 ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`} />
+            ) : (
+              <XCircle className={`w-6 h-6 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
+            )}
+            <p className="font-semibold">{notification.message}</p>
           </div>
         </div>
       )}
