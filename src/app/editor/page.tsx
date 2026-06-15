@@ -53,7 +53,9 @@ export default function EditorPage() {
 
   // Estados de guardado
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [modalCvName, setModalCvName] = useState('');
   const [cvName, setCvName] = useState('');
+  const [cvId, setCvId] = useState<string | null>(null);
   const [cvRole, setCvRole] = useState('');
   const [currentHtmlToSave, setCurrentHtmlToSave] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -99,6 +101,7 @@ export default function EditorPage() {
         const { data } = await res.json();
         if (data && data.html_content) {
           setInitialContent(data.html_content);
+          if (data._id) setCvId(data._id);
           if (data.nombre_cv) setCvName(data.nombre_cv);
           if (data.rol_aplicado) setCvRole(data.rol_aplicado);
           if (data.template_id) setSelectedTemplateId(data.template_id);
@@ -242,11 +245,12 @@ export default function EditorPage() {
 
   const handleSaveCV = (html: string) => {
     setCurrentHtmlToSave(html);
+    setModalCvName(''); // Lo iniciamos vacío como solicitó el usuario
     setShowSaveModal(true);
   };
 
   const confirmSaveCV = async () => {
-    if (!cvName.trim()) {
+    if (!modalCvName.trim()) {
       showNotification("Por favor ingresa un nombre para el CV", "error");
       return;
     }
@@ -257,7 +261,8 @@ export default function EditorPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nombre_cv: cvName,
+          // No enviamos cv_id aquí para forzar que sea un documento nuevo ("Guardar como") o que busque por nombre si ya existía otro con ese nombre
+          nombre_cv: modalCvName,
           rol_aplicado: cvRole,
           html_content: currentHtmlToSave,
           template_id: selectedTemplateId
@@ -265,8 +270,53 @@ export default function EditorPage() {
       });
       
       if (response.ok) {
+        const { cv_id } = await response.json();
+        if (cv_id) setCvId(cv_id);
+        setCvName(modalCvName); // Actualizamos el nombre general
+        
         showNotification("¡Currículum guardado exitosamente!", "success");
         setShowSaveModal(false);
+        loadMyCVs(); // Refrescamos lista en caso de que se haya creado uno nuevo
+      } else {
+        showNotification("Error al guardar el currículum", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification("Error al conectar con el servidor", "error");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleOverwriteCV = async (html: string) => {
+    if (!cvName.trim()) {
+      // Si no tiene nombre, actúa como "Guardar nuevo borrador" pidiendo el nombre
+      handleSaveCV(html);
+      return;
+    }
+    
+    // Sobreescribir directamente sin modal
+    setCurrentHtmlToSave(html);
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/cv/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cv_id: cvId, // Pasamos el ID para que sobreescriba aunque hayamos cambiado el nombre
+          nombre_cv: cvName,
+          rol_aplicado: cvRole,
+          html_content: html,
+          template_id: selectedTemplateId
+        })
+      });
+      
+      if (response.ok) {
+        const { cv_id } = await response.json();
+        if (cv_id) setCvId(cv_id);
+        
+        showNotification("¡Currículum sobreescrito exitosamente!", "success");
+        loadMyCVs(); // Actualizar la lista en segundo plano
       } else {
         showNotification("Error al guardar el currículum", "error");
       }
@@ -340,7 +390,10 @@ export default function EditorPage() {
           selectedTemplateId={selectedTemplateId}
           onTemplateChange={handleTemplateChange}
           onSaveCV={handleSaveCV}
+          onOverwriteCV={handleOverwriteCV}
           onShowMyCVs={handleShowMyCVs}
+          cvName={cvName}
+          onNameChange={setCvName}
         />
       </section>
 
@@ -354,11 +407,17 @@ export default function EditorPage() {
               <label className="block text-sm font-semibold mb-1">Nombre del CV</label>
               <input 
                 type="text" 
-                value={cvName} 
-                onChange={e => setCvName(e.target.value)} 
+                value={modalCvName} 
+                onChange={e => setModalCvName(e.target.value)} 
                 placeholder="Ej: Mi CV Principal" 
                 className={`w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-violet-500 ${isDarkMode ? 'bg-[#0b1437] border-white/10' : 'bg-white border-slate-200'}`}
               />
+              {modalCvName.trim() !== '' && savedCVs.some(cv => cv.nombre_cv === modalCvName.trim()) && (
+                <p className="text-red-500 text-[11px] mt-1.5 font-medium flex items-center gap-1">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                  Ya tienes un archivo con este nombre. Se sobreescribirá si guardas.
+                </p>
+              )}
             </div>
 
             <div className="mb-6">

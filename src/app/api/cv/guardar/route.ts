@@ -80,10 +80,12 @@ export async function POST(req: Request) {
     // Podría buscarse por nombre_cv si queremos permitir múltiples CVs.
     
     let query: any = { usuario_id: new ObjectId(userId) };
-    if (data.nombre_cv) {
+    if (data.cv_id) {
+      query._id = new ObjectId(data.cv_id);
+    } else if (data.nombre_cv) {
       query.nombre_cv = data.nombre_cv;
     } else {
-       // Si no envían nombre, actualizamos el último editado (fallback de seguridad)
+       // Si no envían nombre ni id, actualizamos el último editado (fallback de seguridad)
        const lastCV = await db.collection('CV_perfiles').findOne({ usuario_id: new ObjectId(userId) }, { sort: { updatedAt: -1 } });
        if (lastCV) {
          query._id = lastCV._id;
@@ -110,7 +112,10 @@ export async function POST(req: Request) {
       { upsert: true }
     );
 
-    return NextResponse.json({ success: true, result }, { status: 200 });
+    // Devolver el ID (ya sea existente o recién creado) para que el frontend lo rastree
+    const savedId = result.upsertedId || query._id;
+
+    return NextResponse.json({ success: true, cv_id: savedId, result }, { status: 200 });
 
   } catch (error: any) {
     console.error('Error en POST /api/cv/guardar:', error);

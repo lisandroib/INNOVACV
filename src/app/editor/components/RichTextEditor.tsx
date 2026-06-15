@@ -51,7 +51,10 @@ interface RichTextEditorProps {
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
   onSaveCV?: (html: string) => void;
+  onOverwriteCV?: (html: string) => void;
   onShowMyCVs?: () => void;
+  cvName?: string;
+  onNameChange?: (name: string) => void;
 }
 
 export interface RichTextEditorRef {
@@ -114,7 +117,10 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
   selectedTemplateId,
   onTemplateChange,
   onSaveCV,
-  onShowMyCVs
+  onOverwriteCV,
+  onShowMyCVs,
+  cvName,
+  onNameChange
 }, ref) => {
   const contentRef = useRef<HTMLDivElement>(null);
   
@@ -238,8 +244,11 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
           selectedTemplateId={selectedTemplateId} 
           onTemplateChange={onTemplateChange} 
           onSaveCV={onSaveCV}
+          onOverwriteCV={onOverwriteCV}
           onDownloadPDF={handlePrint as () => void}
           onShowMyCVs={onShowMyCVs}
+          cvName={cvName}
+          onNameChange={onNameChange}
         />
       </div>
 

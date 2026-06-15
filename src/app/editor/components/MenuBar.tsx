@@ -23,7 +23,8 @@ import {
   Quote,
   Minus,
   ChevronDown,
-  Palette
+  Palette,
+  FileText
 } from 'lucide-react';
 
 import { getAllTemplates, getTemplateById } from '@/lib/cv-templates';
@@ -33,8 +34,11 @@ interface MenuBarProps {
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
   onSaveCV?: (html: string) => void;
+  onOverwriteCV?: (html: string) => void;
   onDownloadPDF?: () => void;
   onShowMyCVs?: () => void;
+  cvName?: string;
+  onNameChange?: (name: string) => void;
 }
 
 const FONTS = [
@@ -73,7 +77,7 @@ const PRESET_COLORS = [
   '#805ad5'  // Violeta/Púrpura
 ];
 
-export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, onSaveCV, onDownloadPDF, onShowMyCVs }: MenuBarProps) {
+export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, onSaveCV, onOverwriteCV, onDownloadPDF, onShowMyCVs, cvName, onNameChange }: MenuBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
   const [tempSize, setTempSize] = useState('12');
@@ -539,8 +543,22 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
         </button>
       </div>
 
-      {/* 6. CV Styles */}
+      {/* 6. Opciones, Nombre y Estilo */}
       <div className="flex items-center gap-2 ml-auto">
+        {/* Document Name */}
+        {onNameChange !== undefined && (
+          <div className="flex items-center px-2 py-1.5 border border-transparent hover:border-slate-200 hover:bg-slate-50 rounded-lg transition-colors group">
+            <FileText className="w-3.5 h-3.5 text-slate-400 mr-1.5 group-hover:text-violet-500 transition-colors" />
+            <input
+              type="text"
+              value={cvName || ''}
+              onChange={(e) => onNameChange(e.target.value)}
+              placeholder="Documento sin título"
+              className="bg-transparent border-none outline-none text-xs font-semibold w-32 truncate text-slate-700 placeholder:text-slate-400 focus:ring-0 p-0"
+            />
+          </div>
+        )}
+        
         <div className="relative">
           <button
             onMouseDown={(e) => { e.preventDefault(); toggleDropdown(e, 'cvStyle'); }}
@@ -587,18 +605,27 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
           <span>Mis CVs</span>
         </button>
 
-        {/* Save & Download Options Dropdown */}
-        <div 
-          className="relative"
-          onMouseEnter={() => setActiveDropdown('saveOptions')}
-          onMouseLeave={() => setActiveDropdown(null)}
-        >
+        {/* Save & Download Options Split Button */}
+        <div className="relative flex items-stretch">
           <button
-            onMouseDown={(e) => { e.preventDefault(); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200 rounded-lg transition-colors cursor-pointer"
+            onMouseDown={(e) => { 
+              e.preventDefault(); 
+              if (onOverwriteCV && editor) onOverwriteCV(editor.getHTML());
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-violet-600 text-white hover:bg-violet-700 border border-violet-600 rounded-l-lg transition-colors cursor-pointer"
+            title="Guardar cambios (Sobreescribir)"
           >
             <span>Guardar</span>
-            <ChevronDown className="w-3.5 h-3.5 text-violet-500" />
+          </button>
+          <button
+            onMouseDown={(e) => { 
+              e.preventDefault(); 
+              toggleDropdown(e, 'saveOptions'); 
+            }}
+            className="flex items-center justify-center px-1.5 py-1.5 bg-violet-600 text-white hover:bg-violet-700 border border-violet-600 border-l-violet-700 rounded-r-lg transition-colors cursor-pointer"
+            title="Opciones de guardado"
+          >
+            <ChevronDown className="w-3.5 h-3.5" />
           </button>
           
           {activeDropdown === 'saveOptions' && (
@@ -614,7 +641,7 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
                   }}
                   className="w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-700 font-medium transition-colors"
                 >
-                  Guardar borrador
+                  Guardar nuevo borrador
                 </button>
                 <button
                   onMouseDown={(e) => {
