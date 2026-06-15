@@ -32,6 +32,9 @@ interface MenuBarProps {
   editor: Editor;
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
+  onSaveCV?: (html: string) => void;
+  onDownloadPDF?: () => void;
+  onShowMyCVs?: () => void;
 }
 
 const FONTS = [
@@ -70,7 +73,7 @@ const PRESET_COLORS = [
   '#805ad5'  // Violeta/Púrpura
 ];
 
-export default function MenuBar({ editor, selectedTemplateId, onTemplateChange }: MenuBarProps) {
+export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, onSaveCV, onDownloadPDF, onShowMyCVs }: MenuBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
   const [tempSize, setTempSize] = useState('12');
@@ -195,7 +198,7 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange }
   };
 
   return (
-    <div ref={menuBarRef} className="flex flex-wrap items-center gap-1.5 p-2.5 bg-white border border-slate-200 rounded-xl shadow-xs w-full text-slate-700">
+    <div ref={menuBarRef} className="menu-bar-container flex flex-wrap items-center gap-1.5 p-2.5 bg-white border border-slate-200 rounded-xl shadow-xs w-full text-slate-700">
       
       {/* 1. Historial */}
       <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5">
@@ -572,11 +575,63 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange }
           )}
         </div>
 
-        <button 
-          className="bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white border border-violet-950 rounded-lg px-3.5 py-1.5 text-xs font-semibold shadow-md transition-all transform hover:-translate-y-0.5 whitespace-nowrap cursor-pointer"
+        {/* Mis CVs Button */}
+        <button
+          onClick={(e) => { e.preventDefault(); if (onShowMyCVs) onShowMyCVs(); }}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors cursor-pointer mr-1"
+          title="Ver mis CVs guardados"
         >
-          Descargar PDF
+          <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+          </svg>
+          <span>Mis CVs</span>
         </button>
+
+        {/* Save & Download Options Dropdown */}
+        <div 
+          className="relative"
+          onMouseEnter={() => setActiveDropdown('saveOptions')}
+          onMouseLeave={() => setActiveDropdown(null)}
+        >
+          <button
+            onMouseDown={(e) => { e.preventDefault(); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200 rounded-lg transition-colors cursor-pointer"
+          >
+            <span>Guardar</span>
+            <ChevronDown className="w-3.5 h-3.5 text-violet-500" />
+          </button>
+          
+          {activeDropdown === 'saveOptions' && (
+            <div className="absolute top-full right-0 pt-1 w-48 z-50">
+              <div className="bg-white border border-slate-200 rounded-lg shadow-lg py-1 text-xs">
+                <button
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setActiveDropdown(null);
+                    if (onSaveCV && editor) {
+                      onSaveCV(editor.getHTML());
+                    }
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-700 font-medium transition-colors"
+                >
+                  Guardar borrador
+                </button>
+                <button
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setActiveDropdown(null);
+                    if (onDownloadPDF) {
+                      onDownloadPDF();
+                    }
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-700 font-medium transition-colors border-t border-slate-100"
+                >
+                  Descargar como PDF
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
     </div>
