@@ -4,11 +4,11 @@ import path from 'path';
 
 const CACHE_FILE_PATH = path.join(process.cwd(), '.jobs_cache.json');
 
-// Interface para la estructura del Caché
 interface CacheData {
   [key: string]: {
     timestamp: number;
     results: any[];
+    nextPageToken?: string | null;
   };
 }
 
