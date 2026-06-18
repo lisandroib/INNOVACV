@@ -238,7 +238,7 @@ export async function POST(req: Request) {
     let result;
     // Si sabemos quién es el usuario, actualizamos su perfil único o lo creamos si no existe (upsert)
     if (finalUserId) {
-      // Buscar si ya existe un perfil para este usuario
+      // Mezclamos con el perfil existente para no borrar datos anidados como ubicación o teléfono
       const perfilExistente = await db.collection('perfiles').findOne({ usuario_id: new ObjectId(finalUserId) });
       
       // Preservar de forma robusta los datos personales existentes (como ubicación o email)
@@ -250,20 +250,19 @@ export async function POST(req: Request) {
 
         // 2. Fusionar datos_personales (especialmente ubicación)
         if (perfilExistente.datos_personales) {
-          if (!documentoPerfil.datos_personales) {
-            documentoPerfil.datos_personales = {};
-          }
+          documentoPerfil.datos_personales = {
+            ...perfilExistente.datos_personales,
+            ...(documentoPerfil.datos_personales || {})
+          };
           
           // Preservar ubicación si la nueva no viene o es vacía
-          const ubicacionExistente = perfilExistente.datos_personales.ubicacion;
-          const nuevaUbicacion = documentoPerfil.datos_personales.ubicacion;
-          
-          const ciudadVacia = !nuevaUbicacion?.ciudad || 
-                               nuevaUbicacion.ciudad === '{{typebotUserCity}}' || 
-                               nuevaUbicacion.ciudad.trim() === '';
+          const nuevaUbicacion = documentoPerfil.datos_personales?.ubicacion;
+          const ubicacionVacia = !nuevaUbicacion?.ciudad || 
+                                 nuevaUbicacion.ciudad === '{{typebotUserCity}}' || 
+                                 nuevaUbicacion.ciudad.trim() === '';
                                
-          if (ubicacionExistente && (ciudadVacia || !nuevaUbicacion)) {
-            documentoPerfil.datos_personales.ubicacion = ubicacionExistente;
+          if (ubicacionVacia) {
+            documentoPerfil.datos_personales.ubicacion = perfilExistente.datos_personales.ubicacion;
           }
           
           // Preservar otros campos personales si el webhook no los envió pero ya existían en la DB
