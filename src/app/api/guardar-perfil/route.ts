@@ -241,18 +241,38 @@ export async function POST(req: Request) {
       // Buscar si ya existe un perfil para este usuario
       const perfilExistente = await db.collection('perfiles').findOne({ usuario_id: new ObjectId(finalUserId) });
       
-      // Si ya existe ubicación y la nueva no viene o viene vacía o con placeholders de Typebot, la preservamos
-      if (perfilExistente && perfilExistente.datos_personales?.ubicacion) {
-        const nuevaUbicacion = documentoPerfil.datos_personales?.ubicacion;
-        const ciudadVacia = !nuevaUbicacion?.ciudad || 
-                             nuevaUbicacion.ciudad === '{{typebotUserCity}}' || 
-                             nuevaUbicacion.ciudad === '';
-        
-        if (ciudadVacia) {
+      // Preservar de forma robusta los datos personales existentes (como ubicación o email)
+      if (perfilExistente) {
+        // 1. Preservar email_registro si el nuevo viene nulo o vacío
+        if (!documentoPerfil.email_registro && perfilExistente.email_registro) {
+          documentoPerfil.email_registro = perfilExistente.email_registro;
+        }
+
+        // 2. Fusionar datos_personales (especialmente ubicación)
+        if (perfilExistente.datos_personales) {
           if (!documentoPerfil.datos_personales) {
             documentoPerfil.datos_personales = {};
           }
-          documentoPerfil.datos_personales.ubicacion = perfilExistente.datos_personales.ubicacion;
+          
+          // Preservar ubicación si la nueva no viene o es vacía
+          const ubicacionExistente = perfilExistente.datos_personales.ubicacion;
+          const nuevaUbicacion = documentoPerfil.datos_personales.ubicacion;
+          
+          const ciudadVacia = !nuevaUbicacion?.ciudad || 
+                               nuevaUbicacion.ciudad === '{{typebotUserCity}}' || 
+                               nuevaUbicacion.ciudad.trim() === '';
+                               
+          if (ubicacionExistente && (ciudadVacia || !nuevaUbicacion)) {
+            documentoPerfil.datos_personales.ubicacion = ubicacionExistente;
+          }
+          
+          // Preservar otros campos personales si el webhook no los envió pero ya existían en la DB
+          const camposPersonales = ['telefono', 'linkedin', 'nombre_completo', 'fecha_nacimiento'];
+          for (const campo of camposPersonales) {
+            if (!documentoPerfil.datos_personales[campo] && perfilExistente.datos_personales[campo]) {
+              documentoPerfil.datos_personales[campo] = perfilExistente.datos_personales[campo];
+            }
+          }
         }
       }
 
