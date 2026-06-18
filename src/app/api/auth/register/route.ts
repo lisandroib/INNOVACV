@@ -5,7 +5,7 @@ import { SignJWT } from 'jose';
 
 export async function POST(req: Request) {
   try {
-    const { email, password, location } = await req.json();
+    const { email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Por favor, ingresa correo y contraseña' }, { status: 400 });
@@ -23,6 +23,31 @@ export async function POST(req: Request) {
     // Encriptar la contraseña (salting rounds = 10)
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Intentar obtener la ubicación por IP del cliente
+    let location = { ciudad: '', provincia: '' };
+    try {
+      let ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '';
+      if (ip) {
+        ip = ip.split(',')[0].trim();
+      }
+      
+      const isLocal = !ip || ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.');
+      const geoUrl = isLocal ? 'https://ipapi.co/json/' : `https://ipapi.co/${ip}/json/`;
+      
+      const geoRes = await fetch(geoUrl, { signal: AbortSignal.timeout(3000) }).catch(() => null);
+      if (geoRes && geoRes.ok) {
+        const geoData = await geoRes.json();
+        if (geoData && geoData.city && geoData.country_name) {
+          location = {
+            ciudad: geoData.city,
+            provincia: geoData.country_name
+          };
+        }
+      }
+    } catch (geoErr) {
+      console.error('Error al detectar ubicación por IP en registro:', geoErr);
+    }
+
     // Guardar el usuario
     const result = await db.collection('usuarios').insertOne({
       email,
@@ -30,21 +55,21 @@ export async function POST(req: Request) {
       createdAt: new Date()
     });
 
-    // Crear el perfil inicial del usuario con la ubicación por IP
+    // Crear el perfil inicial con la ubicación precargada por IP
     await db.collection('perfiles').insertOne({
       usuario_id: result.insertedId,
       email_registro: email,
       datos_personales: {
         nombre: '',
+        email: email,
         telefono: '',
         ubicacion: {
-          ciudad: location?.ciudad || '',
-          provincia: location?.provincia || ''
+          ciudad: location.ciudad,
+          provincia: location.provincia
         }
       },
       createdAt: new Date(),
-      updatedAt: new Date(),
-      origen: 'registro'
+      updatedAt: new Date()
     });
 
     // Generar Token JWT para auto-login
