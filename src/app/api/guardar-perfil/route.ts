@@ -204,10 +204,35 @@ export async function POST(req: Request) {
       };
     }
 
-    // Procesar cursos si vienen desde Typebot
+    // Procesar cursos si vienen desde Typebot (lista o único curso)
     const cursosInput = data.cursos || (data.educacion && data.educacion.cursos);
+    let cursosIniciales = [];
     if (cursosInput) {
-      documentoPerfil.cursos = parsearCursos(cursosInput);
+      cursosIniciales = parsearCursos(cursosInput);
+    }
+
+    const nuevoCursoInput = data.curso || (data.educacion && data.educacion.curso);
+    if (nuevoCursoInput && nuevoCursoInput.titulo && nuevoCursoInput.institucion) {
+      const tituloValido = nuevoCursoInput.titulo && !nuevoCursoInput.titulo.includes('{{') && nuevoCursoInput.titulo.trim() !== '';
+      const instValida = nuevoCursoInput.institucion && !nuevoCursoInput.institucion.includes('{{') && nuevoCursoInput.institucion.trim() !== '';
+      if (tituloValido && instValida) {
+        cursosIniciales.push({
+          id: `c_bot_${Date.now()}`,
+          titulo: nuevoCursoInput.titulo.trim(),
+          institucion: nuevoCursoInput.institucion.trim(),
+          anio: nuevoCursoInput.ano && !nuevoCursoInput.ano.includes('{{') && nuevoCursoInput.ano.trim() !== ''
+            ? nuevoCursoInput.ano.trim() 
+            : new Date().getFullYear().toString()
+        });
+      }
+    }
+
+    if (cursosIniciales.length > 0) {
+      documentoPerfil.cursos = cursosIniciales;
+      if (!documentoPerfil.educacion) {
+        documentoPerfil.educacion = {};
+      }
+      documentoPerfil.educacion.cursos = cursosIniciales;
     }
 
     let result;
@@ -231,9 +256,36 @@ export async function POST(req: Request) {
         }
       }
 
-      // Preservar cursos existentes en el perfil si no vienen en la petición actual
-      if (perfilExistente && perfilExistente.cursos && !cursosInput) {
-        documentoPerfil.cursos = perfilExistente.cursos;
+      // Preservar y fusionar cursos existentes en el perfil de la DB
+      let cursosExistentes = [];
+      if (perfilExistente) {
+        if (Array.isArray(perfilExistente.cursos)) {
+          cursosExistentes = perfilExistente.cursos;
+        } else if (perfilExistente.educacion && Array.isArray(perfilExistente.educacion.cursos)) {
+          cursosExistentes = perfilExistente.educacion.cursos;
+        }
+      }
+
+      // Si tenemos cursos en la DB o nos llegan nuevos cursos, los fusionamos
+      if (cursosExistentes.length > 0 || (documentoPerfil.cursos && documentoPerfil.cursos.length > 0)) {
+        const cursosNuevos = documentoPerfil.cursos || [];
+        const cursosFusionados = [...cursosExistentes];
+
+        for (const c of cursosNuevos) {
+          const yaExiste = cursosFusionados.some(
+            (x: any) => x.titulo?.toLowerCase().trim() === c.titulo?.toLowerCase().trim() &&
+                       x.institucion?.toLowerCase().trim() === c.institucion?.toLowerCase().trim()
+          );
+          if (!yaExiste) {
+            cursosFusionados.push(c);
+          }
+        }
+
+        documentoPerfil.cursos = cursosFusionados;
+        if (!documentoPerfil.educacion) {
+          documentoPerfil.educacion = {};
+        }
+        documentoPerfil.educacion.cursos = cursosFusionados;
       }
 
       result = await db.collection('perfiles').updateOne(

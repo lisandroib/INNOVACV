@@ -86,8 +86,9 @@ export default function ProfilePage() {
               if (edu.length > 0) setFormalEducation(edu);
             }
 
-            if (dbData.cursos && Array.isArray(dbData.cursos)) {
-              setCourses(dbData.cursos);
+            const dbCursos = dbData.cursos || (dbData.educacion && dbData.educacion.cursos);
+            if (dbCursos && Array.isArray(dbCursos)) {
+              setCourses(dbCursos);
             }
           } else {
             // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
@@ -210,7 +211,8 @@ export default function ProfilePage() {
           titulo: gradoObj.titulo,
           ano_inicio: gradoObj.anioInicio,
           ano_fin: gradoObj.anioFin
-        } : null
+        } : null,
+        cursos: finalCourses
       },
       habilidades: {
         duras: durasArr.join(', '),
