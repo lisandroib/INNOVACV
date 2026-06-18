@@ -410,6 +410,8 @@ export default function JobsPage() {
   // Filtrado de búsquedas
   const jobsSource = activeTab === 'saved' ? savedJobs : jobs;
   const filteredJobs = jobsSource.filter(job => {
+    if (activeTab === 'saved') return true;
+    
     const matchesSearch =
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -428,7 +430,7 @@ export default function JobsPage() {
         className="jobs-main-column" 
         ref={mainRef} 
         onWheel={handleWheel} 
-        style={{ overflowY: viewState === 'hero' ? 'hidden' : 'auto' }}
+        style={{ overflowY: (viewState === 'hero' && activeTab !== 'saved') ? 'hidden' : 'auto' }}
       >
         {/* Gradientes decorativos de fondo al estilo premium del mockup */}
         <div className="jobs-decor-backdrop">
@@ -517,7 +519,7 @@ export default function JobsPage() {
         {/* =========================================
             BARRA DE BÚSQUEDA UNIFICADA FLOTANTE
            ========================================= */}
-        {!isLoading && (
+        {!isLoading && activeTab !== 'saved' && (
           <div className={`floating-search-wrapper state-${viewState}`}>
             <h1 className="jobs-hero-title">Encuentra tu próximo empleo</h1>
             <div className="jobs-hero-search-box">
@@ -563,9 +565,10 @@ export default function JobsPage() {
             <p>Buscando las mejores oportunidades para ti...</p>
           </div>
         ) : (
-          <div key="content" className={`jobs-content-transition state-${viewState}`}>
+          <div key="content" className={`jobs-content-transition state-${activeTab === 'saved' ? 'compact' : viewState}`}>
             {/* Tab Selectors de Sección */}
-            <div className="jobs-section-tabs">
+            {activeTab !== 'saved' && (
+              <div className="jobs-section-tabs">
               <button
                 type="button"
                 className={`jobs-tab-pill ${activeTab === 'positions' ? 'active' : ''}`}
@@ -588,7 +591,8 @@ export default function JobsPage() {
                 </svg>
                 <span>Guardados</span>
               </button>
-            </div>
+              </div>
+            )}
 
             {/* Contenido Grid */}
             <div className="jobs-grid-wrapper">
@@ -696,7 +700,7 @@ export default function JobsPage() {
                   ))}
                 </div>
                 
-                {hasMoreJobs && (
+                {hasMoreJobs && activeTab !== 'saved' && (
                   <div className="w-full py-10 mt-2 flex flex-col items-center justify-center">
                     <button 
                       onClick={fetchMoreJobs} 
