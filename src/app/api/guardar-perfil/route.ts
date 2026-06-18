@@ -12,6 +12,121 @@ const corsHeaders = {
   'Access-Control-Allow-Credentials': 'true', // OBLIGATORIO para leer el auth_token
 };
 
+// Función auxiliar para normalizar de forma robusta las habilidades enviadas por Typebot
+function normalizarHabilidades(entrada: any): string[] {
+  if (!entrada) return [];
+  
+  if (Array.isArray(entrada)) {
+    return entrada.flatMap(item => normalizarHabilidades(item));
+  }
+  
+  if (typeof entrada === 'string') {
+    const stringLimpio = entrada.trim();
+    if (!stringLimpio) return [];
+    
+    // Si parece un array serializado en JSON: e.g. ["A", "B"] o ["A"]
+    if (stringLimpio.startsWith('[') && stringLimpio.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(stringLimpio);
+        return normalizarHabilidades(parsed);
+      } catch (e) {
+        // Fallback por si no es JSON válido pero tiene corchetes (ej. [React.js, Node.js])
+        const sinCorchetes = stringLimpio.slice(1, -1);
+        return sinCorchetes.split(',').map(s => s.replace(/['"]/g, '').trim()).filter(Boolean);
+      }
+    }
+    
+    // Si es una cadena normal, la dividimos por comas
+    return stringLimpio.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  
+  return [String(entrada).trim()];
+}
+
+// Función auxiliar para normalizar y parsear cursos/certificaciones de forma robusta
+function parsearCursos(entrada: any): any[] {
+  if (!entrada) return [];
+  
+  if (Array.isArray(entrada)) {
+    return entrada.map((item, index) => {
+      if (item && typeof item === 'object') {
+        return {
+          id: item.id || `c_${Date.now()}_${index}`,
+          titulo: item.titulo || item.title || 'Curso / Certificación',
+          institucion: item.institucion || item.institution || 'No especificada',
+          anio: String(item.anio || item.year || '')
+        };
+      }
+      if (typeof item === 'string') {
+        return parsearUnicoCurso(item, index);
+      }
+      return null;
+    }).filter(Boolean);
+  }
+  
+  if (typeof entrada === 'string') {
+    const trimmed = entrada.trim();
+    if (!trimmed) return [];
+    
+    // Si parece un array JSON stringificado
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return parsearCursos(parsed);
+      } catch (e) {
+        // Fallback al parseo como string regular por comas
+      }
+    }
+    
+    // Dividir por comas o saltos de línea
+    const items = trimmed.split(/,|\n/).map(s => s.trim()).filter(Boolean);
+    return items.map((item, index) => parsearUnicoCurso(item, index));
+  }
+  
+  return [];
+}
+
+// Auxiliar para extraer título, institución y año de un string que describe un curso
+function parsearUnicoCurso(texto: string, index: number): any {
+  let titulo = texto;
+  let institucion = 'No especificada';
+  let anio = '';
+  
+  // Extraer año de 4 dígitos entre 1980 y 2030
+  const anioMatch = texto.match(/\b(19\d\d|20\d\d)\b/);
+  if (anioMatch) {
+    anio = anioMatch[0];
+    titulo = titulo.replace(new RegExp(`\\(?\\b${anio}\\b\\)?`, 'g'), '');
+  }
+  
+  // Buscar separadores comunes como " - ", " en ", " de "
+  const separadores = [' - ', ' en ', ' de '];
+  for (const sep of separadores) {
+    if (titulo.includes(sep)) {
+      const parts = titulo.split(sep);
+      const posibleTitulo = parts[0].trim();
+      const posibleInst = parts.slice(1).join(sep).trim();
+      
+      if (posibleTitulo && posibleInst) {
+        titulo = posibleTitulo;
+        institucion = posibleInst;
+        break;
+      }
+    }
+  }
+  
+  // Limpiar caracteres sobrantes (paréntesis vacíos, comas, etc.)
+  titulo = titulo.replace(/[(),\-–]/g, ' ').replace(/\s+/g, ' ').trim();
+  institucion = institucion.replace(/[(),\-–]/g, ' ').replace(/\s+/g, ' ').trim();
+  
+  return {
+    id: `c_${Date.now()}_${index}`,
+    titulo: titulo || 'Curso / Certificación',
+    institucion: institucion || 'No especificada',
+    anio: anio
+  };
+}
+
 // 2. Manejar la consulta de seguridad (Preflight) que hace el navegador
 export async function OPTIONS() {
   return new NextResponse(null, { status: 200, headers: corsHeaders });
@@ -55,6 +170,71 @@ export async function POST(req: Request) {
       origen: 'typebot'
     };
 
+    // Procesar y fusionar habilidades si vienen desde Typebot
+    if (data.habilidades) {
+      // 1. Habilidades Duras (Técnicas)
+      const durasSeleccionadasRaw = data.habilidades.duras_seleccionadas;
+      const durasSeleccionadas = normalizarHabilidades(durasSeleccionadasRaw)
+        .filter((s: string) => s && s !== 'Quiero agregar otras manualmente...');
+        
+      const durasManualesRaw = data.habilidades.duras_manuales || '';
+      const durasManuales = normalizarHabilidades(durasManualesRaw);
+      
+      const durasList = [...durasSeleccionadas, ...durasManuales];
+      const durasFinal = Array.from(new Set(durasList)).join(', ');
+
+      // 2. Habilidades Blandas (Interpersonales)
+      const blandasSeleccionadasRaw = data.habilidades.blandas_seleccionadas;
+      const blandasSeleccionadas = normalizarHabilidades(blandasSeleccionadasRaw)
+        .filter((s: string) => s && s !== 'Quiero agregar otras manualmente...');
+        
+      const blandasManualesRaw = data.habilidades.blandas_manuales || '';
+      const blandasManuales = normalizarHabilidades(blandasManualesRaw);
+      
+      const blandasList = [...blandasSeleccionadas, ...blandasManuales];
+      const blandasFinal = Array.from(new Set(blandasList)).join(', ');
+
+      documentoPerfil.habilidades = {
+        duras: durasFinal || data.habilidades.duras || '',
+        blandas: blandasFinal || data.habilidades.blandas || '',
+        duras_seleccionadas: durasSeleccionadas,
+        duras_manuales: Array.isArray(durasManualesRaw) ? durasManualesRaw : String(durasManualesRaw),
+        blandas_seleccionadas: blandasSeleccionadas,
+        blandas_manuales: Array.isArray(blandasManualesRaw) ? blandasManualesRaw : String(blandasManualesRaw)
+      };
+    }
+
+    // Procesar cursos si vienen desde Typebot (lista o único curso)
+    const cursosInput = data.cursos || (data.educacion && data.educacion.cursos);
+    let cursosIniciales = [];
+    if (cursosInput) {
+      cursosIniciales = parsearCursos(cursosInput);
+    }
+
+    const nuevoCursoInput = data.curso || (data.educacion && data.educacion.curso);
+    if (nuevoCursoInput && nuevoCursoInput.titulo && nuevoCursoInput.institucion) {
+      const tituloValido = nuevoCursoInput.titulo && !nuevoCursoInput.titulo.includes('{{') && nuevoCursoInput.titulo.trim() !== '';
+      const instValida = nuevoCursoInput.institucion && !nuevoCursoInput.institucion.includes('{{') && nuevoCursoInput.institucion.trim() !== '';
+      if (tituloValido && instValida) {
+        cursosIniciales.push({
+          id: `c_bot_${Date.now()}`,
+          titulo: nuevoCursoInput.titulo.trim(),
+          institucion: nuevoCursoInput.institucion.trim(),
+          anio: nuevoCursoInput.ano && !nuevoCursoInput.ano.includes('{{') && nuevoCursoInput.ano.trim() !== ''
+            ? nuevoCursoInput.ano.trim() 
+            : new Date().getFullYear().toString()
+        });
+      }
+    }
+
+    if (cursosIniciales.length > 0) {
+      documentoPerfil.cursos = cursosIniciales;
+      if (!documentoPerfil.educacion) {
+        documentoPerfil.educacion = {};
+      }
+      documentoPerfil.educacion.cursos = cursosIniciales;
+    }
+
     let result;
     // Si sabemos quién es el usuario, actualizamos su perfil único o lo creamos si no existe (upsert)
     if (finalUserId) {
@@ -74,6 +254,38 @@ export async function POST(req: Request) {
         if (ubicacionVacia) {
           documentoPerfil.datos_personales.ubicacion = perfilExistente.datos_personales.ubicacion;
         }
+      }
+
+      // Preservar y fusionar cursos existentes en el perfil de la DB
+      let cursosExistentes = [];
+      if (perfilExistente) {
+        if (Array.isArray(perfilExistente.cursos)) {
+          cursosExistentes = perfilExistente.cursos;
+        } else if (perfilExistente.educacion && Array.isArray(perfilExistente.educacion.cursos)) {
+          cursosExistentes = perfilExistente.educacion.cursos;
+        }
+      }
+
+      // Si tenemos cursos en la DB o nos llegan nuevos cursos, los fusionamos
+      if (cursosExistentes.length > 0 || (documentoPerfil.cursos && documentoPerfil.cursos.length > 0)) {
+        const cursosNuevos = documentoPerfil.cursos || [];
+        const cursosFusionados = [...cursosExistentes];
+
+        for (const c of cursosNuevos) {
+          const yaExiste = cursosFusionados.some(
+            (x: any) => x.titulo?.toLowerCase().trim() === c.titulo?.toLowerCase().trim() &&
+                       x.institucion?.toLowerCase().trim() === c.institucion?.toLowerCase().trim()
+          );
+          if (!yaExiste) {
+            cursosFusionados.push(c);
+          }
+        }
+
+        documentoPerfil.cursos = cursosFusionados;
+        if (!documentoPerfil.educacion) {
+          documentoPerfil.educacion = {};
+        }
+        documentoPerfil.educacion.cursos = cursosFusionados;
       }
 
       result = await db.collection('perfiles').updateOne(
