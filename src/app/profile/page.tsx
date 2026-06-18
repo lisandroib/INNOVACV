@@ -85,6 +85,10 @@ export default function ProfilePage() {
               }
               if (edu.length > 0) setFormalEducation(edu);
             }
+
+            if (dbData.cursos && Array.isArray(dbData.cursos)) {
+              setCourses(dbData.cursos);
+            }
           } else {
             // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
             window.location.href = '/chat';
@@ -136,6 +140,7 @@ export default function ProfilePage() {
     const finalExperiences = overrides.nextExperiences !== undefined ? overrides.nextExperiences : experiences;
     const finalFormalEducation = overrides.nextFormalEducation !== undefined ? overrides.nextFormalEducation : formalEducation;
     const finalSkills = overrides.nextSkills !== undefined ? overrides.nextSkills : skills;
+    const finalCourses = overrides.nextCourses !== undefined ? overrides.nextCourses : courses;
 
     const cleanCiudad = finalCiudad.split(',')[0]?.trim() || '';
     const cleanProvincia = finalCiudad.split(',')[1]?.trim() || '';
@@ -210,7 +215,8 @@ export default function ProfilePage() {
       habilidades: {
         duras: durasArr.join(', '),
         blandas: blandasArr.join(', ')
-      }
+      },
+      cursos: finalCourses
     };
 
     try {

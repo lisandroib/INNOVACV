@@ -43,6 +43,90 @@ function normalizarHabilidades(entrada: any): string[] {
   return [String(entrada).trim()];
 }
 
+// Función auxiliar para normalizar y parsear cursos/certificaciones de forma robusta
+function parsearCursos(entrada: any): any[] {
+  if (!entrada) return [];
+  
+  if (Array.isArray(entrada)) {
+    return entrada.map((item, index) => {
+      if (item && typeof item === 'object') {
+        return {
+          id: item.id || `c_${Date.now()}_${index}`,
+          titulo: item.titulo || item.title || 'Curso / Certificación',
+          institucion: item.institucion || item.institution || 'No especificada',
+          anio: String(item.anio || item.year || '')
+        };
+      }
+      if (typeof item === 'string') {
+        return parsearUnicoCurso(item, index);
+      }
+      return null;
+    }).filter(Boolean);
+  }
+  
+  if (typeof entrada === 'string') {
+    const trimmed = entrada.trim();
+    if (!trimmed) return [];
+    
+    // Si parece un array JSON stringificado
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return parsearCursos(parsed);
+      } catch (e) {
+        // Fallback al parseo como string regular por comas
+      }
+    }
+    
+    // Dividir por comas o saltos de línea
+    const items = trimmed.split(/,|\n/).map(s => s.trim()).filter(Boolean);
+    return items.map((item, index) => parsearUnicoCurso(item, index));
+  }
+  
+  return [];
+}
+
+// Auxiliar para extraer título, institución y año de un string que describe un curso
+function parsearUnicoCurso(texto: string, index: number): any {
+  let titulo = texto;
+  let institucion = 'No especificada';
+  let anio = '';
+  
+  // Extraer año de 4 dígitos entre 1980 y 2030
+  const anioMatch = texto.match(/\b(19\d\d|20\d\d)\b/);
+  if (anioMatch) {
+    anio = anioMatch[0];
+    titulo = titulo.replace(new RegExp(`\\(?\\b${anio}\\b\\)?`, 'g'), '');
+  }
+  
+  // Buscar separadores comunes como " - ", " en ", " de "
+  const separadores = [' - ', ' en ', ' de '];
+  for (const sep of separadores) {
+    if (titulo.includes(sep)) {
+      const parts = titulo.split(sep);
+      const posibleTitulo = parts[0].trim();
+      const posibleInst = parts.slice(1).join(sep).trim();
+      
+      if (posibleTitulo && posibleInst) {
+        titulo = posibleTitulo;
+        institucion = posibleInst;
+        break;
+      }
+    }
+  }
+  
+  // Limpiar caracteres sobrantes (paréntesis vacíos, comas, etc.)
+  titulo = titulo.replace(/[(),\-–]/g, ' ').replace(/\s+/g, ' ').trim();
+  institucion = institucion.replace(/[(),\-–]/g, ' ').replace(/\s+/g, ' ').trim();
+  
+  return {
+    id: `c_${Date.now()}_${index}`,
+    titulo: titulo || 'Curso / Certificación',
+    institucion: institucion || 'No especificada',
+    anio: anio
+  };
+}
+
 // 2. Manejar la consulta de seguridad (Preflight) que hace el navegador
 export async function OPTIONS() {
   return new NextResponse(null, { status: 200, headers: corsHeaders });
@@ -120,6 +204,12 @@ export async function POST(req: Request) {
       };
     }
 
+    // Procesar cursos si vienen desde Typebot
+    const cursosInput = data.cursos || (data.educacion && data.educacion.cursos);
+    if (cursosInput) {
+      documentoPerfil.cursos = parsearCursos(cursosInput);
+    }
+
     let result;
     // Si sabemos quién es el usuario, actualizamos su perfil único o lo creamos si no existe (upsert)
     if (finalUserId) {
@@ -139,6 +229,11 @@ export async function POST(req: Request) {
           }
           documentoPerfil.datos_personales.ubicacion = perfilExistente.datos_personales.ubicacion;
         }
+      }
+
+      // Preservar cursos existentes en el perfil si no vienen en la petición actual
+      if (perfilExistente && perfilExistente.cursos && !cursosInput) {
+        documentoPerfil.cursos = perfilExistente.cursos;
       }
 
       result = await db.collection('perfiles').updateOne(
