@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import './signup.css';
@@ -10,26 +10,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [location, setLocation] = useState<{ ciudad?: string; provincia?: string } | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchLocation = async () => {
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        const data = await res.json();
-        if (data && data.city && data.country_name) {
-          setLocation({
-            ciudad: data.city,
-            provincia: data.country_name
-          });
-        }
-      } catch (err) {
-        console.error('Error auto-detectando ubicación para registro:', err);
-      }
-    };
-    fetchLocation();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +24,7 @@ export default function SignUp() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, location })
+        body: JSON.stringify({ email, password })
       });
       const data = await res.json();
       

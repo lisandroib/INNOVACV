@@ -58,20 +58,20 @@ export async function POST(req: Request) {
     let result;
     // Si sabemos quién es el usuario, actualizamos su perfil único o lo creamos si no existe (upsert)
     if (finalUserId) {
-      // Buscar si ya existe un perfil para este usuario
+      // Mezclamos con el perfil existente para no borrar datos anidados como ubicación o teléfono
       const perfilExistente = await db.collection('perfiles').findOne({ usuario_id: new ObjectId(finalUserId) });
-      
-      // Si ya existe ubicación y la nueva no viene o viene vacía o con placeholders de Typebot, la preservamos
-      if (perfilExistente && perfilExistente.datos_personales?.ubicacion) {
-        const nuevaUbicacion = documentoPerfil.datos_personales?.ubicacion;
-        const ciudadVacia = !nuevaUbicacion?.ciudad || 
-                             nuevaUbicacion.ciudad === '{{typebotUserCity}}' || 
-                             nuevaUbicacion.ciudad === '';
+      if (perfilExistente && perfilExistente.datos_personales) {
+        documentoPerfil.datos_personales = {
+          ...perfilExistente.datos_personales,
+          ...(documentoPerfil.datos_personales || {})
+        };
         
-        if (ciudadVacia) {
-          if (!documentoPerfil.datos_personales) {
-            documentoPerfil.datos_personales = {};
-          }
+        const nuevaUbicacion = documentoPerfil.datos_personales?.ubicacion;
+        const ubicacionVacia = !nuevaUbicacion?.ciudad || 
+                               nuevaUbicacion.ciudad === '{{typebotUserCity}}' || 
+                               nuevaUbicacion.ciudad === '';
+                               
+        if (ubicacionVacia) {
           documentoPerfil.datos_personales.ubicacion = perfilExistente.datos_personales.ubicacion;
         }
       }
