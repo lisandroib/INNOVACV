@@ -55,6 +55,44 @@ export async function POST(req: Request) {
       origen: 'typebot'
     };
 
+    // Procesar y fusionar habilidades si vienen desde Typebot
+    if (data.habilidades) {
+      // 1. Habilidades Duras (Técnicas)
+      const durasSeleccionadas = Array.isArray(data.habilidades.duras_seleccionadas)
+        ? data.habilidades.duras_seleccionadas
+        : (data.habilidades.duras_seleccionadas ? [data.habilidades.duras_seleccionadas] : []);
+        
+      const durasManuales = data.habilidades.duras_manuales || '';
+      
+      const durasList = [
+        ...durasSeleccionadas.map((s: string) => s.trim()).filter((s: string) => s && s !== 'Quiero agregar otras manualmente...'),
+        ...durasManuales.split(',').map((s: string) => s.trim()).filter(Boolean)
+      ];
+      const durasFinal = Array.from(new Set(durasList)).join(', ');
+
+      // 2. Habilidades Blandas (Interpersonales)
+      const blandasSeleccionadas = Array.isArray(data.habilidades.blandas_seleccionadas)
+        ? data.habilidades.blandas_seleccionadas
+        : (data.habilidades.blandas_seleccionadas ? [data.habilidades.blandas_seleccionadas] : []);
+        
+      const blandasManuales = data.habilidades.blandas_manuales || '';
+      
+      const blandasList = [
+        ...blandasSeleccionadas.map((s: string) => s.trim()).filter((s: string) => s && s !== 'Quiero agregar otras manualmente...'),
+        ...blandasManuales.split(',').map((s: string) => s.trim()).filter(Boolean)
+      ];
+      const blandasFinal = Array.from(new Set(blandasList)).join(', ');
+
+      documentoPerfil.habilidades = {
+        duras: durasFinal || data.habilidades.duras || '',
+        blandas: blandasFinal || data.habilidades.blandas || '',
+        duras_seleccionadas: durasSeleccionadas,
+        duras_manuales: durasManuales,
+        blandas_seleccionadas: blandasSeleccionadas,
+        blandas_manuales: blandasManuales
+      };
+    }
+
     let result;
     // Si sabemos quién es el usuario, actualizamos su perfil único o lo creamos si no existe (upsert)
     if (finalUserId) {
