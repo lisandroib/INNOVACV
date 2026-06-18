@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { motion, AnimatePresence } from "motion/react";
 import Sidebar from '@/components/Sidebar';
 import { GooeyLoader } from '@/components/GooeyLoader';
 import './jobs.css';
@@ -19,66 +20,11 @@ interface Job {
   saved: boolean;
   description: string;
   applyUrl?: string;
+  isComparing?: boolean;
+  isCompared?: boolean;
 }
 
-const INITIAL_JOBS: Job[] = [
-  {
-    id: 'job1',
-    title: 'Software Engineering Lead, Senior ...',
-    company: 'Pwc Canada',
-    emblem: 'PC',
-    emblemBg: 'linear-gradient(135deg, #FF5A5F 0%, #FF7E82 100%)',
-    timePosted: 'Hace 16 horas',
-    type: 'Full-time',
-    salary: '$ - No Especificado',
-    location: 'Toronto, ON, Canada (+1 más)',
-    compatibility: 85,
-    saved: false,
-    description: 'Como Software Engineering Lead en PwC Canadá, liderarás un equipo de ingenieros talentosos construyendo soluciones de software innovadoras. Desarrollarás arquitecturas escalables en la nube, coordinarás metodologías ágiles y colaborarás estrechamente con líderes del negocio para transformar requerimientos técnicos en productos excepcionales. Buscamos experiencia sólida en liderazgo técnico, nube (AWS/Azure) y stacks modernos de desarrollo.'
-  },
-  {
-    id: 'job2',
-    title: 'Software Engineering Lead - Senior S ...',
-    company: 'Capgemini',
-    emblem: 'CA',
-    emblemBg: 'linear-gradient(135deg, #0070F3 0%, #3291FF 100%)',
-    timePosted: 'Hace 22 horas',
-    type: 'Full-time',
-    salary: '$ - No Especificado',
-    location: 'Mississauga, ON, Canada',
-    compatibility: 85,
-    saved: false,
-    description: 'Capgemini busca un Senior Software Engineering Lead para guiar la transformación tecnológica de nuestros clientes más importantes. Diseñarás sistemas distribuidos complejos, optimizarás la entrega de software mediante prácticas robustas de DevOps e integraciones CI/CD, y mentorizarás a desarrolladores junior y middle en tecnologías modernas. Requisitos: 6+ años de experiencia y excelentes habilidades de comunicación.'
-  },
-  {
-    id: 'job3',
-    title: 'Senior UI/Full Stack Software Engi ...',
-    company: 'Motorola Solutions, Inc.',
-    emblem: 'MI',
-    emblemBg: 'linear-gradient(135deg, #6147FF 0%, #8A70FF 100%)',
-    timePosted: 'Hace 1 día',
-    type: 'Full-time',
-    salary: '130K - 170K por año',
-    location: 'Vancouver, BC, Canada',
-    compatibility: 84,
-    saved: false,
-    description: 'Únete a Motorola Solutions como Senior UI/Full Stack Engineer. Crearás interfaces seguras, intuitivas y de alto rendimiento para centros de comando de misiones críticas. Utilizarás React, TypeScript y microservicios en Node.js, colaborando en un entorno global de alta ingeniería enfocado en salvar vidas y mejorar la seguridad pública. Se valorará conocimiento en WebSockets y visualización de mapas en tiempo real.'
-  },
-  {
-    id: 'job4',
-    title: 'Software/Data Engineer',
-    company: 'TEKsystems',
-    emblem: 'TE',
-    emblemBg: 'linear-gradient(135deg, #7928CA 0%, #FF0080 100%)',
-    timePosted: 'Hace 2 días',
-    type: 'Full-time',
-    salary: 'CA$80 - CA$90 por hora',
-    location: 'Montreal, Quebec, Canada',
-    compatibility: 84,
-    saved: false,
-    description: 'TEKsystems está contratando un Software/Data Engineer senior para uno de nuestros principales socios del sector financiero. Construirás pipelines de datos robustos y escalables, optimizarás almacenes de datos analíticos en la nube (Snowflake/BigQuery) y diseñarás APIs de alta velocidad en Python y Java. Esencial poseer experiencia con SQL complejo y herramientas de orquestación de datos como Airflow.'
-  }
-];
+const INITIAL_JOBS: Job[] = [];
 
 export default function JobsPage() {
   const [activeTab, setActiveTab] = useState('positions'); // 'positions' | 'saved'
@@ -86,9 +32,23 @@ export default function JobsPage() {
   const [locationQuery, setLocationQuery] = useState('');
   const [viewState, setViewState] = useState<'hero' | 'compact'>('hero');
   const [hasSearched, setHasSearched] = useState(false);
+  const [aiErrorToast, setAiErrorToast] = useState<{show: boolean, title: string, message: string} | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  
+  // Novedades: Para seleccionar CV a comparar
+  const [savedCVs, setSavedCVs] = useState<any[]>([]);
+  const [selectedCompareCvId, setSelectedCompareCvId] = useState<string | null>(null);
+  const [showMyCVsModal, setShowMyCVsModal] = useState(false);
+  const [showInfoBubble, setShowInfoBubble] = useState(false);
+  const [comparingChunkIndex, setComparingChunkIndex] = useState(0);
+  
+  // Paginación
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMoreJobs, setHasMoreJobs] = useState(true);
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined' && (window as any).__hydrated) {
       return localStorage.getItem('theme') === 'dark';
@@ -105,16 +65,56 @@ export default function JobsPage() {
     setIsLoading(true);
     setHasSearched(true);
     setViewState('compact');
+    setNextPageToken(null);
+    setHasMoreJobs(true);
     try {
       const res = await fetch(`/api/jobs?q=${encodeURIComponent(searchQuery)}&location=${encodeURIComponent(locationQuery)}`);
       const data = await res.json();
       if (data.jobs) {
-        setJobs(data.jobs);
+        // Inicializar los trabajos como no comparados
+        const initializedJobs = data.jobs.map((j: Job) => ({ ...j, isCompared: false, isComparing: false }));
+        setJobs(initializedJobs);
+        setNextPageToken(data.nextPageToken || null);
+        if (!data.nextPageToken) setHasMoreJobs(false);
+      } else {
+        setHasMoreJobs(false);
       }
     } catch (err) {
       console.error('Failed to fetch jobs:', err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchMoreJobs = async () => {
+    if (isFetchingMore || !hasMoreJobs || !hasSearched || !nextPageToken) return;
+    setIsFetchingMore(true);
+    
+    try {
+      const res = await fetch(`/api/jobs?q=${encodeURIComponent(searchQuery)}&location=${encodeURIComponent(locationQuery)}&pageToken=${encodeURIComponent(nextPageToken)}`);
+      const data = await res.json();
+      if (data.jobs && data.jobs.length > 0) {
+        const initializedJobs = data.jobs.map((j: Job) => ({ ...j, isCompared: false, isComparing: false }));
+        
+        // Evitar duplicados revisando los IDs
+        setJobs(prev => {
+          const existingIds = new Set(prev.map(j => j.id));
+          const newJobs = initializedJobs.filter((j: Job) => !existingIds.has(j.id));
+          
+          return [...prev, ...newJobs];
+        });
+        
+        setNextPageToken(data.nextPageToken || null);
+        if (!data.nextPageToken) {
+          setHasMoreJobs(false);
+        }
+      } else {
+        setHasMoreJobs(false);
+      }
+    } catch (err) {
+      console.error('Failed to fetch more jobs:', err);
+    } finally {
+      setIsFetchingMore(false);
     }
   };
 
@@ -196,6 +196,109 @@ export default function JobsPage() {
     fetchLocation();
   }, []);
 
+  // Cargar CVs guardados para la comparación
+  useEffect(() => {
+    const loadCVs = async () => {
+      try {
+        const res = await fetch('/api/cv/lista');
+        if (res.ok) {
+          const { data } = await res.json();
+          setSavedCVs(data || []);
+          if (data && data.length > 0) {
+            const savedSelectedId = localStorage.getItem('selectedCompareCvId');
+            if (savedSelectedId && data.find((cv: any) => cv._id === savedSelectedId)) {
+              setSelectedCompareCvId(savedSelectedId);
+            } else {
+              setSelectedCompareCvId(data[0]._id);
+            }
+            
+            // Mostrar la burbuja flotante automáticamente por 5 segundos al entrar a la página
+            setShowInfoBubble(true);
+            setTimeout(() => setShowInfoBubble(false), 5000);
+          }
+        }
+      } catch (e) {
+        console.error('Error cargando CVs:', e);
+      }
+    };
+    loadCVs();
+  }, []);
+
+  // Lógica para Procesamiento Batch de la IA (Lotes de 10)
+  useEffect(() => {
+    const processBatch = async () => {
+      // Si no hay trabajos o no hay CV seleccionado, no hacemos nada
+      if (jobs.length === 0 || !selectedCompareCvId) return;
+      
+      const needsComparison = jobs.filter(j => !j.isCompared && !j.isComparing).slice(0, 10);
+      
+      if (needsComparison.length === 0) return;
+
+      // Marcamos este lote como "en proceso"
+      setJobs(prev => prev.map(job => 
+        needsComparison.find(nc => nc.id === job.id) ? { ...job, isComparing: true } : job
+      ));
+
+      try {
+        const payload = {
+          cv_id: selectedCompareCvId,
+          jobs: needsComparison.map(j => ({ id: j.id, title: j.title, company: j.company, description: j.description }))
+        };
+
+        const res = await fetch('/api/jobs/compare-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const { results } = await res.json();
+          // Actualizamos los puntajes y desmarcamos el flag isComparing
+          setJobs(prev => prev.map(job => {
+            const found = results.find((r: any) => r.id === job.id);
+            if (found) {
+              return { ...job, compatibility: found.compatibility, isComparing: false, isCompared: true };
+            }
+            // Si por alguna razón Gemini no lo devolvió, quitamos el flag para evitar infinite loops
+            if (needsComparison.find(nc => nc.id === job.id)) {
+               return { ...job, isComparing: false, isCompared: true };
+            }
+            return job;
+          }));
+        } else {
+          // Lanzamos error si la API devuelve 429, 500, etc.
+          throw new Error(`API Error: ${res.status}`);
+        }
+      } catch (err) {
+        console.error("Error en comparación batch:", err);
+        setJobs(prev => prev.map(job => 
+          needsComparison.find(nc => nc.id === job.id) ? { ...job, isComparing: false, isCompared: true } : job
+        ));
+        
+        // Mostrar alerta no intrusiva
+        setAiErrorToast({
+          show: true,
+          title: "IA No Disponible",
+          message: "Límite gratuito excedido o servicio de la IA ocupado. Revisa más tarde para calcular compatibilidad."
+        });
+        
+        // Ocultar alerta después de 5 segundos
+        setTimeout(() => {
+          setAiErrorToast(null);
+        }, 5000);
+      }
+    };
+    
+    // Evitamos ejecutarlo en cada render. Reactivará cuando lleguen nuevos jobs, o cambie el CV.
+    processBatch();
+  }, [jobs, selectedCompareCvId]);
+
+  const handleSelectCompareCV = (id: string) => {
+    setSelectedCompareCvId(id);
+    localStorage.setItem('selectedCompareCvId', id);
+    setShowMyCVsModal(false);
+  };
+
   const toggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
@@ -264,7 +367,12 @@ export default function JobsPage() {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* 2. CONTENIDO PRINCIPAL */}
-      <main className="jobs-main-column" ref={mainRef} onWheel={handleWheel} style={{ overflowY: viewState === 'hero' ? 'hidden' : 'auto' }}>
+      <main 
+        className="jobs-main-column" 
+        ref={mainRef} 
+        onWheel={handleWheel} 
+        style={{ overflowY: viewState === 'hero' ? 'hidden' : 'auto' }}
+      >
         {/* Gradientes decorativos de fondo al estilo premium del mockup */}
         <div className="jobs-decor-backdrop">
           <div className="aurora-orb orb-violet" />
@@ -307,13 +415,37 @@ export default function JobsPage() {
               )}
             </button>
 
-            <button className="header-icon-btn" title="Información">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-            </button>
+            <div 
+              className="relative"
+              onMouseEnter={() => setShowInfoBubble(true)}
+              onMouseLeave={() => setShowInfoBubble(false)}
+            >
+              <button 
+                className="header-icon-btn" 
+                title="Información"
+                onClick={() => setShowMyCVsModal(true)}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+              </button>
+              
+              {/* Burbuja flotante */}
+              {showInfoBubble && (
+                <div className="absolute top-full right-0 mt-2 w-64 bg-slate-800 text-white text-xs p-3 rounded-lg shadow-xl z-50 pointer-events-none animate-bounce-bubble">
+                  <div className="absolute -top-1.5 right-3 w-3 h-3 bg-slate-800 transform rotate-45" />
+                  <p className="relative z-10 font-semibold mb-1">Comparando empleos usando:</p>
+                  <p className="relative z-10 text-slate-300 truncate">
+                    {savedCVs.length > 0 && selectedCompareCvId 
+                      ? savedCVs.find(cv => cv._id === selectedCompareCvId)?.nombre_cv || 'CV Sin Nombre'
+                      : 'Ningún CV seleccionado'}
+                  </p>
+                  <p className="relative z-10 text-[10px] text-slate-400 mt-2 italic">Haz clic para cambiar de CV</p>
+                </div>
+              )}
+            </div>
 
             {/* Avatar del usuario */}
             <div className="header-avatar-circle" title="Mi Cuenta">
@@ -369,12 +501,12 @@ export default function JobsPage() {
 
         {/* LOADING O CONTENIDO GRID */}
         {isLoading ? (
-          <div className="jobs-loading-state">
+          <div key="loading" className="jobs-loading-state">
             <GooeyLoader className="mb-4" />
             <p>Buscando las mejores oportunidades para ti...</p>
           </div>
         ) : (
-          <div className={`jobs-content-transition state-${viewState}`}>
+          <div key="content" className={`jobs-content-transition state-${viewState}`}>
             {/* Tab Selectors de Sección */}
             <div className="jobs-section-tabs">
               <button
@@ -404,98 +536,136 @@ export default function JobsPage() {
             {/* Contenido Grid */}
             <div className="jobs-grid-wrapper">
               {filteredJobs.length > 0 ? (
-                <div className="jobs-grid">
-                  {filteredJobs.map((job) => (
-                    <div className="job-card" key={job.id}>
-                      {/* Bookmark ribbon superior derecho */}
-                      <button
-                        className={`btn-save-bookmark ${job.saved ? 'saved' : ''}`}
-                        onClick={() => handleToggleSave(job.id)}
-                        title={job.saved ? 'Quitar guardado' : 'Guardar empleo'}
-                      >
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill={job.saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-                          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                      </button>
-
-                      {/* Logo/Emblema centralizado */}
-                      <div className="job-company-emblem" style={{ background: job.emblemBg }}>
-                        {job.emblem}
-                      </div>
-
-                      {/* Títulos */}
-                      <h3 className="job-card-title" title={job.title}>{job.title}</h3>
-                      <p className="job-card-company">{job.company}</p>
-
-                      {/* Fila de Contenido inferior */}
-                      <div className="job-card-footer-layout">
-                        {/* Tags */}
-                        <div className="job-tags-group">
-                          <div className="tags-row-one">
-                            <span className="job-tag-pill">{job.timePosted}</span>
-                            <span className="job-tag-pill">{job.type}</span>
-                            <span className="job-tag-pill">{job.salary}</span>
+                <>
+                  <div className="jobs-grid">
+                    {filteredJobs.map((job) => (
+                      <div className={`w-full p-5 border rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col ${isDarkMode ? 'bg-[#1a1b2e] border-slate-700/60' : 'bg-white border-neutral-200/60'}`} key={job.id}>
+                        {/* Cabecera: Logo, Empresa y Guardar */}
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div 
+                              className="flex items-center justify-center w-12 h-12 text-white rounded-xl font-bold text-lg shadow-sm"
+                              style={{ background: job.emblemBg || '#3b82f6' }}
+                            >
+                              {job.emblem}
+                            </div>
+                            <div>
+                              <h3 className={`text-[13px] font-semibold ${isDarkMode ? 'text-slate-400' : 'text-neutral-500'}`}>{job.company}</h3>
+                            </div>
                           </div>
-                          <div className="tags-row-two">
-                            <span className="job-tag-pill location-pill">
-                              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '4px' }}>
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                              </svg>
-                              {job.location}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Medidor Circular de Compatibilidad SVG */}
-                        <div className="job-compat-indicator">
-                          <div className="svg-ring-container">
-                            <svg width="56" height="56" viewBox="0 0 36 36">
-                              {/* Fondo de vía */}
-                              <path
-                                className="ring-background-track"
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none"
-                                stroke="#e2e8f0"
-                                strokeWidth="2.5"
-                              />
-                              {/* Anillo de progreso verde */}
-                              <path
-                                className="ring-progress-bar"
-                                strokeDasharray={`${job.compatibility}, 100`}
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none"
-                                stroke="#22c55e"
-                                strokeWidth="3.2"
-                                strokeLinecap="round"
-                              />
+                          <button 
+                            className={`p-2 rounded-full transition-colors ${job.saved ? (isDarkMode ? 'text-violet-300 bg-violet-900/40' : 'text-violet-600 bg-violet-50') : (isDarkMode ? 'text-slate-500 hover:text-violet-400 hover:bg-slate-800' : 'text-neutral-400 hover:text-violet-600 hover:bg-violet-50')}`}
+                            onClick={() => handleToggleSave(job.id)}
+                            title={job.saved ? 'Quitar guardado' : 'Guardar empleo'}
+                          >
+                            <svg className="w-5 h-5" fill={job.saved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
                             </svg>
-                            <div className="ring-text-centered">{job.compatibility}%</div>
+                          </button>
+                        </div>
+
+                        {/* Cuerpo: Título y Meta-datos */}
+                        <div className="mb-5 flex-1">
+                          <h2 className={`text-[17px] font-bold leading-snug mb-3 line-clamp-2 ${isDarkMode ? 'text-white' : 'text-slate-800'}`} title={job.title}>
+                            {job.title}
+                          </h2>
+                          <div className={`flex flex-wrap items-center gap-x-2 gap-y-2 text-[12px] font-medium ${isDarkMode ? 'text-slate-300' : 'text-neutral-500'}`}>
+                            <span className={`flex items-center gap-1 px-2 py-1 rounded-md ${isDarkMode ? 'bg-[#22243e]' : 'bg-neutral-100'}`}>
+                              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> 
+                              <span className="truncate max-w-[140px]">{job.location.split(',')[0]}</span>
+                            </span>
+                            <span className={`flex items-center gap-1 px-2 py-1 rounded-md ${isDarkMode ? 'bg-[#22243e]' : 'bg-neutral-100'}`}>{job.type}</span>
+                            <span className={`flex items-center gap-1 px-2 py-1 rounded-md ${isDarkMode ? 'bg-[#22243e]' : 'bg-neutral-100'}`}>{job.timePosted}</span>
                           </div>
-                          <div className="compat-label-text">
-                            <span>Alta</span>
-                            <span>Compatibilidad</span>
+                          <div className={`mt-3 text-[13px] font-semibold ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                            {job.salary}
                           </div>
                         </div>
-                      </div>
 
-                      {/* Botón Ver Descripción */}
-                      <div className="job-card-action-bar">
-                        <button
-                          type="button"
-                          className="btn-view-desc"
-                          onClick={() => setSelectedJob(job)}
-                        >
-                          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '6px' }}>
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                          </svg>
-                          Ver Descripción
-                        </button>
+                        {/* Pie: IA y Call to Action */}
+                        <div className={`flex items-center justify-between pt-4 border-t mt-auto ${isDarkMode ? 'border-slate-700/50' : 'border-neutral-100'}`}>
+                          {/* Contenedor del Score IA */}
+                          <div className={`analyzing-loader-container ${job.isComparing ? 'is-comparing' : ''}`} title={job.isComparing ? "IA analizando compatibilidad..." : "Compatibilidad IA"}>
+                            <div className="relative flex items-center justify-center w-[44px] h-[44px]">
+                              <svg viewBox="0 0 36 36" className="circular-progress-svg absolute inset-0">
+                                <circle cx="18" cy="18" r="15.9155" className="circular-progress-bg" style={{ stroke: isDarkMode ? '#334155' : '#e2e8f0' }} />
+                                <circle 
+                                  cx="18" cy="18" r="15.9155" 
+                                  className={`circular-progress-fill ${
+                                    job.isComparing 
+                                      ? 'text-violet-500' 
+                                      : (job.compatibility && job.compatibility >= 70 
+                                          ? 'text-emerald-400' 
+                                          : job.compatibility && job.compatibility >= 50 
+                                              ? 'text-amber-400' 
+                                              : 'text-rose-400')
+                                  }`} 
+                                  style={job.isComparing ? undefined : { strokeDashoffset: 100 - (job.compatibility || 0) }}
+                                />
+                              </svg>
+                              {!job.isComparing && (
+                                <span className={`text-[11px] font-bold relative z-10 ${isDarkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                                  {job.compatibility || 0}%
+                               </span>
+                              )}
+                            </div>
+                            
+                            <div className="flex flex-col">
+                              {job.isComparing ? (
+                                <div className="analyzing-loader-text">
+                                  {['A','n','a','l','i','z','a','n','d','o','.','.','.'].map((letter, i) => (
+                                    <span key={i} className="analyzing-letter" style={{ animationDelay: `${i * 0.1}s` }}>{letter}</span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className={`text-[12px] font-bold ${job.compatibility && job.compatibility >= 70 ? (isDarkMode ? 'text-emerald-400' : 'text-emerald-600') : job.compatibility && job.compatibility >= 50 ? (isDarkMode ? 'text-amber-400' : 'text-amber-600') : (isDarkMode ? 'text-rose-400' : 'text-rose-500')}`}>
+                                  {job.compatibility && job.compatibility >= 70 ? 'Alta' : job.compatibility && job.compatibility >= 50 ? 'Media' : 'Baja'}
+                                </span>
+                              )}
+                              <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-neutral-400'}`}>Compatibilidad</span>
+                            </div>
+                          </div>
+                          
+                          {/* Botón Principal */}
+                          <button 
+                            className={`px-4 py-2 text-[13px] font-bold rounded-xl transition-colors flex items-center gap-1.5 ${isDarkMode ? 'text-violet-300 bg-violet-900/30 hover:bg-violet-900/50' : 'text-violet-600 bg-violet-50 hover:bg-violet-100'}`}
+                            onClick={() => setSelectedJob(job)}
+                          >
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            Ver Detalles
+                          </button>
+                        </div>
                       </div>
-                    </div>
                   ))}
                 </div>
+                
+                {hasMoreJobs && (
+                  <div className="w-full py-10 mt-2 flex flex-col items-center justify-center">
+                    <button 
+                      onClick={fetchMoreJobs} 
+                      disabled={isFetchingMore}
+                      className="btn-drawer-action btn-drawer-primary font-bold"
+                      style={{ 
+                        padding: '14px 28px', 
+                        borderRadius: '12px', 
+                        cursor: isFetchingMore ? 'wait' : 'pointer', 
+                        opacity: isFetchingMore ? 0.7 : 1,
+                        width: 'auto',
+                        minWidth: '250px'
+                      }}
+                    >
+                      {isFetchingMore ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          Cargando empleos...
+                        </div>
+                      ) : 'Cargar más empleos'}
+                    </button>
+                  </div>
+                )}
+                </>
               ) : (
                 <div className="jobs-empty-state">
                   <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -603,6 +773,119 @@ export default function JobsPage() {
           </div>
         </div>
       )}
+
+      {/* MODAL DE SELECCIÓN DE CV PARA COMPARAR */}
+      {showMyCVsModal && (
+        <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex justify-end p-4 sm:p-5">
+          <div 
+            className={`w-full max-w-md h-full flex flex-col p-6 shadow-2xl animate-slide-in-right rounded-3xl border
+            ${isDarkMode ? 'bg-[#111c44] text-white border-white/10' : 'bg-[#f8fafc] text-slate-800 border-slate-200'}`}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <svg className="w-5 h-5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Elige el CV a comparar
+              </h3>
+              <button 
+                onClick={() => setShowMyCVsModal(false)}
+                className={`p-2 rounded-xl transition-colors ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-slate-200'}`}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pb-4 custom-scrollbar pr-2 space-y-3">
+              {savedCVs.length === 0 ? (
+                <div className="text-center text-slate-400 mt-10">
+                  <p>No tienes currículums guardados aún.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-3">
+                  {savedCVs.map(cv => (
+                    <div 
+                      key={cv._id} 
+                      onClick={() => handleSelectCompareCV(cv._id)}
+                      className={`group relative flex items-stretch gap-6 py-4 cursor-pointer transition-all border-b ${isDarkMode ? 'border-white/10 hover:bg-white/5' : 'border-slate-200 hover:bg-slate-50'} ${selectedCompareCvId === cv._id ? 'bg-violet-50 dark:bg-violet-900/20' : ''}`}
+                    >
+                      <div className={`w-[120px] h-[169px] rounded-lg flex-shrink-0 shadow-sm overflow-hidden relative pointer-events-none select-none border border-slate-300 ml-2 bg-white`}>
+                        <div className="absolute top-0 left-0 w-[800px] h-[1128px] origin-top-left bg-white" style={{ transform: 'scale(0.15)' }}>
+                          <div 
+                            className="ProseMirror w-full h-full p-8 text-black"
+                            dangerouslySetInnerHTML={{ __html: cv.html_content }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col justify-center flex-1 pr-2">
+                        <div className="mb-2">
+                          <h4 className="font-bold text-[16px] truncate pr-4">{cv.nombre_cv || 'CV Sin Nombre'}</h4>
+                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full mt-1 inline-block ${isDarkMode ? 'bg-violet-500/20 text-violet-300' : 'bg-violet-100 text-violet-700'}`}>
+                            {cv.rol_aplicado || 'General'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Actualizado: {new Date(cv.updatedAt).toLocaleDateString()}
+                        </div>
+                        {selectedCompareCvId === cv._id && (
+                          <div className="mt-3 text-xs font-bold text-violet-600 flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                            Seleccionado
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Alerta de Error de IA no intrusiva */}
+      <AnimatePresence>
+        {aiErrorToast && aiErrorToast.show && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
+            className="fixed bottom-8 right-8 bg-white rounded-[20px] shadow-2xl p-5 z-[9999] flex flex-col gap-1 border border-neutral-100 max-w-[340px]"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 flex items-center justify-center w-[46px] h-[46px] rounded-full bg-red-50 text-[#d94f4f] mt-1">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                  <path d="M12 9v4"/>
+                  <path d="M12 17h.01"/>
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <h3 className="font-bold text-[#1e293b] text-[17px] m-0 mb-1 leading-tight tracking-tight">
+                  {aiErrorToast.title}
+                </h3>
+                <p className="text-[13.5px] text-neutral-500 m-0 leading-snug pr-2">
+                  {aiErrorToast.message}
+                </p>
+              </div>
+            </div>
+            <button 
+              className="absolute top-4 right-4 text-neutral-300 hover:text-neutral-500 transition-colors"
+              onClick={() => setAiErrorToast(null)}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
