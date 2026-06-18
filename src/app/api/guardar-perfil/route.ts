@@ -12,6 +12,37 @@ const corsHeaders = {
   'Access-Control-Allow-Credentials': 'true', // OBLIGATORIO para leer el auth_token
 };
 
+// Función auxiliar para normalizar de forma robusta las habilidades enviadas por Typebot
+function normalizarHabilidades(entrada: any): string[] {
+  if (!entrada) return [];
+  
+  if (Array.isArray(entrada)) {
+    return entrada.flatMap(item => normalizarHabilidades(item));
+  }
+  
+  if (typeof entrada === 'string') {
+    const stringLimpio = entrada.trim();
+    if (!stringLimpio) return [];
+    
+    // Si parece un array serializado en JSON: e.g. ["A", "B"] o ["A"]
+    if (stringLimpio.startsWith('[') && stringLimpio.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(stringLimpio);
+        return normalizarHabilidades(parsed);
+      } catch (e) {
+        // Fallback por si no es JSON válido pero tiene corchetes (ej. [React.js, Node.js])
+        const sinCorchetes = stringLimpio.slice(1, -1);
+        return sinCorchetes.split(',').map(s => s.replace(/['"]/g, '').trim()).filter(Boolean);
+      }
+    }
+    
+    // Si es una cadena normal, la dividimos por comas
+    return stringLimpio.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  
+  return [String(entrada).trim()];
+}
+
 // 2. Manejar la consulta de seguridad (Preflight) que hace el navegador
 export async function OPTIONS() {
   return new NextResponse(null, { status: 200, headers: corsHeaders });
@@ -58,38 +89,34 @@ export async function POST(req: Request) {
     // Procesar y fusionar habilidades si vienen desde Typebot
     if (data.habilidades) {
       // 1. Habilidades Duras (Técnicas)
-      const durasSeleccionadas = Array.isArray(data.habilidades.duras_seleccionadas)
-        ? data.habilidades.duras_seleccionadas
-        : (data.habilidades.duras_seleccionadas ? [data.habilidades.duras_seleccionadas] : []);
+      const durasSeleccionadasRaw = data.habilidades.duras_seleccionadas;
+      const durasSeleccionadas = normalizarHabilidades(durasSeleccionadasRaw)
+        .filter((s: string) => s && s !== 'Quiero agregar otras manualmente...');
         
-      const durasManuales = data.habilidades.duras_manuales || '';
+      const durasManualesRaw = data.habilidades.duras_manuales || '';
+      const durasManuales = normalizarHabilidades(durasManualesRaw);
       
-      const durasList = [
-        ...durasSeleccionadas.map((s: string) => s.trim()).filter((s: string) => s && s !== 'Quiero agregar otras manualmente...'),
-        ...durasManuales.split(',').map((s: string) => s.trim()).filter(Boolean)
-      ];
+      const durasList = [...durasSeleccionadas, ...durasManuales];
       const durasFinal = Array.from(new Set(durasList)).join(', ');
 
       // 2. Habilidades Blandas (Interpersonales)
-      const blandasSeleccionadas = Array.isArray(data.habilidades.blandas_seleccionadas)
-        ? data.habilidades.blandas_seleccionadas
-        : (data.habilidades.blandas_seleccionadas ? [data.habilidades.blandas_seleccionadas] : []);
+      const blandasSeleccionadasRaw = data.habilidades.blandas_seleccionadas;
+      const blandasSeleccionadas = normalizarHabilidades(blandasSeleccionadasRaw)
+        .filter((s: string) => s && s !== 'Quiero agregar otras manualmente...');
         
-      const blandasManuales = data.habilidades.blandas_manuales || '';
+      const blandasManualesRaw = data.habilidades.blandas_manuales || '';
+      const blandasManuales = normalizarHabilidades(blandasManualesRaw);
       
-      const blandasList = [
-        ...blandasSeleccionadas.map((s: string) => s.trim()).filter((s: string) => s && s !== 'Quiero agregar otras manualmente...'),
-        ...blandasManuales.split(',').map((s: string) => s.trim()).filter(Boolean)
-      ];
+      const blandasList = [...blandasSeleccionadas, ...blandasManuales];
       const blandasFinal = Array.from(new Set(blandasList)).join(', ');
 
       documentoPerfil.habilidades = {
         duras: durasFinal || data.habilidades.duras || '',
         blandas: blandasFinal || data.habilidades.blandas || '',
         duras_seleccionadas: durasSeleccionadas,
-        duras_manuales: durasManuales,
+        duras_manuales: Array.isArray(durasManualesRaw) ? durasManualesRaw : String(durasManualesRaw),
         blandas_seleccionadas: blandasSeleccionadas,
-        blandas_manuales: blandasManuales
+        blandas_manuales: Array.isArray(blandasManualesRaw) ? blandasManualesRaw : String(blandasManualesRaw)
       };
     }
 
