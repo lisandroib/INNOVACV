@@ -35,6 +35,7 @@ export default function JobsPage() {
   const [aiErrorToast, setAiErrorToast] = useState<{show: boolean, title: string, message: string} | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
+  const [savedJobs, setSavedJobs] = useState<Job[]>([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   
   // Novedades: Para seleccionar CV a comparar
@@ -71,8 +72,13 @@ export default function JobsPage() {
       const res = await fetch(`/api/jobs?q=${encodeURIComponent(searchQuery)}&location=${encodeURIComponent(locationQuery)}`);
       const data = await res.json();
       if (data.jobs) {
-        // Inicializar los trabajos como no comparados
-        const initializedJobs = data.jobs.map((j: Job) => ({ ...j, isCompared: false, isComparing: false }));
+        const savedIds = new Set(savedJobs.map(j => j.id));
+        const initializedJobs = data.jobs.map((j: Job) => ({ 
+          ...j, 
+          isCompared: false, 
+          isComparing: false,
+          saved: savedIds.has(j.id)
+        }));
         setJobs(initializedJobs);
         setNextPageToken(data.nextPageToken || null);
         if (!data.nextPageToken) setHasMoreJobs(false);
@@ -94,7 +100,13 @@ export default function JobsPage() {
       const res = await fetch(`/api/jobs?q=${encodeURIComponent(searchQuery)}&location=${encodeURIComponent(locationQuery)}&pageToken=${encodeURIComponent(nextPageToken)}`);
       const data = await res.json();
       if (data.jobs && data.jobs.length > 0) {
-        const initializedJobs = data.jobs.map((j: Job) => ({ ...j, isCompared: false, isComparing: false }));
+        const savedIds = new Set(savedJobs.map(j => j.id));
+        const initializedJobs = data.jobs.map((j: Job) => ({ 
+          ...j, 
+          isCompared: false, 
+          isComparing: false,
+          saved: savedIds.has(j.id)
+        }));
         
         // Evitar duplicados revisando los IDs
         setJobs(prev => {
@@ -194,6 +206,27 @@ export default function JobsPage() {
       }
     };
     fetchLocation();
+  }, []);
+
+  // Fetch saved jobs on mount
+  useEffect(() => {
+    const fetchSavedJobs = async () => {
+      try {
+        const res = await fetch('/api/ofertas/guardadas');
+        if (res.ok) {
+          const { data } = await res.json();
+          setSavedJobs(data || []);
+          // Also sync INITIAL_JOBS if any of them are saved
+          setJobs(prevJobs => {
+            const savedIds = new Set((data || []).map((j: Job) => j.id));
+            return prevJobs.map(j => ({ ...j, saved: savedIds.has(j.id) }));
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching saved jobs:', error);
+      }
+    };
+    fetchSavedJobs();
   }, []);
 
   // Cargar CVs guardados para la comparación
@@ -340,24 +373,50 @@ export default function JobsPage() {
   };
 
   // Manejar el toggle de guardar empleo
-  const handleToggleSave = (id: string) => {
-    setJobs(prevJobs =>
-      prevJobs.map(job =>
-        job.id === id ? { ...job, saved: !job.saved } : job
-      )
-    );
+  const handleToggleSave = async (job: Job) => {
+    const isCurrentlySaved = job.saved;
+    
+    // Update jobs list optimistically
+    setJobs(prevJobs => prevJobs.map(j => j.id === job.id ? { ...j, saved: !job.saved } : j));
+    
+    // Update savedJobs list optimistically
+    if (isCurrentlySaved) {
+      setSavedJobs(prev => prev.filter(j => j.id !== job.id));
+    } else {
+      setSavedJobs(prev => [{ ...job, saved: true }, ...prev]);
+    }
+
+    try {
+      const res = await fetch('/api/ofertas/guardadas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job })
+      });
+      if (!res.ok) {
+        throw new Error('Failed to toggle save');
+      }
+    } catch (error) {
+      console.error('Error saving job:', error);
+      // Revert on error
+      setJobs(prevJobs => prevJobs.map(j => j.id === job.id ? { ...j, saved: isCurrentlySaved } : j));
+      if (isCurrentlySaved) {
+        setSavedJobs(prev => [{ ...job, saved: true }, ...prev]);
+      } else {
+        setSavedJobs(prev => prev.filter(j => j.id !== job.id));
+      }
+    }
   };
 
   // Filtrado de búsquedas
-  const filteredJobs = jobs.filter(job => {
+  const jobsSource = activeTab === 'saved' ? savedJobs : jobs;
+  const filteredJobs = jobsSource.filter(job => {
+    if (activeTab === 'saved') return true;
+    
     const matchesSearch =
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-    if (activeTab === 'saved') {
-      return matchesSearch && job.saved;
-    }
     return matchesSearch;
   });
 
@@ -371,7 +430,7 @@ export default function JobsPage() {
         className="jobs-main-column" 
         ref={mainRef} 
         onWheel={handleWheel} 
-        style={{ overflowY: viewState === 'hero' ? 'hidden' : 'auto' }}
+        style={{ overflowY: (viewState === 'hero' && activeTab !== 'saved') ? 'hidden' : 'auto' }}
       >
         {/* Gradientes decorativos de fondo al estilo premium del mockup */}
         <div className="jobs-decor-backdrop">
@@ -460,7 +519,7 @@ export default function JobsPage() {
         {/* =========================================
             BARRA DE BÚSQUEDA UNIFICADA FLOTANTE
            ========================================= */}
-        {!isLoading && (
+        {!isLoading && activeTab !== 'saved' && (
           <div className={`floating-search-wrapper state-${viewState}`}>
             <h1 className="jobs-hero-title">Encuentra tu próximo empleo</h1>
             <div className="jobs-hero-search-box">
@@ -506,9 +565,10 @@ export default function JobsPage() {
             <p>Buscando las mejores oportunidades para ti...</p>
           </div>
         ) : (
-          <div key="content" className={`jobs-content-transition state-${viewState}`}>
+          <div key="content" className={`jobs-content-transition state-${activeTab === 'saved' ? 'compact' : viewState}`}>
             {/* Tab Selectors de Sección */}
-            <div className="jobs-section-tabs">
+            {activeTab !== 'saved' && (
+              <div className="jobs-section-tabs">
               <button
                 type="button"
                 className={`jobs-tab-pill ${activeTab === 'positions' ? 'active' : ''}`}
@@ -531,7 +591,8 @@ export default function JobsPage() {
                 </svg>
                 <span>Guardados</span>
               </button>
-            </div>
+              </div>
+            )}
 
             {/* Contenido Grid */}
             <div className="jobs-grid-wrapper">
@@ -555,7 +616,7 @@ export default function JobsPage() {
                           </div>
                           <button 
                             className={`p-2 rounded-full transition-colors ${job.saved ? (isDarkMode ? 'text-violet-300 bg-violet-900/40' : 'text-violet-600 bg-violet-50') : (isDarkMode ? 'text-slate-500 hover:text-violet-400 hover:bg-slate-800' : 'text-neutral-400 hover:text-violet-600 hover:bg-violet-50')}`}
-                            onClick={() => handleToggleSave(job.id)}
+                            onClick={() => handleToggleSave(job)}
                             title={job.saved ? 'Quitar guardado' : 'Guardar empleo'}
                           >
                             <svg className="w-5 h-5" fill={job.saved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
@@ -639,7 +700,7 @@ export default function JobsPage() {
                   ))}
                 </div>
                 
-                {hasMoreJobs && (
+                {hasMoreJobs && activeTab !== 'saved' && (
                   <div className="w-full py-10 mt-2 flex flex-col items-center justify-center">
                     <button 
                       onClick={fetchMoreJobs} 
@@ -749,7 +810,7 @@ export default function JobsPage() {
                 type="button"
                 className="btn-drawer-action btn-drawer-secondary"
                 onClick={() => {
-                  handleToggleSave(selectedJob.id);
+                  handleToggleSave(selectedJob);
                   // Actualizar el estado temporal en el drawer
                   setSelectedJob(prev => prev ? { ...prev, saved: !prev.saved } : null);
                 }}
