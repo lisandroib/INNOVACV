@@ -21,7 +21,8 @@ export default async function ChatPage() {
         const client = await clientPromise;
         const db = client.db('innovacv_db');
         const profile = await db.collection('perfiles').findOne({ usuario_id: new ObjectId(userId) });
-        if (profile) {
+        // Solo redirigir al perfil si ya fue completado a través del chatbot
+        if (profile && profile.origen === 'typebot') {
           hasProfile = true;
         }
       }
