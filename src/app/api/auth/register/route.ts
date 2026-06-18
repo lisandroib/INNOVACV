@@ -5,7 +5,7 @@ import { SignJWT } from 'jose';
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, location } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Por favor, ingresa correo y contraseña' }, { status: 400 });
@@ -28,6 +28,23 @@ export async function POST(req: Request) {
       email,
       password: hashedPassword,
       createdAt: new Date()
+    });
+
+    // Crear el perfil inicial del usuario con la ubicación por IP
+    await db.collection('perfiles').insertOne({
+      usuario_id: result.insertedId,
+      email_registro: email,
+      datos_personales: {
+        nombre: '',
+        telefono: '',
+        ubicacion: {
+          ciudad: location?.ciudad || '',
+          provincia: location?.provincia || ''
+        }
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      origen: 'registro'
     });
 
     // Generar Token JWT para auto-login
