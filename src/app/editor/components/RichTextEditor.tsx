@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
-import { useReactToPrint } from 'react-to-print';
+import React, { useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Underline } from '@tiptap/extension-underline';
@@ -50,15 +49,6 @@ interface RichTextEditorProps {
   onSectionChange?: (section: string, textContext: string) => void;
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
-  onSaveCV?: (html: string) => void;
-  onOverwriteCV?: (html: string) => void;
-  onShowMyCVs?: () => void;
-  cvName?: string;
-  onNameChange?: (name: string) => void;
-}
-
-export interface RichTextEditorRef {
-  insertText: (text: string) => void;
 }
 
 const DEFAULT_CV_CONTENT = `
@@ -110,24 +100,13 @@ const DEFAULT_CV_CONTENT = `
   </ul>
 `;
 
-const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({ 
+export default function RichTextEditor({ 
   initialContent, 
   onChange, 
   onSectionChange,
   selectedTemplateId,
-  onTemplateChange,
-  onSaveCV,
-  onOverwriteCV,
-  onShowMyCVs,
-  cvName,
-  onNameChange
-}, ref) => {
-  const contentRef = useRef<HTMLDivElement>(null);
-  
-  const handlePrint = useReactToPrint({
-    contentRef: contentRef,
-    documentTitle: 'Curriculum_Vitae',
-  });
+  onTemplateChange
+}: RichTextEditorProps) {
   const extensions = useMemo(() => [
     StarterKit.configure({
       // @ts-ignore: Tiptap StarterKit types don't strictly expose history options but it works at runtime
@@ -167,15 +146,6 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
       },
     },
   });
-
-  useImperativeHandle(ref, () => ({
-    insertText: (text: string) => {
-      if (editor) {
-        const formattedText = text.replace(/\n/g, '<br>');
-        editor.chain().focus().insertContent(formattedText).run();
-      }
-    }
-  }));
 
   // Escuchar cambios en initialContent desde afuera (e.g. al cambiar de plantilla)
   React.useEffect(() => {
@@ -238,30 +208,20 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
   return (
     <div className="flex flex-col h-full w-full">
       {/* Barra de Herramientas */}
-      <div className="toolbar-sticky-container sticky top-0 z-30 pb-3 border-b">
+      <div className="sticky top-0 z-30 bg-[#f1f5f9] pb-3 border-b border-slate-200">
         <MenuBar 
           editor={editor} 
           selectedTemplateId={selectedTemplateId} 
           onTemplateChange={onTemplateChange} 
-          onSaveCV={onSaveCV}
-          onOverwriteCV={onOverwriteCV}
-          onDownloadPDF={handlePrint as () => void}
-          onShowMyCVs={onShowMyCVs}
-          cvName={cvName}
-          onNameChange={onNameChange}
         />
       </div>
 
       {/* Contenedor de la Hoja A4 Scrollable */}
       <div className="document-scroll-container">
-        <div className="a4-sheet" ref={contentRef}>
+        <div className="a4-sheet">
           <EditorContent editor={editor} />
         </div>
       </div>
     </div>
   );
-});
-
-RichTextEditor.displayName = 'RichTextEditor';
-
-export default RichTextEditor;
+}

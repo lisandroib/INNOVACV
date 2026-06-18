@@ -3,36 +3,32 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    console.log('=== SUGGEST SKILLS API CALL ===');
-    console.log('Body recibido:', JSON.stringify(body));
     const rolObjetivo = body.rol_objetivo || body.Rol_Objetivo || body.rolObjetivo || body.role || body.Role || 'Profesional General';
-    console.log('Rol objetivo detectado:', rolObjetivo);
 
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      // Fallback amigable con listas separadas si no hay API Key configurada
+      // Fallback amigable con una lista de competencias genéricas si no hay API Key configurada
       console.warn('GEMINI_API_KEY no está configurada. Usando fallback de competencias genéricas.');
-      const hardSkills = ['Desarrollo Frontend', 'Desarrollo Backend', 'Bases de Datos SQL', 'Control de Versiones Git', 'Desarrollo Web/Móvil', 'APIs RESTful'];
-      const softSkills = ['Resolución de problemas', 'Trabajo en equipo', 'Comunicación efectiva', 'Gestión del tiempo', 'Adaptabilidad al cambio'];
-      
-      const hardSkillsWithManual = [...hardSkills, "Quiero agregar otras manualmente..."];
-      const softSkillsWithManual = [...softSkills, "Quiero agregar otras manualmente..."];
-
       return NextResponse.json({
-        skills: [...hardSkills, ...softSkills, "Quiero agregar otras manualmente..."],
-        hard_skills: hardSkillsWithManual,
-        soft_skills: softSkillsWithManual,
+        skills: [
+          'Resolución de problemas',
+          'Trabajo en equipo',
+          'Comunicación efectiva',
+          'Gestión del tiempo',
+          'Adaptabilidad al cambio',
+          'Pensamiento crítico',
+          'Iniciativa y proactividad',
+          'Orientación al detalle'
+        ],
         fallback: true
       });
     }
 
     const systemPrompt = `Eres un experto en reclutamiento, selección de talento y redacción de currículums de alto impacto. 
-Tu tarea es analizar el puesto de trabajo objetivo provisto por el usuario y recomendar habilidades esenciales para incluir en el CV.
-Debes sugerir habilidades separadas en dos categorías:
-1. "hard_skills": De 6 a 8 habilidades duras o conocimientos técnicos específicos del rol (ej. "React.js", "Bases de Datos SQL", "Figma", "Redacción técnica").
-2. "soft_skills": De 4 a 6 habilidades blandas o metacompetencias personales cruciales para el rol (ej. "Trabajo en equipo", "Resolución de problemas", "Comunicación efectiva").
-Asegúrate de que cada habilidad sea corta y directa (máximo 4 palabras por habilidad).`;
+Tu tarea es analizar el puesto de trabajo objetivo provisto por el usuario y recomendar una lista limpia y concisa de habilidades esenciales para incluir en el CV.
+Debes sugerir entre 8 y 12 competencias en total, combinando tanto habilidades duras (específicas del puesto/técnicas) como habilidades blandas cruciales.
+Asegúrate de que cada habilidad sea corta y directa (máximo 4 palabras por habilidad, ej. "React.js", "Gestión de proyectos", "Trabajo en equipo").`;
 
     const userPrompt = `Genera la lista de competencias y habilidades clave para el puesto: "${rolObjetivo}".`;
 
@@ -52,22 +48,15 @@ Asegúrate de que cada habilidad sea corta y directa (máximo 4 palabras por hab
         responseSchema: {
           type: 'OBJECT',
           properties: {
-            hard_skills: {
+            skills: {
               type: 'ARRAY',
-              description: 'Habilidades duras y técnicas del puesto',
-              items: {
-                type: 'STRING'
-              }
-            },
-            soft_skills: {
-              type: 'ARRAY',
-              description: 'Habilidades blandas y humanas del puesto',
+              description: 'Lista de habilidades sugeridas para el CV',
               items: {
                 type: 'STRING'
               }
             }
           },
-          required: ['hard_skills', 'soft_skills']
+          required: ['skills']
         }
       }
     };
@@ -95,39 +84,25 @@ Asegúrate de que cada habilidad sea corta y directa (máximo 4 palabras por hab
     }
 
     const parsedData = JSON.parse(assistantText);
-    const hardSkills = parsedData.hard_skills || [];
-    const softSkills = parsedData.soft_skills || [];
-
-    const hardSkillsWithManual = [...hardSkills, "Quiero agregar otras manualmente..."];
-    const softSkillsWithManual = [...softSkills, "Quiero agregar otras manualmente..."];
-
-    console.log('=== HABILIDADES GENERADAS ===');
-    console.log('Duras (Hard):', JSON.stringify(hardSkillsWithManual));
-    console.log('Blandas (Soft):', JSON.stringify(softSkillsWithManual));
 
     return NextResponse.json({
-      skills: [...hardSkills, ...softSkills, "Quiero agregar otras manualmente..."],
-      hard_skills: hardSkillsWithManual,
-      soft_skills: softSkillsWithManual
+      skills: parsedData.skills || []
     });
 
   } catch (error: any) {
     console.error('Error en /api/suggest-skills:', error);
-    const hardSkills = ['Desarrollo Frontend', 'Desarrollo Backend', 'Bases de Datos SQL', 'Control de Versiones Git', 'APIs RESTful'];
-    const softSkills = ['Resolución de problemas', 'Trabajo en equipo', 'Comunicación efectiva', 'Gestión del tiempo', 'Adaptabilidad'];
-    
-    const hardSkillsWithManual = [...hardSkills, "Quiero agregar otras manualmente..."];
-    const softSkillsWithManual = [...softSkills, "Quiero agregar otras manualmente..."];
-
     return NextResponse.json(
       { 
         error: error.message || 'Error interno del servidor',
-        skills: [...hardSkills, ...softSkills, "Quiero agregar otras manualmente..."],
-        hard_skills: hardSkillsWithManual,
-        soft_skills: softSkillsWithManual,
-        fallback: true
+        skills: [
+          'Resolución de problemas',
+          'Trabajo en equipo',
+          'Comunicación efectiva',
+          'Gestión del tiempo',
+          'Adaptabilidad'
+        ]
       },
-      { status: 200 }
+      { status: 500 }
     );
   }
 }
