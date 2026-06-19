@@ -1,4 +1,6 @@
-import { MongoClient, Binary } from 'mongodb';
+import { MongoClient, Binary, ObjectId } from 'mongodb';
+import { cookies } from 'next/headers';
+import { jwtVerify } from 'jose';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +15,27 @@ export async function OPTIONS() {
 
 export async function POST(request) {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+    
+    let userId = null;
+    if (token) {
+      try {
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret_de_desarrollo_inseguro');
+        const { payload } = await jwtVerify(token, secret);
+        userId = payload.userId;
+      } catch (err) {
+        console.error('Token inválido en upload-pdf', err);
+      }
+    }
+
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "No autorizado" }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file');
 
@@ -34,8 +57,9 @@ export async function POST(request) {
     const db = client.db('innovacv_db');
     const collection = db.collection('archivos_pdf');
 
-    // Guardamos el archivo y metadatos
+    // Guardamos el archivo, metadatos y el id del usuario
     const doc = {
+      usuario_id: new ObjectId(userId),
       filename: file.name,
       contentType: file.type || 'application/pdf',
       size: file.size,

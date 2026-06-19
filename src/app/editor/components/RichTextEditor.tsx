@@ -110,6 +110,30 @@ const DEFAULT_CV_CONTENT = `
   </ul>
 `;
 
+const extensions = [
+  StarterKit.configure({
+    // @ts-ignore: Tiptap StarterKit types don't strictly expose history options but it works at runtime
+    history: {
+      depth: 100,
+      newGroupDelay: 500,
+    },
+  }),
+  GlobalStyle,
+  Underline,
+  TextStyle,
+  Color,
+  FontFamily,
+  FontSize,
+  TextAlign.configure({
+    types: ['heading', 'paragraph'],
+    alignments: ['left', 'center', 'right', 'justify'],
+  }),
+  Link.configure({
+    openOnClick: false,
+    autolink: true,
+  }),
+];
+
 const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({ 
   initialContent, 
   onChange, 
@@ -128,29 +152,6 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
     contentRef: contentRef,
     documentTitle: 'Curriculum_Vitae',
   });
-  const extensions = useMemo(() => [
-    StarterKit.configure({
-      // @ts-ignore: Tiptap StarterKit types don't strictly expose history options but it works at runtime
-      history: {
-        depth: 100,
-        newGroupDelay: 500,
-      },
-    }),
-    GlobalStyle,
-    Underline,
-    TextStyle,
-    Color,
-    FontFamily,
-    FontSize,
-    TextAlign.configure({
-      types: ['heading', 'paragraph'],
-      alignments: ['left', 'center', 'right', 'justify'],
-    }),
-    Link.configure({
-      openOnClick: false,
-      autolink: true,
-    }),
-  ], []);
 
   const editor = useEditor({
     extensions,
