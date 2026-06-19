@@ -39,13 +39,41 @@ export default function ProfilePage() {
               if (dbData.datos_personales.linkedin) setLinkedin(dbData.datos_personales.linkedin);
               
               if (dbData.datos_personales.ubicacion) {
-                const ciudad = dbData.datos_personales.ubicacion.ciudad || '';
-                const prov = dbData.datos_personales.ubicacion.provincia || '';
-                const ub = `${ciudad}${ciudad && prov ? ', ' : ''}${prov}`;
-                if (ub) setCiudad(ub);
+                const ciudadDB = dbData.datos_personales.ubicacion.ciudad || '';
+                const provDB = dbData.datos_personales.ubicacion.provincia || '';
+                const ub = `${ciudadDB}${ciudadDB && provDB ? ', ' : ''}${provDB}`;
+                
+                if (ub && ub.trim() !== '' && !ub.includes('{{')) {
+                  setCiudad(ub);
+                } else {
+                  // Si no hay ubicación válida, intentar obtenerla automáticamente
+                  fetch('https://ipapi.co/json/')
+                    .then(r => r.json())
+                    .then(geo => {
+                      if (geo && geo.city && geo.country_name) {
+                        setCiudad(`${geo.city}, ${geo.country_name}`);
+                      }
+                    })
+                    .catch(e => console.error("Error obteniendo IP local:", e));
+                }
+              } else {
+                // Si no hay objeto ubicación, intentar obtenerla automáticamente
+                fetch('https://ipapi.co/json/')
+                  .then(r => r.json())
+                  .then(geo => {
+                    if (geo && geo.city && geo.country_name) {
+                      setCiudad(`${geo.city}, ${geo.country_name}`);
+                    }
+                  })
+                  .catch(e => console.error("Error obteniendo IP local:", e));
               }
             }
-            if (dbData.email_registro) setMail(dbData.email_registro);
+            
+            if (dbData.datos_personales?.correo_electronico || dbData.datos_personales?.email) {
+              setMail(dbData.datos_personales.correo_electronico || dbData.datos_personales.email);
+            } else if (dbData.email_registro) {
+              setMail(dbData.email_registro);
+            }
 
             if (dbData.experiencia_laboral && dbData.experiencia_laboral.trabajo_actual) {
               const ta = dbData.experiencia_laboral.trabajo_actual;
@@ -62,14 +90,31 @@ export default function ProfilePage() {
             }
 
             if (dbData.habilidades) {
-              let newSkills = [];
-              if (dbData.habilidades.duras) {
-                newSkills.push(...dbData.habilidades.duras.split(',').map((s: string, i: number) => ({ id: `d${i}`, nombre: s.trim(), descripcion: 'Habilidad Dura' })));
-              }
-              if (dbData.habilidades.blandas) {
-                newSkills.push(...dbData.habilidades.blandas.split(',').map((s: string, i: number) => ({ id: `b${i}`, nombre: s.trim(), descripcion: 'Habilidad Blanda' })));
-              }
-              if (newSkills.length > 0) setSkills(newSkills.filter((s: any) => s.nombre));
+              let newSkills: any[] = [];
+              
+              // Recopilar todas las habilidades duras
+              const duras = [
+                ...(dbData.habilidades.duras ? dbData.habilidades.duras.split(',') : []),
+                ...(dbData.habilidades.duras_seleccionadas ? dbData.habilidades.duras_seleccionadas.split(',') : []),
+                ...(dbData.habilidades.duras_manuales ? dbData.habilidades.duras_manuales.split(',') : [])
+              ].map(s => s.trim()).filter(Boolean);
+              
+              Array.from(new Set(duras)).forEach((s, i) => {
+                newSkills.push({ id: `d${i}`, nombre: s, descripcion: 'Habilidad Dura' });
+              });
+
+              // Recopilar todas las habilidades blandas
+              const blandas = [
+                ...(dbData.habilidades.blandas ? dbData.habilidades.blandas.split(',') : []),
+                ...(dbData.habilidades.blandas_seleccionadas ? dbData.habilidades.blandas_seleccionadas.split(',') : []),
+                ...(dbData.habilidades.blandas_manuales ? dbData.habilidades.blandas_manuales.split(',') : [])
+              ].map(s => s.trim()).filter(Boolean);
+              
+              Array.from(new Set(blandas)).forEach((s, i) => {
+                newSkills.push({ id: `b${i}`, nombre: s, descripcion: 'Habilidad Blanda' });
+              });
+
+              if (newSkills.length > 0) setSkills(newSkills);
             }
             
             if (dbData.educacion) {
@@ -168,6 +213,7 @@ export default function ProfilePage() {
       datos_personales: {
         nombre_completo: `${finalNombre} ${finalApellido}`.trim(),
         fecha_nacimiento: finalFechaNacimiento,
+        correo_electronico: finalMail,
         telefono: finalTelefono,
         linkedin: finalLinkedin,
         ubicacion: {
@@ -180,15 +226,15 @@ export default function ProfilePage() {
         trabajo_actual: ta ? {
           empresa: ta.company,
           puesto: ta.position,
-          fecha_inicio: ta.anioInicio,
-          fecha_fin: ta.anioFin,
+          fecha_inicio: ta.anioInicio ? String(ta.anioInicio).toUpperCase() : '',
+          fecha_fin: ta.anioFin ? String(ta.anioFin).toUpperCase() : '',
           descripcion: ta.desc
         } : null,
         historial: hist.map(h => ({
           empresa: h.company,
           puesto: h.position,
-          fecha_inicio: h.anioInicio,
-          fecha_fin: h.anioFin,
+          fecha_inicio: h.anioInicio ? String(h.anioInicio).toUpperCase() : '',
+          fecha_fin: h.anioFin ? String(h.anioFin).toUpperCase() : '',
           descripcion: h.desc
         }))
       },

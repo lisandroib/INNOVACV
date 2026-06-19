@@ -170,6 +170,24 @@ export async function POST(req: Request) {
       origen: 'typebot'
     };
 
+    // Convertir fechas de experiencia laboral a mayúsculas
+    if (documentoPerfil.experiencia_laboral) {
+      if (documentoPerfil.experiencia_laboral.trabajo_actual) {
+        if (documentoPerfil.experiencia_laboral.trabajo_actual.fecha_inicio) {
+          documentoPerfil.experiencia_laboral.trabajo_actual.fecha_inicio = String(documentoPerfil.experiencia_laboral.trabajo_actual.fecha_inicio).toUpperCase();
+        }
+        if (documentoPerfil.experiencia_laboral.trabajo_actual.fecha_fin) {
+          documentoPerfil.experiencia_laboral.trabajo_actual.fecha_fin = String(documentoPerfil.experiencia_laboral.trabajo_actual.fecha_fin).toUpperCase();
+        }
+      }
+      if (Array.isArray(documentoPerfil.experiencia_laboral.historial)) {
+        documentoPerfil.experiencia_laboral.historial.forEach((h: any) => {
+          if (h.fecha_inicio) h.fecha_inicio = String(h.fecha_inicio).toUpperCase();
+          if (h.fecha_fin) h.fecha_fin = String(h.fecha_fin).toUpperCase();
+        });
+      }
+    }
+
     // Procesar y fusionar habilidades si vienen desde Typebot
     if (data.habilidades) {
       // 1. Habilidades Duras (Técnicas)
