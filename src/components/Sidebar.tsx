@@ -32,8 +32,13 @@ export default function Sidebar({ activeTab = 'personal', setActiveTab }: Sideba
     localStorage.setItem('sidebar_collapsed', String(newState));
   };
 
-  const handleLogout = () => {
-    router.push('/signin');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Error cerrando sesión', error);
+    }
+    window.location.href = '/signin';
   };
 
   const handleTabClick = (tab: string, e: React.MouseEvent) => {
