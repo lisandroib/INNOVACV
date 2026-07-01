@@ -1,0 +1,602 @@
+{
+  "search_metadata": {
+    "id": "6a31c72f410cdaa87962b7d9",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/x1LzrJVCBkpB72q8Vap0rA/6a31c72f410cdaa87962b7d9.json",
+    "created_at": "2026-06-16 21:59:11 UTC",
+    "processed_at": "2026-06-16 21:59:11 UTC",
+    "google_jobs_url": "https://www.google.com/search?q=desarrollador+remoto&hl=es&udm=8",
+    "raw_html_file": "https://serpapi.com/searches/x1LzrJVCBkpB72q8Vap0rA/6a31c72f410cdaa87962b7d9.html",
+    "total_time_taken": 0.64
+  },
+  "search_parameters": {
+    "q": "desarrollador remoto",
+    "engine": "google_jobs",
+    "google_domain": "google.com",
+    "hl": "es"
+  },
+  "filters": [
+    {
+      "name": "Fecha de publicación",
+      "options": [
+        {
+          "name": "Ayer",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g",
+            "q": "desarrollador remoto desde ayer"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g"
+        },
+        {
+          "name": "Últimos 3 días",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA",
+            "q": "desarrollador remoto en los últimos 3 días"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA"
+        },
+        {
+          "name": "Última semana",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA",
+            "q": "desarrollador remoto en la última semana"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA"
+        },
+        {
+          "name": "Último mes",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA",
+            "q": "desarrollador remoto en el último mes"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA"
+        }
+      ]
+    },
+    {
+      "name": "Fecha de publicación",
+      "options": [
+        {
+          "name": "Ayer",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g",
+            "q": "desarrollador remoto desde ayer"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g"
+        },
+        {
+          "name": "Últimos 3 días",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA",
+            "q": "desarrollador remoto en los últimos 3 días"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA"
+        },
+        {
+          "name": "Última semana",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA",
+            "q": "desarrollador remoto en la última semana"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA"
+        },
+        {
+          "name": "Último mes",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA",
+            "q": "desarrollador remoto en el último mes"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGBAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA"
+        }
+      ]
+    },
+    {
+      "name": "Tipo de trabajo",
+      "options": [
+        {
+          "name": "Tiempo completo",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o",
+            "q": "desarrollador remoto tiempo completo"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o"
+        },
+        {
+          "name": "Tiempo parcial",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi",
+            "q": "desarrollador remoto tiempo parcial"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi"
+        },
+        {
+          "name": "Con contrato",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN",
+            "q": "desarrollador remoto con contrato"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN"
+        },
+        {
+          "name": "Prácticas",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA",
+            "q": "desarrollador remoto prácticas"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA"
+        }
+      ]
+    },
+    {
+      "name": "Tipo de trabajo",
+      "options": [
+        {
+          "name": "Tiempo completo",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o",
+            "q": "desarrollador remoto tiempo completo"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o"
+        },
+        {
+          "name": "Tiempo parcial",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi",
+            "q": "desarrollador remoto tiempo parcial"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi"
+        },
+        {
+          "name": "Con contrato",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN",
+            "q": "desarrollador remoto con contrato"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN"
+        },
+        {
+          "name": "Prácticas",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA",
+            "q": "desarrollador remoto prácticas"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIGhAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA"
+        }
+      ]
+    },
+    {
+      "name": "Tipo de trabajo",
+      "options": [
+        {
+          "name": "Tiempo completo",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o",
+            "q": "desarrollador remoto tiempo completo"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o"
+        },
+        {
+          "name": "Tiempo parcial",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi",
+            "q": "desarrollador remoto tiempo parcial"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi"
+        },
+        {
+          "name": "Con contrato",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN",
+            "q": "desarrollador remoto con contrato"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN"
+        },
+        {
+          "name": "Prácticas",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA",
+            "q": "desarrollador remoto prácticas"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA"
+        }
+      ]
+    },
+    {
+      "name": "Tipo de trabajo",
+      "options": [
+        {
+          "name": "Tiempo completo",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o",
+            "q": "desarrollador remoto tiempo completo"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+completo&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-UlSiExdpbNNYXT_VZcmcJkrkpsdsJkQhqGl3krVnWiEKhStE5rJf6L1nn2gnCps8fVVKocgKEaITf2GeT2Xu9R5nSY9kG05eUSFo3rDM4x9akS6yROiUqQF0KxDCK0z3PmxfUpHu6lzkJ8DcMq39xnk-fwaR9F8QZMHcI6dA2EvzFz7YdHGJpigqK0VEZlqrDWBGDqVD03-fcM2OJW7z83C9o8pMokgf5LZrk5CdxTKiNTZifmumktAQCgGVO2bswdDbFjiXl8PziDqKQlHkahqVYhwcVC1MHCIe9l8lDAH-ChDSS25JjHfhFrLUDkCRl7ztuCnDPq0FbMK6HtLlOW9CW-o"
+        },
+        {
+          "name": "Tiempo parcial",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi",
+            "q": "desarrollador remoto tiempo parcial"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+tiempo+parcial&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-S3Am8F3U5_vxqtHDrad7q6crMlJD0K6yjxwDzY0WhKdFzJBaWIu7C9jUDvuo4_tskJnjHKNmlMVL-fA_-om9g095nmzvGF3PmLK8rruqfveTYQ3qlrf8AJv_uQZ87VeKKI3cugzOawcTKalNIAO7FeMlgZ1qRWiT8ll1I-p7aY5xbmUekECW_B--jg6qbzqBEFeMraMjJRrBGnQc8CFOQLRPCw14DkR-U035wfNOvirh6sJkL6btiAZZzUITSAe9h3tc3Eo7L5-42jSYxJ-VdOg1jRreboDYpspJgAonLMyT-D2zB65A8UTKp5Em92lJTXod61skoFz3OzZgRr5_nTOE5MFkmCiSraFOjxksDaDEf6bi"
+        },
+        {
+          "name": "Con contrato",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN",
+            "q": "desarrollador remoto con contrato"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+con+contrato&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-C4HMATc8q7Kctztzig1tdhvjkBKBTtPbiJ4ffJQNZdxxMdTIjz-JJa0pOX6sKzDHGcec1m21GVaogxNTST4oh3fg-VUO1Nq6gkVuWBzv01VykoNAsRPR1BLCtxGnwHZIOLg3nib5f8mHtFxD67puAQLU-4CSrjbQ9lEDu8bBDSFzpOm5rdAFZZul-oxlXy-7DXiNl3LS7_q2PyVvxIzpOjeadqhZg5t_XLnZkQ3v75YxkGbKtVUH0roZRd3EBJlFjuRyxiZQUhOzKPhzoA_uPZ56X3vVOZ3pXXkT-i7xwEanYLfxPidsVZYY1LjsnNeTRMyN4TglbUr8AbR2BMQoyB7k8NqbLlSimlwUIu-HydeueAeN"
+        },
+        {
+          "name": "Prácticas",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA",
+            "q": "desarrollador remoto prácticas"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFxAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+pr%C3%A1cticas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-JcbdWOnasW1xmrVND3Nnd0bwg0UrCL3mHuPbn25iWWSEfy3C3gQfamfceVQgCv-NCeVv84MrWc96DYdC1AWinKiy0Ky80biRWx_FQQBxvJnAhso8CpWcXOBQ1Vm6Z1PKisl8taR8k9_Ed4JkwqF-hvc7ePMt_dHk3nkQep3DGSY-D86sY0LvEpFruKuEGulnJYluLEQfCU0IV3h_fh8AVOPDwSDze1Bvb_Ao92juD1QwYD-EUe2F39OAgztt9mntG5U7RtxtQSRnycUKIGe2JftGiUZQQSoWc-ZBpJnu-W1WRibIvUErcgMFMpO5471k_3yAjzotmY72SL-4lijyY07aWWnHgOs5TQMIACIgYn6br1cA"
+        }
+      ]
+    },
+    {
+      "name": "Fecha de publicación",
+      "options": [
+        {
+          "name": "Ayer",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g",
+            "q": "desarrollador remoto desde ayer"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g"
+        },
+        {
+          "name": "Últimos 3 días",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA",
+            "q": "desarrollador remoto en los últimos 3 días"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA"
+        },
+        {
+          "name": "Última semana",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA",
+            "q": "desarrollador remoto en la última semana"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA"
+        },
+        {
+          "name": "Último mes",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA",
+            "q": "desarrollador remoto en el último mes"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA"
+        }
+      ]
+    },
+    {
+      "name": "Fecha de publicación",
+      "options": [
+        {
+          "name": "Ayer",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g",
+            "q": "desarrollador remoto desde ayer"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAC",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+desde+ayer&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-d3l-cRdNVhrB19MYUZyDBoow1Tezj_QaetfP7X4OypGs791hVQ5FjMcBYbl-XQW5jRXVlMgxS-bAt_t-zoxqhQMXISZ1czGG3ozb0L5p1Pg8rXKX1IWBujgiVru2EEBNdHmVXq3vc_370aelnjB7iVE_d07e75kUbwvd48M3srGAFw8fvIXBcdvEsJ_PvYKvMm80gf-TERwWRq1xxnHzIs9G72c8FQw5L7F2V_L9uULg76ZVkJ14wCu8d_Bjj2XNeRzpXPV1vTBfmkxqdQt5-QUercziGAoCSPeXKCEBKogNpU6fcoeP23ihXfzV-Fl54Lg97sJoe74wQBpTwIhhA6igj7xOMTLip-JtsZxUK5OcbXGp-Gyz5Aq-bdRlp9MzYHaB7g"
+        },
+        {
+          "name": "Últimos 3 días",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA",
+            "q": "desarrollador remoto en los últimos 3 días"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAD",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+los+%C3%BAltimos+3+d%C3%ADas&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-3gaRksl8dKFbhNLp-jhaDxIs-3_a7On9MG60WanwOXUtnT0eMDOnxlGy3t5zRlxZXl9PFUQ_zQEKIy-v1bf7m0J6Ag7wuYXmljhH2_Cgjir5UnHCOPFGigc_Gcop2Wu5u6qYzyw52VsW0PZr6EafDVfXF-E8bMsxCAM0iwe9T81pJ4pPDczX7ArOmFP5XG7DqFU9IXQWXCQydXsrdgheXp9AoYKOEGBy83UV1XEMrX6c59YBZu0o-MiFV3fIk36qjZ7vKP0L5cgKKscXp9nUnWu1sPm3NNgjsqIr5SAlC65wbvIFo-88SCLztHvwdh-T8HnwQAoLobU5VSW3jwLx7QZv6EYDMNS13Xc5dA-Ja8PftkvSD7KhLS5v3AZRTaUTvqcKKA"
+        },
+        {
+          "name": "Última semana",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA",
+            "q": "desarrollador remoto en la última semana"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAE",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+la+%C3%BAltima+semana&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-fkqPUJPImkwQ-8FwSil79O8BvhZ40Iv3kOn6DSWVcKxeWcFDlyS8GbtMtrqyyhKJnW8rCYGJxMjiOg7YvC3HsL3yYpR-bz1GfZGgXCGMpZIb0NtJQCr9inA2ox_fvpQAYUXYa_PqBTBeW-NGj4mjWgYB0_QJmUEqH4YVbtdROJkxcps4gWiBf_UaiQngSYYQDG404SvMh3pASbw9yqL1LhFcLYyXCXnY816bFp35BonzBvbdxp5bJgwaP4w19mTsEOs2TITrBWwX73g4juiAow5L7ZEcFsdY1msYWGGMJCRsrSdwe4-QIhkJUcV-pnFbJwVqoqWxoNGu6ph7w73MLaI5YsMOLFeyLiGKvCQacosWQhBYc-xFoQarf09t5i0QnWbxsA"
+        },
+        {
+          "name": "Último mes",
+          "parameters": {
+            "uds": "ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA",
+            "q": "desarrollador remoto en el último mes"
+          },
+          "link": "https://www.google.com/search?sca_esv=b652ab54d70f7f26&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA&udm=8&sa=X&ved=2ahUKEwir6-Hs4IyVAxVAv4kEHTvoKXUQkbEKegQIFhAF",
+          "serpapi_link": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&q=desarrollador+remoto+en+el+%C3%BAltimo+mes&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-gXUuNYh-bOhIDeWe6shQKaoqbMzDOKKE4377NXxnAy4WFt0OTlRGuCm_jUuYYFr6bDj-zENXUHw4WkeVmGEJSURWgu_EnYfDW930SvY3x4wI2yecatRfV4cDomiWgRRm56_7MizldnSgA2JB5y7Lf-mmGD7NlvrFn34SNLbr3VinlmLa7QV0sNL78d7iZLoA-M-sqFam7trPcGX68KEAGqy0-V_AqJ4YUfitQlse4sc7Htig0YwtVcEGv3qLA2JMHjBtxpxrUAiV4RYHWwEUhAywSUTgMrxt87J2KU3uVmKRj29nDwdlxOJyeUS4aSZZMle47JjmW8DlxAK6NotVztEy16Wyy4g77fj5xhRiecF17d4yQoO2MFhXdhrZhWavJcm8dA"
+        }
+      ]
+    }
+  ],
+  "jobs_results": [
+    {
+      "title": "Desarrollador Backend Java – Remoto 100% y Spring",
+      "company_name": "BairesDev",
+      "location": "Nueva York, NY",
+      "via": "The BIG Jobsite",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=TYusCw8uBG5-9GgNAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xXOMQ6CQBBA0dh6BG2msTGGRRMb7AiJiYUFVlRkgAkgy866sxjtvIP38AC23sSTKM0vX_70NZmmCQk6x1pjxQ5iLDsyFRzwivB9PCGlnj3DOgwXcIeTda2pIyg-b7kMVCFUBNRbTQxkYM9ca5rtGu-tREqJ6KAWj74tg5J7xYYKvqkzFzImlwYdWY2e8s02vAXW1Mt5jK0jSeg6iseB_iMZu24Fx-wHUeZAyLEAAAA&shmds=v1_ATWGeeOcdLM7HG33a_Ld3KE9Q74EMKhZP1DjWjaE7TT0qGJCxw&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=TYusCw8uBG5-9GgNAAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/images/i/iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAMAAACfWMssAAAAbFBMVEXx8fH2YTXx9vf2Wyr0opDx8_T2Xi_2XzL2VBvx7u32ViH2WSb1hGj2XC32Uhfztqj0non0p5bzxLn0lX7y4Nzy1tD1i3H0q5vx5-T2Tgn1kHjy3Nb2Zz32a0TzzMTzyL_1dFH1gGH1eVnzsKE6LgTFAAABrklEQVRIie1V25aCMAw0qW1KoS2KoCu6ePn_f1y80nha5HEfyBPhzDBpMySLxRxz8Mh2KN_PC8QhGw_0P_sWn8-lPpxXNeIkYmGtq7K7DC4FKaGPXk5QzQwACFXjg9gnQObw-1VUduaO1Wt8E_vUld-YWNkH1nU4EAFM8YUpgV7QjQyIkDejTFnrF1KdMCSCWY0xcTVAjWdEcPXI3eKJ3kACTqRTWlJudIA03Sokgu6SkujzAKiaLSOqc1ISCxUiD0sbpqB3KclMM6AqiOX5OiH5tE0gyVOR8s_bNolQKftIonHiJU4MbBOPVCd5v2_A4zTF0DYPYMO6AzZudG6bu-BHH0Xc59w2N4GKOwfMb9QAeOaFga65VyGPnvDTNn2lH7dlq_gR1x-26ccOJ7o2Xume34Qt-AQAsU-0X7FmEGVs5gCJLM7jtqG8r4sRXWK28rKsqJG_cz71ZxyDSs1ph-xjlOQFtqFcXPG1O573QskdgFsnVB82d4dr9tpWdyIJV2bJaSM3viwul3Pl22Gr4dKIXMNyNzaKJT4jaDL6pvStnLpawwNMX8hzzPFP4w-lXhKAsjstdgAAAABJRU5ErkJggg.png",
+      "extensions": [
+        "hace 3 días",
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "posted_at": "hace 3 días",
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://us.thebigjobsite.com/details/D43D760E6889BD550A5A0902B7EB224A/desarrollador-backend-java---remoto-100--y-spring",
+      "job_title": "Desarrollador Backend Java – Remoto 100% y Spring",
+      "description": "BairesDev busca un Desarrollador Java para diseñar y mantener aplicaciones robustas y servicios backend. Trabaja 100% remoto, colaborando con un equipo global.\n\nEl candidato ideal tiene más de 3 años de experiencia en desarrollo Java, conocimientos sólidos de programación orientada a objetos, y experiencia en Spring Framework.\n\nOfrecemos flexibilidad horaria, una compensación competitiva y oportunidades de crecimiento profesional.\n\n\n#J-18808-Ljbffr",
+      "apply_options": [
+        {
+          "title": "The BIG Jobsite",
+          "link": "https://us.thebigjobsite.com/details/D43D760E6889BD550A5A0902B7EB224A/desarrollador-backend-java---remoto-100--y-spring?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJEZXNhcnJvbGxhZG9yIEJhY2tlbmQgSmF2YSDigJMgUmVtb3RvIDEwMCUgeSBTcHJpbmciLCJjb21wYW55X25hbWUiOiJCYWlyZXNEZXYiLCJodGlkb2NpZCI6IlRZdXNDdzh1Qkc1LTlHZ05BQUFBQUE9PSIsImhsIjoiZXMiLCJmYyI6IkVzd0JDb3dCUVUxdU15MTVValpuYm5ab2VuSXdaMVZqYlU5TU4xa3paazR6VW05eGFFRmlaM2c1U1VNMlJVRkxRa3hRVldaVE1uSnZVbDkwYzNwc1FrUklXRk13Ums5dlIydE5VMmN5VERGMGR6VllWVlp1V0RjM1FtSXhlR3hHTkZaTGNqZG9ZVmd6T0hKalUycGhTRlUzY21aUFZFZ3RVMlY0VEdjd2REQndlbFpsTUZjeFZHcGZlRlJtZFd4VWFrTVNGMHc0WTNoaGRYVllUSE5FTFhCMFVWQjFPVU51Y1ZGakdpSkJTa3RNUm0xTVpUUlNaMDFvVFVwM1RuQTFXRVJ6YVdaamNreEVUMHhLVkZSUiIsImZjdiI6IjMiLCJmY19pZCI6IlRZdXNDdzh1Qkc1LTlHZ05BQUFBQUE9PSJ9"
+    },
+    {
+      "title": "Puesto remoto de desarrollo de software de Craigslist en 2026 | ok.com",
+      "company_name": "Craigslist",
+      "location": "Boston, MA",
+      "via": "Us.ok.com",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=cPmNnR5OPSh0IPfMAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_1WOMQ7CMAxFxdoTICbPCDVVJRjKBAxMSNygSlvTFtI4xK7owMkYWLgYCRuS5a9v_a_n5D1L8DwiC4HHgYI0GIa192TMzzFd5KF9PMPB675l07MAWsizfANPoFta01BA9XnxfcRGxyQOziDF1JGoNbjYdiKOC6WYTdqyaOnr2FNksaJJXaniuEruAswZLVjm62xKnW2X83_wnsLDdgWn3Rc_Xyz0wQAAAA&shmds=v1_ATWGeeO7rCAtq2AL4C2uDLr2W_PEY-tsjW4o5nkNtey4I5oW6g&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=cPmNnR5OPSh0IPfMAAAAAA%3D%3D",
+      "extensions": [
+        "60 K por año",
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "salary": "60 K por año",
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://us.ok.com/es/city-burns/cate-engineering-software/remote-software-development-position-41540983710614528/",
+      "job_title": "Puesto remoto de desarrollo de software de Craigslist en 2026 | ok.com",
+      "description": "Resumen:\nEste programa ofrece a desarrolladores principiantes la oportunidad de construir una carrera en el sector tecnológico adquiriendo h",
+      "apply_options": [
+        {
+          "title": "Us.ok.com",
+          "link": "https://us.ok.com/es/city-burns/cate-engineering-software/remote-software-development-position-41540983710614528/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJQdWVzdG8gcmVtb3RvIGRlIGRlc2Fycm9sbG8gZGUgc29mdHdhcmUgZGUgQ3JhaWdzbGlzdCBlbiAyMDI2IHwgb2suY29tIiwiY29tcGFueV9uYW1lIjoiQ3JhaWdzbGlzdCIsImh0aWRvY2lkIjoiY1BtTm5SNU9QU2gwSVBmTUFBQUFBQT09IiwiaGwiOiJlcyIsImZjIjoiRXN3QkNvd0JRVTF1TXkxNVZHdElhemhYWm01VVJGRkdXRGxvTVZBNVVpMUtOa3QzZUZFeVNVaFBhSFozU0RCMldXOWxkVk5LWjFSSGFscE5TbkpxVG00dFdtaFJhV2hQZGsxakxUaHRRblYwY0UwNVYyVmFSV3hsTjFGak9IbzNUVTVoY1ZWSVVXSnFlVzlrZUhZNWFsRlBjWEpqYVdvelQzTndUbW8wYjBwTE5YRnNOMDlZZEVwVGFVVlhObWRaZWs0U0YwdzRZM2hoZFhWWVRITkVMWEIwVVZCMU9VTnVjVkZqR2lKQlNrdE1SbTFKUkVwVlVscEhNVTVEYVVwS2RsaHNWRlZLU3psVFZXbFhRVGRuIiwiZmN2IjoiMyIsImZjX2lkIjoiY1BtTm5SNU9QU2gwSVBmTUFBQUFBQT09In0="
+    },
+    {
+      "title": "SR - Desarrollador Host",
+      "company_name": "Babel",
+      "location": "Ayer, MA",
+      "via": "BeBee",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=VGWCvliHkhCh57oOAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xXMsQrCMBAAUFy7uTrdLJqIoEOdKoIuLvoB5dIcbeWai7kI9Q_8Jld_TLq88RWfWbG_32ANJ1JMSZjRS4KLaC7B_b76fJFH8AQ0RCYBCnAWaZkWhy7nqKW1qmxazZj7xjQyWAnkZLQPcTpRa4eJImOmervbjCaGdjk_oiOetupNaQXX6g_lXordiwAAAA&shmds=v1_ATWGeeM2e21aTGa-XoWKz7ZsYY_Hj_rm-zmkYDHJU7MlxrQujw&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=VGWCvliHkhCh57oOAAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/searches/6a31c72f410cdaa87962b7d9/images/EbdYWgEzVDDGptyYnglIlyhHlWht4GJd2LUFT2QnqBM.jpeg",
+      "extensions": [
+        "hace 10 días",
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "posted_at": "hace 10 días",
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://bebee.com/us/jobs/sr-desarrollador-host-babel-ayer-ma--theirstack-704362973",
+      "job_title": "SR - Desarrollador Host",
+      "description": "We are\nOne Team.\nWe\nmake it happen.\nWe are\nUnstoppable.\nBabel es una consultora tecnológica multinacional especializada en aplicar sus servicios y conocimiento tecnológico en los procesos de aceleración digital de sus clientes, grandes empresas y organismos públicos.\n\n\n¿Cuál es nuestro plan estratégico?\n¡Miramos hacia el futuro! Nuestro\nplan estratégico Hiperespacio 2029\npromete ser un viaje emocionante,\nlleno de oportunidades\npara crecer y desarrollarse profesionalmente. Alcanzar\n1000 millones\nde facturación, un reto que estamos seguros de que con la\ncolaboración\ny el\ntalento\nde nuestra gente, será otra historia de éxito que escribiremos juntos y juntas.\n\n\n¿Qué buscamos?\n\n\n\nACTIVIDADES A DESEMPEÑAR:\n\nAnálisis, diseño y construcción de programas Batch y Online (CICS).\n\nMantenimiento y optimización de paquetes COBOL complejos para el core bancario.\n\nManejo de estructuras de datos en DB2 y gestión de archivos VSAM.\n\nCreación y modificación de JCLs para la ejecución de procesos masivos.\n\nAseguramiento de calidad técnica mediante pruebas unitarias y cumplimiento de estándares de seguridad bancaria.\n\nEXPERIENCIA (AÑOS)\n\nMínimo 3 de experiencia sólida en entornos Mainframe.\n\nSTACK TECNOLÓGICO BASE\n\nCobol, CICS, DB2, JCL, VSAM, TSO/ISPF, Changeman o Endeavor (Control de versiones).\n\nNIVEL DE INGLÉS\n\nBásico - Intermedio (A2/B1): Comprensión de manuales técnicos y herramientas.\n\nEXPERIENCIA EN SECTOR BANCARIO\n\nIndispensable. Conocimiento en flujos transaccionales bancarios y normativas de alta disponibilidad.\n\n\n¿Qué ofrecemos?\nBabel, the great way to achieve the success.\n¿Quieres formar parte de un equipo en expansión, comprometido e innovador que hace historia cada día? En Babel te acompañamos en tu camino hacia el éxito. Creemos en el talento de las personas y lo queremos potenciar ofreciéndote un gran entorno de trabajo basado en la colaboración y la solidaridad.\nTrabajar en Babel es mucho más que trabajar en una empresa, es unirse a un equipo de personas con una misión compartida y a un modelo de compañía centrado en valores.\nY lo hacemos promoviendo la diversidad, la equidad y la inclusión, garantizando la igualdad de oportunidades a todas las personas candidatas, en un entorno libre de cualquier tipo de discriminación.\n\n\nAdemás,\n\n\n\nEsquema 100% Nomina\nSGM Mayores, SGM Menores\nApoyo de Home Office\nBeneficios corporativos superiores\n\n¿Aceptas el desafío? ¡Te esperamos!\nEn cumplimiento de la normativa vigente en materia de protección de datos, le informamos que el responsable de sus datos personales es GRUPO BABEL y los utilizará para la realización de procesos internos de selección de personal, basado en su consentimiento, mediante la facilitación de sus datos curriculares y en la aplicación de medidas precontractuales.\nLos datos podrán ser comunicados a las entidades que conforman el GRUPO BABEL con el fin ofrecerle el puesto de trabajo que se adapte a su perfil profesional y las establecidas legalmente.\nPuede acceder, rectificar y suprimir los datos, así como otros derechos que le asisten sobre protección de datos a través de data.protection@babelgroup.com. Podrá obtener información adicional, sobre protección de datos, dirigiéndose a nuestra política de privacidad.",
+      "apply_options": [
+        {
+          "title": "BeBee",
+          "link": "https://bebee.com/us/jobs/sr-desarrollador-host-babel-ayer-ma--theirstack-704362973?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJTUiAtIERlc2Fycm9sbGFkb3IgSG9zdCIsImNvbXBhbnlfbmFtZSI6IkJhYmVsIiwiaHRpZG9jaWQiOiJWR1dDdmxpSGtoQ2g1N29PQUFBQUFBPT0iLCJobCI6ImVzIiwiZmMiOiJFc3dCQ293QlFVMXVNeTE1VTB0dk1FaFNVa0ZCY0MxVGFtSnFWMjlRVlRWNmVUZFNkSEZzVVV4alJXVk1SbEpDVFhsQ2FYaEJlbmhuUlRWUmRubFVkbTAzZVRobU5YVTFOM0JqTVRGdlluRldOblJLZEdoak5rODVkR0V5WXpWSVVXcE9kWFJQTWtkT1RFaG5SazFEVVVreExVSTVOWEJVV1V4WE0wdG1XVVJqU1cxdlMyVTFUM1pOUzNKWlVIazFhV2tTRjB3NFkzaGhkWFZZVEhORUxYQjBVVkIxT1VOdWNWRmpHaUpCU2t0TVJtMUpURmhXYzAxTmNFeGpTSEJUU1VkTGJrMXJUVVZ6ZEMxUk1FSjMiLCJmY3YiOiIzIiwiZmNfaWQiOiJWR1dDdmxpSGtoQ2g1N29PQUFBQUFBPT0ifQ=="
+    },
+    {
+      "title": "Diseñador y desarrollador web remoto (WordPress/Bricks)",
+      "company_name": "ONWARD SEARCH",
+      "location": "Nueva York, NY",
+      "via": "Univision",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=m7F5TNEV-HhJfXCcAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_x2Muw6CQBAAY8sn2LilGsMZExutUIxWaLQgVuaADSAHi7uH4mdZmdj6Yz6aSaaYcZ4dJ_RzwfdDJ8RwhwRFM5Mxf79hBIwlWYJ-SJzsGEXUgvO4kMEMovdLLg0m-psBlrVBAqxgTZQa7M4za2uZKSVi3FSstnnsxlQqqjCiVp0pkh9OkmnG2miLp8l03Lp1lQ572yD09j4cVt5-ufldgwavGo7ExQiC4wfVal6ougAAAA&shmds=v1_ATWGeePDY4cYVxODgqhG-WQnV-ECslRf5ZxL-ocnzSbIqY502A&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=m7F5TNEV-HhJfXCcAAAAAA%3D%3D",
+      "extensions": [
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://trabajos.univision.com/empleo/23-14660_DE09B641D5B55C65C4804D820A6FE46B",
+      "job_title": "Diseñador y desarrollador web remoto (WordPress/Bricks)",
+      "description": "Una empresa líder de atención médica está buscando un diseñador web / desarrollador talentoso para un papel remoto. Este puesto temporal se centra en la construcción de páginas front-end, con énfasis en la ejecución y precisión utilizando HTML, CSS, JavaScript y WordPress, específicamente con el constructor de página Bricks. El puesto ofrece beneficios como médicos, dentales, seguro de visión y un programa de reembolso educativo. Esta es una excelente oportunidad para los profesionales calificados ansiosos por contribuir a un equipo dinámico.",
+      "apply_options": [
+        {
+          "title": "Univision",
+          "link": "https://trabajos.univision.com/empleo/23-14660_DE09B641D5B55C65C4804D820A6FE46B?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJEaXNlw7FhZG9yIHkgZGVzYXJyb2xsYWRvciB3ZWIgcmVtb3RvIChXb3JkUHJlc3MvQnJpY2tzKSIsImNvbXBhbnlfbmFtZSI6Ik9OV0FSRCBTRUFSQ0giLCJodGlkb2NpZCI6Im03RjVUTkVWLUhoSmZYQ2NBQUFBQUE9PSIsImhsIjoiZXMiLCJmYyI6IkVzd0JDb3dCUVUxdU15MTVValpNWkMwNE5XZGxUV2xXZG5SQ2RrdDBNRzlxUzNZMlVWWlBUMlZDYUhWWVNFMUtOV1JSWnprdGNVeG5TRlZUZFRRNGIwZGpVVFUyTms5VWVWSnZaVXRzWlhjdFdUVkpiVTVIVW1kTVFtWmliREY0VVhKYWFYaDJNRlppTTBnd2MwRlZYMjVwYTBsRGJDMHRTV1YwUldKWFpFMTBRbFpmZFRVek5UUXhkbUZOWnpRM1UxSVNGMHc0WTNoaGRYVllUSE5FTFhCMFVWQjFPVU51Y1ZGakdpSkJTa3RNUm0xSmRUSktha053V1hWSVFrOTJVSFUzVTJ0R2NrZGxRakkyUlY5MyIsImZjdiI6IjMiLCJmY19pZCI6Im03RjVUTkVWLUhoSmZYQ2NBQUFBQUE9PSJ9"
+    },
+    {
+      "title": "Analista Programador Senior (Teletrabajo 100%)",
+      "company_name": "knowmad mood",
+      "location": "Municipio de Cedar Grove, NJ",
+      "via": "ZipRecruiter",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=jR0EolY1_kwUu7D9AAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xWOsQ6CMBRF48onOL3FRA0BNHHByTiQmGBMdDev8ALFtq-2Rfk2Vn9MWO7ZzrnRuIjKk0ElfUC4OW4caqzZwZ2MnLB-kKLgUGDHsMuy1SYH8Rv9u6caoSYgbRUxkIGCuVG0PLYhWJ-nqfcqaSZtkFVSsU7ZkOAh7Vj4eZ6-RUdWYaDn_pANiTXNNn4Z_k4HQDPXs7TsjayklTy3zlPTQeH4QzFcL3-cb7VnvQAAAA&shmds=v1_ATWGeeN0S6k8sIhnAs9ku6Fg2tkhlr6wIhI5afYC3LM-34XsCw&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=jR0EolY1_kwUu7D9AAAAAA%3D%3D",
+      "extensions": [
+        "hace 6 días",
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "posted_at": "hace 6 días",
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://www.ziprecruiter.com/c/knowmad-mood/Job/Analista-Programador-Senior-(Teletrabajo-100-)/-in-Cedar-Grove,NJ?jid=6061da9da8582c5f",
+      "job_title": "Analista Programador Senior (Teletrabajo 100%)",
+      "description": "We are knowmad mood!\n\nSomos una compania lider en transformacion digital, en constante evolucion y a la vanguardia de la tecnologia. Nacimos para provocar un cambio real a traves de la innovacion y el desarrollo sostenible, con la mision de aportar valor a los clientes e impulsar nuestro talento.\n\nFormado por mas de 3.000 personas creativas, digitales e innovadoras conectadas a un proposito y capaces de generar conexiones con personas de todo el mundo. Un equipo responsable, flexible y con alta capacidad de adaptacion a las necesidades de nuestros clientes y del mercado, a la vez que proporciona valor, vision, creatividad, expertise, profesionalidad y pasion por la tecnologia en cada proyecto.\n\nLos valores que marcan nuestro rumbo y nos guian hacia la excelencia son la colaboracion, la innovacion, el compromiso, la diversion y la conanza.\n\nQue es lo que valoramos?\n\noLicenciatura en Informatica, Ingenieria o un campo afin.\n\noExperiencia minima de 8-10 anos.\n\noExperiencia demostrable como Desarrollador Senior .NET o puesto similar.\n\noConocimiento profundo del framework .NET y dominio de C#.\n\noExperiencia con ASP.NET MVC y/o ASP.NET CORE para desarrollo web.\n\noConocimiento de tecnologias front-end (HTML, CSS, JavaScript).\n\noSolidos conocimientos de bases de datos relacionales y SQL.\n\noExperiencia en desarrollo e integracion de API RESTful.\n\noConocimiento de sistemas de control de versiones, como Git.\n\noExcelentes habilidades de resolucion de problemas y comunicacion.\n\noCapacidad para trabajar en colaboracion en un entorno agil.\n\noConocimiento de tecnologias de contenedorizacion (Docker, Kubernetes).\n\noNivel de ingles minimo B2 (real) \n\n\n\nY con nosotros podras disfrutar de:\n\nContrato Indefinido\n\n 100% REMOTO\n\nFormacion interna y acceso a certificaciones Consulta nuestro calendario aqui:\n\nhttps://www.knowmadmood.com/es/talento/formacion\n\nPlan de retribucion flexible (seguro medico, transporte, tickets guarderia, tickets restaurante)\n\nEmbajador de nuestra marca, a traves de nuestro plan amigo\n\nRecomienda a tus amigos y llevate un extra!\n\nEventos, meetups, techdays, charlas...y mucho mas!\n\n 26 dias de descanso (22 dias vacaciones, 2 dias de libre disposicion y 24 y 31 diciembre festivos por defecto)\n\n Horario: 8.30 a 18h ( flexible) L-J y V 8 a 15h e Intensiva de Verano Julio y Agosto de 8 a 15h\n\n\n\nPara estar al corriente de nuestras novedades siguenos aqui -> knowmad mood\n\nEn knowmad mood nos comprometemos con la igualdad de oportunidades y el respeto a la diversidad. Aplicamos nuestro Plan de Igualdad y el principio de no discriminacion en todos nuestros procesos de seleccion.\n\n\n\nEmployment Type: FULL_TIME",
+      "apply_options": [
+        {
+          "title": "ZipRecruiter",
+          "link": "https://www.ziprecruiter.com/c/knowmad-mood/Job/Analista-Programador-Senior-(Teletrabajo-100-)/-in-Cedar-Grove,NJ?jid=6061da9da8582c5f&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJBbmFsaXN0YSBQcm9ncmFtYWRvciBTZW5pb3IgKFRlbGV0cmFiYWpvIDEwMCUpIiwiY29tcGFueV9uYW1lIjoia25vd21hZCBtb29kIiwiaHRpZG9jaWQiOiJqUjBFb2xZMV9rd1V1N0Q5QUFBQUFBPT0iLCJobCI6ImVzIiwiZmMiOiJFc3dCQ293QlFVMXVNeTE1VVdsb2EzUTRhVGd3Y1d0U1NrbFpjelJWVTNVeFJWSmpUVVl0YnpaNWJsOTBTblF5WmxWbE1VNDRWaTB3TUdSNFYweHZaRWRqVG5JeWVITkVTak40TFRSaGFUWnJaalpSTTJzdE0ySjBhVkpVZWs5blVGSklWMlUzVDBoNWNERnhka1F3TXpZNFNuZzBVRmRRUTNabGVqbExhWFI1YkhseE5XWnBRM1I2TldSWFlrWlFNRWtTRjB3NFkzaGhkWFZZVEhORUxYQjBVVkIxT1VOdWNWRmpHaUpCU2t0TVJtMUxSSGMzUjNKbFJYbFZYMGxtWTNKSWVIVlpTRVZRVEMxNFRrMVIiLCJmY3YiOiIzIiwiZmNfaWQiOiJqUjBFb2xZMV9rd1V1N0Q5QUFBQUFBPT0ifQ=="
+    },
+    {
+      "title": "Desarrollador AB Initio Remoto | Monitoreo y Incidentes",
+      "company_name": "Comercial M Y B",
+      "location": "Nueva York, NY",
+      "via": "BeBee",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=y9olTt8jHQ9OvW5hAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xWMsQrCMBRFce0nOD1XkUYElzpZBXFoBwehU0nbRxtN8mJeKhX8MHH1x2yXO5xzuNFnFl2PyNJ70lo25GGfwtmqoAguaCgQvCGjEZBHgtfoatWgDcgJVL8vP3psJDQIaJweC7RwImo1znddCI4TIZh13HKQQdVxTUaQxYoGcaOKpym5kx6dlgHLzXY9xM62y8WBDPpaSQ0ZFJBOv3mPTwkF-fsK8uIPpBGFqbsAAAA&shmds=v1_ATWGeeP8-6cVTGojsqxxvAilrZW2elSsFkh27PkVgDcK6l4jKA&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=y9olTt8jHQ9OvW5hAAAAAA%3D%3D",
+      "extensions": [
+        "hace 10 días"
+      ],
+      "detected_extensions": {
+        "posted_at": "hace 10 días"
+      },
+      "source_link": "https://bebee.com/us/jobs/desarrollador-ab-initio-remoto-monitoreo-y-incidentes-comercial-m-y-b-new-york--lensa-7428_a6edfb2d5e8178633356f2141e982fa6ae6a4a170abe9c3eaff3ec0d42dca006",
+      "job_title": "Desarrollador AB Initio Remoto | Monitoreo y Incidentes",
+      "description": "Comercial M Y B, una empresa mexicana con 40 años de experiencia en TI, busca un Desarrollador AB Initio. Este rol es remoto y requiere experiencia de 2 a 3 años en monitoreo, gestión de incidentes y habilidades en AB Initio, Oracle Database y SQL.\nLas responsabilidades incluyen la gestión de incidentes, análisis de causa raíz y desarrollo de scripts para soluciones temporales. Se valora experiencia en automatización básica y herramientas de ticketing.",
+      "apply_options": [
+        {
+          "title": "BeBee",
+          "link": "https://bebee.com/us/jobs/desarrollador-ab-initio-remoto-monitoreo-y-incidentes-comercial-m-y-b-new-york--lensa-7428_a6edfb2d5e8178633356f2141e982fa6ae6a4a170abe9c3eaff3ec0d42dca006?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJEZXNhcnJvbGxhZG9yIEFCIEluaXRpbyBSZW1vdG8gfCBNb25pdG9yZW8geSBJbmNpZGVudGVzIiwiY29tcGFueV9uYW1lIjoiQ29tZXJjaWFsIE0gWSBCIiwiaHRpZG9jaWQiOiJ5OW9sVHQ4akhROU92VzVoQUFBQUFBPT0iLCJobCI6ImVzIiwiZmMiOiJFc3dCQ293QlFVMXVNeTE1VkRodVZVcGhTMm8yVDNsaVMycDRSVU5vVmpGbk4wZ3dhWE5pTVdGTlowWjBhMnBFTW1saVYzTlNVVU5WVkZOUFlqZEZiRU5EYkRGNVNVNUhTbTE2V0ZGaVlqUlhORUpYZWxwWFEwUXdja3hUZUdVM1ZIaFFjMWRsYjI5eE56bG5Ua1ZZY1VZdFlXeHVNak5yWjJKU1ZrbFNiM1pRU2paU1JuQjFTWEpPYVdWbVdHVlBZbmNTRjB3NFkzaGhkWFZZVEhORUxYQjBVVkIxT1VOdWNWRmpHaUpCU2t0TVJtMUpRV1pNWlhsU2IyNUhUVU5wZEhrd1JqbFlkVXA2WHpaWWJsQjMiLCJmY3YiOiIzIiwiZmNfaWQiOiJ5OW9sVHQ4akhROU92VzVoQUFBQUFBPT0ifQ=="
+    },
+    {
+      "title": "Desarrollador de Software Líder (Microservicios) [Remoto]",
+      "company_name": "Confidential",
+      "location": "Bogota, NJ",
+      "via": "Tallo",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=AQzthNLoVEEpDfjsAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xWNvQ4BQRRGo_UIqlsisisSDR0SiaCgEhGZ3bnWyOx8a-7181I6ldaLsc3pzjnNd6O5m7GYGOG9sYhkmbY46cNEpuX3ZTlSe-XyCOF4d7mDdGi_4RKKw4iy70euN7am9risPIM40BwoPLfGZ9VKRmkq4pNC1KjLkxxlisAZnukFmdQ4yvm_q7xRPg6G_WdShaLbmiKcnOWgzvg6OkEBNT1aL366Y5n9twAAAA&shmds=v1_ATWGeePjAELtm2UhditRIoO2Gr7Yp68N1wHpTBDKyy4xnPTeMg&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=AQzthNLoVEEpDfjsAAAAAA%3D%3D",
+      "extensions": [
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://tallo.com/talent/job/technology/software-developer-or-engineer/nj/bogota/desarrollador-de-software-lde-8a43d3a1",
+      "job_title": "Desarrollador de Software Líder (Microservicios) [Remoto]",
+      "description": "Importante empresa del sector tecnologico se encuentra en la busqueda de desarrollador de Software , profesional en Ingeniería de Sistemas, Informática o afín con experiencia de 2 años en adelante en desarrollo de software, liderazgo de equipos de desarrollo, experiencia en desarrollo bajo arquitectura de microservicios. \n\nLiderazgo y mentoring: Experiencia guiando equipos de desarrollo y promoviendo una cultura de aprendizaje y crecimiento continuo. Gestión de Proyectos: Experiencia en la gestión de proyectos ágiles,asegurando entregas de acuerdo a los cronograma definido en la planeación de cada proyecto o contrato. (deseable exp en gestion de proyectos).Te ofrecemos Contrato por obra o labor Salario a convenir de acuerdo a los años de experienciaMOdalidad : Remoto ( Bucaramanga.\n\nBogota,Cucuta)Horarios : L - V 8:00 - 5:30 Si te interesa y cumples con el perfil postulate con tu hoja de vida actualizada.",
+      "apply_options": [
+        {
+          "title": "Tallo",
+          "link": "https://tallo.com/talent/job/technology/software-developer-or-engineer/nj/bogota/desarrollador-de-software-lde-8a43d3a1?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJEZXNhcnJvbGxhZG9yIGRlIFNvZnR3YXJlIEzDrWRlciAoTWljcm9zZXJ2aWNpb3MpIFtSZW1vdG9dIiwiY29tcGFueV9uYW1lIjoiQ29uZmlkZW50aWFsIiwiaHRpZG9jaWQiOiJBUXp0aE5Mb1ZFRXBEZmpzQUFBQUFBPT0iLCJobCI6ImVzIiwiZmMiOiJFc3dCQ293QlFVMXVNeTE1VWtsQ1EwczBTVjlaZDI5SVZubHpTMlJYUnpKRVNITkROM1pTYUcxZllXcHZhV0Y1UkdsUGRGWmxja001VEdSZmQzYzNhekZ3WWpSV1RIZEtOVFI0TW04dFducFFhMGhVVFhOdFFqUnpaVk00TTJreFRWQkdhSGhSYW5jdFRFbGhUMXBJTjBOQmVXaHhla1JMU25SMWIzWTFUMjlXVGpCTFEyZE9hVFpRTUV4RmFGSTVSUzBTRjB3NFkzaGhkWFZZVEhORUxYQjBVVkIxT1VOdWNWRmpHaUpCU2t0TVJtMUxkRWw1UlhObVlWQkhPRTQwWjJWQ2MwWklVMncwYWt0R1MyUm4iLCJmY3YiOiIzIiwiZmNfaWQiOiJBUXp0aE5Mb1ZFRXBEZmpzQUFBQUFBPT0ifQ=="
+    },
+    {
+      "title": "Desarrollador Java Junior - Remoto, crecimiento guiado",
+      "company_name": "Compass Global Business ServicesLLC",
+      "location": "Nueva York, NY",
+      "via": "BeBee",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=gXFNUIL6S6bEQj6uAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xWOsYoCQRBEMfUTjDo-vF05MPGy82BhEQPFwEh6Z4t1vJnpcXpG_DZTQ3_q1qSoBwWvpq_J9PAL5ZTEOe4lUcs3prYEO_ZP2sFLljmZBGO9RchCQ7HjckXd86HXgp6pB8FHByEEakQGh9n3Oeeoq7pWddWgmbM1lRFfS0An9_oinb7jpGdOiI4zTl_Lxb2KYfhYrsVHVqXGSceOforagJH3SDdroJvN-u3aFoxvj5L-5rQ9_gPkH7_szgAAAA&shmds=v1_ATWGeePg98Edo1Q0LxJWx6XVOY4qyAVvgN-o8EYgwrPfmzYw6g&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=gXFNUIL6S6bEQj6uAAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/searches/6a31c72f410cdaa87962b7d9/images/qRqMvNa7-y-evQg-Rh7kvdp3k4_xG3ex61KvmwVmwW8.jpeg",
+      "extensions": [
+        "hace 12 días",
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "posted_at": "hace 12 días",
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://bebee.com/us/jobs/desarrollador-java-junior-remoto-crecimiento-guiado-compass-global-business-servicesllc-new-york--lensa-7428_f2f46f3cba92e7e07445a32da34e45f2d26f96ff1378446257f1b08227c3e314",
+      "job_title": "Desarrollador Java Junior - Remoto, crecimiento guiado",
+      "description": "Compass Global Business Services LLC busca un Desarrollador de Software Java de nivel junior con un CAC activo. El candidato ideal tendrá de 3 a 5 años de experiencia en desarrollo de software, trabajando principalmente con tecnologías como Java, J2EE, y JavaScript. Las responsabilidades incluyen diseñar, desarrollar y probar nuevas funcionalidades, así como implementar conceptos J2EE. El trabajo es remoto y ofrece un salario estimado de entre 55,000 y 75,000 $ según la experiencia.",
+      "apply_options": [
+        {
+          "title": "BeBee",
+          "link": "https://bebee.com/us/jobs/desarrollador-java-junior-remoto-crecimiento-guiado-compass-global-business-servicesllc-new-york--lensa-7428_f2f46f3cba92e7e07445a32da34e45f2d26f96ff1378446257f1b08227c3e314?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJEZXNhcnJvbGxhZG9yIEphdmEgSnVuaW9yIC0gUmVtb3RvLCBjcmVjaW1pZW50byBndWlhZG8iLCJjb21wYW55X25hbWUiOiJDb21wYXNzIEdsb2JhbCBCdXNpbmVzcyBTZXJ2aWNlc0xMQyIsImh0aWRvY2lkIjoiZ1hGTlVJTDZTNmJFUWo2dUFBQUFBQT09IiwiaGwiOiJlcyIsImZjIjoiRXN3QkNvd0JRVTF1TXkxNVUwMDRSWGw2TWxnM1oweGxWa1JzUjFORmEwUnVSa3M1VUVSUllXd3lVVVpmZEcxelRUaGxUa2haY1dkMlQxVkJXRUpsVUZkWllVaElWVko2TFRWNFEzSkhla05sTTJkRWVHUm5ZV1owV0RGdWJpMUZVV0Z0Y2xVMFlWTmpXWEV4YmtGR1UydGhTVWgwTXpsell6TXRURmROU0VGc1ZuVjZSM1pYTkRSUlFqSXRSbG8yUkUwU0YwdzRZM2hoZFhWWVRITkVMWEIwVVZCMU9VTnVjVkZqR2lKQlNrdE1SbTFKT1ZjeVlYb3hSekpoV2xwWFgyWkNOVFJWUTFRMU0xaEViVVJSIiwiZmN2IjoiMyIsImZjX2lkIjoiZ1hGTlVJTDZTNmJFUWo2dUFBQUFBQT09In0="
+    },
+    {
+      "title": "Desarrollador Java Senior — Microservicios SpringBoot Remoto",
+      "company_name": "IRIUM - Spain",
+      "location": "Nueva York, NY",
+      "via": "The BIG Jobsite",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=SPx_Se2UivozWanXAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xWOMQrCQBBFsfUINk4tmohgEzsRJEJSGCxSiEySIa5udtadjaT0EJ5GsPImnsTYfF713h--B8PjhgSdY62xYgc7vCNkZFTP38cTElU6FnJ3VSoWyKxTpl4ze9hTw54jKD4vubVUIVQE1FhNDGRgy1xrGq3O3luJwlBEB7V49KoMSm5CNlRwF164kP-c5IyOrEZPp8Vy3gXW1JNxvI8PCcz6LCrzt6Yt9f9ydtcppPkPCHw_P8AAAAA&shmds=v1_ATWGeeMj_Stw80ffw1BHVSo5GsZfovZXzEYrbaxbHYrsqFnkZQ&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=SPx_Se2UivozWanXAAAAAA%3D%3D",
+      "extensions": [
+        "hace 14 días",
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "posted_at": "hace 14 días",
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://us.thebigjobsite.com/details/E7B9D13B4937FE549C8440EA9F1E9FEA/desarrollador-java-senior---microservicios-springboot-remoto",
+      "job_title": "Desarrollador Java Senior — Microservicios SpringBoot Remoto",
+      "description": "IRIUM - Spain busca un/a Desarrollador/a Senior Java con entre 4 y 10 años de experiencia. El candidato trabajará en microservicios con herramientas modernas y tendrá la posibilidad de desarrollo remoto dentro del territorio español.\n\nOfrecemos un contrato indefinido, acceso ilimitado a formación y un ambiente laboral dinámico. Valoramos la responsabilidad y el compromiso con el trabajo bien hecho, y buscamos personas que compartan nuestros valores.\n\n\n#J-18808-Ljbffr",
+      "apply_options": [
+        {
+          "title": "The BIG Jobsite",
+          "link": "https://us.thebigjobsite.com/details/E7B9D13B4937FE549C8440EA9F1E9FEA/desarrollador-java-senior---microservicios-springboot-remoto?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJEZXNhcnJvbGxhZG9yIEphdmEgU2VuaW9yIOKAlCBNaWNyb3NlcnZpY2lvcyBTcHJpbmdCb290IFJlbW90byIsImNvbXBhbnlfbmFtZSI6IklSSVVNIC0gU3BhaW4iLCJodGlkb2NpZCI6IlNQeF9TZTJVaXZveldhblhBQUFBQUE9PSIsImhsIjoiZXMiLCJmYyI6IkVzd0JDb3dCUVUxdU15MTVVMlZwT0hab2FVc3djekE1UzBOMFNIbEJVbWRpWmxKMmVEaGpiMnRQT1hkTk1XaExkRUkzU1V3MVVETldhSHBrWTI1MFFuRjZkbWxoYjNGUmNVeFhZbFIxZUdzelNqQXhWR3hRVDBOelgyaHNkSEpsYlVjM2JXTTVZbkV4WTE4dFdVZzVlbUppV0doelkwaGtRV1EwV0RBM2VVcFpXa28yWXpnMFpHcFFSQzAzVDJ0dE1td1NGMHc0WTNoaGRYVllUSE5FTFhCMFVWQjFPVU51Y1ZGakdpSkJTa3RNUm0xSmIzWXpObDg1TlUwemRUZFdhMmszVUhka1FraG1kV1pWWWxCUiIsImZjdiI6IjMiLCJmY19pZCI6IlNQeF9TZTJVaXZveldhblhBQUFBQUE9PSJ9"
+    },
+    {
+      "title": "Desarrollador WordPress Senior Remoto, Horarios Flexibles",
+      "company_name": "BairesDev",
+      "location": "Nueva York, NY",
+      "via": "BeBee",
+      "share_link": "https://www.google.com/search?ibp=htl;jobs&q=desarrollador+remoto&htidocid=_dHniVfjO0xo5ANFAAAAAA%3D%3D&hl=es-US&shem=epsd1,rimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_xWOsQ7BYBRGY_UILHcWaUViYZMGUyMMmJpb_dL-_O2te3_SBzNZvRhdznCGkzN8D4bnBMaq4j0XonQSLfYKMzqicX9xQC1BprQTZXVitPHoXO5hS8q_H3s8UTAVINSthxAa2oqUHqNVFUJryzg281FpgYO7RlepY2mQSxffJLcemVWsaD0HZPPFrIvappyM1-z-GwlefTF94sV0Eb1PKb38AJhJluO3AAAA&shmds=v1_ATWGeeMjL-2pumyqW1hbd10zT3vWSOaMLHDcL8Ewui9iFRmcPg&source=sh/x/job/li/m1/1#fpstate=tldetail&htivrt=jobs&htiq=desarrollador+remoto&htidocid=_dHniVfjO0xo5ANFAAAAAA%3D%3D",
+      "thumbnail": "https://serpapi.com/searches/6a31c72f410cdaa87962b7d9/images/wqENeeFpuECGSoQWtZ7q-QAUzUKlyE1F2TE03ncy8wA.jpeg",
+      "extensions": [
+        "hace 12 días",
+        "Tiempo completo"
+      ],
+      "detected_extensions": {
+        "posted_at": "hace 12 días",
+        "schedule_type": "Tiempo completo"
+      },
+      "source_link": "https://bebee.com/us/jobs/desarrollador-wordpress-senior-remoto-horarios-flexibles-bairesdev-new-york--lensa-7428_a57cf762f9e9ce8c711caf2d9967e5d98707f24c9fd1187eb47e4996d733b0dd",
+      "job_title": "Desarrollador WordPress Senior Remoto, Horarios Flexibles",
+      "description": "Una empresa de tecnología en rápido crecimiento busca un Desarrollador de WordPress para unirse a su equipo. En esta posición, serás responsable de diseñar y crear funciones de back-end y mantener los sitios de WordPress. Se requiere más de 5 años de experiencia, junto con un buen conocimiento de tecnologías front-end y arquitectura de sitios web. Ofrecemos trabajo 100% remoto, horarios flexibles y compensación por encima de la media del mercado.",
+      "apply_options": [
+        {
+          "title": "BeBee",
+          "link": "https://bebee.com/us/jobs/desarrollador-wordpress-senior-remoto-horarios-flexibles-bairesdev-new-york--lensa-7428_a57cf762f9e9ce8c711caf2d9967e5d98707f24c9fd1187eb47e4996d733b0dd?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic"
+        }
+      ],
+      "job_id": "eyJqb2JfdGl0bGUiOiJEZXNhcnJvbGxhZG9yIFdvcmRQcmVzcyBTZW5pb3IgUmVtb3RvLCBIb3JhcmlvcyBGbGV4aWJsZXMiLCJjb21wYW55X25hbWUiOiJCYWlyZXNEZXYiLCJodGlkb2NpZCI6Il9kSG5pVmZqTzB4bzVBTkZBQUFBQUE9PSIsImhsIjoiZXMiLCJmYyI6IkVzd0JDb3dCUVUxdU15MTVWRTFxVkc5VGEwNVNhMEZKWVd0VFRHZzFkVFIyVjAxaldVRnJZbk52YzFCRE1teHpiRGxHY2w5aFdsb3lWemMzWVdWYVQxTkxRMk13WTBoaU4yZE9RbDlFYXpGRlFWRTNWRloxTW1sUlgweEhiM1ZuVUdNMU1YcG9WWFJaTWtjd1JtbHFNMGxFT1RKSWRFSnZRMjkxU0haNWFIQmtMVUZTTWxCT1ZYQXRSVXc1Tm14TFZETVNGMHc0WTNoaGRYVllUSE5FTFhCMFVWQjFPVU51Y1ZGakdpSkJTa3RNUm0xS2NGRTFjRVZ4YUZJeWJESTFlalZPTkhsWFkydGtPRnBHWnpGQiIsImZjdiI6IjMiLCJmY19pZCI6Il9kSG5pVmZqTzB4bzVBTkZBQUFBQUE9PSJ9"
+    }
+  ],
+  "serpapi_pagination": {
+    "next_page_token": "eyJmYyI6IkVvd0RDc3dDUVUxdU15MTVValp3VERadFlYTkxlVEZYVWs5Mk5qUXhRbmRFZFdWQ1QxQllYMkk1UkZsalZtb3pWREpTWkdOWlVWUnVTV2d3Y0d0bWJXSnphRUZzTURoWWExOUZka1pXTWxjMkxVa3hNRTB0TkU1a1REQjNaRjh3UWtoMFRWQkhRbWx0Ymt0ZlFuUXhkVlZxWkhnNE1IUlRRMGxHTkdwaVJ6ZDJka3hvYUhoT1VreDZWRk5GZURkNmVGRlFPV280U2pGc01VaGtVSFJ1U1UxRVZ6STVOWFF3YXpacE5HUTBVbTlUYmtveE5VdEZUWEUzWjNjeVJXaFViRFpaTTNsd1gyeFBXRkpCVTAxYVdVcHdiSGxZT0Vack9TMUZWRUpFV1daaVRXNW5hRk5DVmtsS2VEZHFibGxtYURkWmFHZHNXbkpqWTNvMmFuaEtTbW8yTFZsR0xXUTJXR0ZKY25OSVkyNTRPR1JyYzBkNlJVNW9aWGhpUW1OM2NHWTFVSG8wVDBWNGMwcGllbGRRUTNaTWJHMXNVV1pLWlhwT1pXZzRjVnBtVFdoR1JDMDRZVlEzWkhFM2IwbGhkMW9TRjB3NFkzaGhkWFZZVEhORUxYQjBVVkIxT1VOdWNWRmpHaUpCU2t0TVJtMUtNRWs1UlhoQk4xaHJXbkZ4TlhoUVpsVm1MV2w0V2tOV1pEaFIiLCJmY3YiOiIzIn0=",
+    "next": "https://serpapi.com/search.json?engine=google_jobs&google_domain=google.com&hl=es&next_page_token=eyJmYyI6IkVvd0RDc3dDUVUxdU15MTVValp3VERadFlYTkxlVEZYVWs5Mk5qUXhRbmRFZFdWQ1QxQllYMkk1UkZsalZtb3pWREpTWkdOWlVWUnVTV2d3Y0d0bWJXSnphRUZzTURoWWExOUZka1pXTWxjMkxVa3hNRTB0TkU1a1REQjNaRjh3UWtoMFRWQkhRbWx0Ymt0ZlFuUXhkVlZxWkhnNE1IUlRRMGxHTkdwaVJ6ZDJka3hvYUhoT1VreDZWRk5GZURkNmVGRlFPV280U2pGc01VaGtVSFJ1U1UxRVZ6STVOWFF3YXpacE5HUTBVbTlUYmtveE5VdEZUWEUzWjNjeVJXaFViRFpaTTNsd1gyeFBXRkpCVTAxYVdVcHdiSGxZT0Vack9TMUZWRUpFV1daaVRXNW5hRk5DVmtsS2VEZHFibGxtYURkWmFHZHNXbkpqWTNvMmFuaEtTbW8yTFZsR0xXUTJXR0ZKY25OSVkyNTRPR1JyYzBkNlJVNW9aWGhpUW1OM2NHWTFVSG8wVDBWNGMwcGllbGRRUTNaTWJHMXNVV1pLWlhwT1pXZzRjVnBtVFdoR1JDMDRZVlEzWkhFM2IwbGhkMW9TRjB3NFkzaGhkWFZZVEhORUxYQjBVVkIxT1VOdWNWRmpHaUpCU2t0TVJtMUtNRWs1UlhoQk4xaHJXbkZ4TlhoUVpsVm1MV2w0V2tOV1pEaFIiLCJmY3YiOiIzIn0%3D&q=desarrollador+remoto"
+  }
+}

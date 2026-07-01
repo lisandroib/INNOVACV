@@ -12,6 +12,9 @@ interface ChatAssistantProps {
   activeSection: string;
   resumeContext: string;
   isDarkMode?: boolean;
+  onApplySuggestion?: (text: string) => void;
+  targetJob: string;
+  onTargetJobChange: (job: string) => void;
 }
 
 // Simple helper to parse basic markdown to React elements
@@ -38,9 +41,9 @@ function parseMarkdown(text: string) {
     let lastIndex = 0;
 
     // Handle list items
-    const isBullet = cleanLine.startsWith('*') || cleanLine.startsWith('-');
+    const isBullet = cleanLine.startsWith('* ') || cleanLine.startsWith('- ');
     if (isBullet) {
-      currentText = cleanLine.substring(1).trim();
+      currentText = cleanLine.substring(2).trim();
     }
 
     while ((match = boldRegex.exec(currentText)) !== null) {
@@ -73,19 +76,46 @@ function parseMarkdown(text: string) {
   });
 }
 
-export default function ChatAssistant({ activeSection, resumeContext, isDarkMode = false }: ChatAssistantProps) {
+export default function ChatAssistant({ activeSection, resumeContext, isDarkMode = false, onApplySuggestion, targetJob, onTargetJobChange }: ChatAssistantProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
       content: '¡Hola! Escribe el **puesto objetivo** al que deseas aplicar arriba para poder darte sugerencias alineadas. Luego, puedes preguntarme lo que quieras o pedirme que analice tu currículum.',
     },
   ]);
-  const [targetJob, setTargetJob] = useState('');
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [selectionMenu, setSelectionMenu] = useState<{ text: string; top: number; left: number } | null>(null);
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed) {
+        setSelectionMenu(null);
+      }
+    };
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+  }, []);
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed) {
+      const text = sel.toString().trim();
+      if (text) {
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        setSelectionMenu({
+          text,
+          top: rect.top - 40,
+          left: rect.left + rect.width / 2,
+        });
+      }
+    }
+  };
 
   // Auto-scroll to bottom of messages
   useEffect(() => {
@@ -161,7 +191,7 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
             type="text"
             placeholder="Ej: Frontend Developer, Contador, etc."
             value={targetJob}
-            onChange={(e) => setTargetJob(e.target.value)}
+            onChange={(e) => onTargetJobChange(e.target.value)}
             className={`w-full text-xs px-2.5 py-1.5 rounded-lg outline-none transition-all font-semibold border ${isDarkMode
               ? 'bg-[#1b254b] border-white/10 text-white focus:border-violet-500 focus:bg-[#111c44] placeholder-slate-500'
               : 'bg-slate-50 border-slate-200 focus:border-violet-500 focus:bg-white'
@@ -195,7 +225,10 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
       </div>
 
       {/* Chat History Area */}
-      <div className={`flex-1 overflow-y-auto p-3.5 space-y-3.5 ${isDarkMode ? 'bg-[#0f172a]' : 'bg-[#f8fafc]'}`}>
+      <div 
+        className={`flex-1 overflow-y-auto p-3.5 space-y-3.5 ${isDarkMode ? 'bg-[#0f172a]' : 'bg-[#f8fafc]'}`}
+        onMouseUp={handleMouseUp}
+      >
         {messages.map((msg, i) => (
           <div key={i} className={`flex items-start gap-2.5 ${msg.role === 'user' ? 'justify-end' : ''}`}>
             {msg.role === 'assistant' && (
@@ -249,6 +282,28 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Selection Action Menu */}
+      {selectionMenu && onApplySuggestion && (
+        <div 
+          className="fixed z-50 transform -translate-x-1/2 -translate-y-full mb-2"
+          style={{ top: selectionMenu.top, left: selectionMenu.left }}
+        >
+          <button
+            onMouseDown={(e) => {
+              e.preventDefault();
+              onApplySuggestion(selectionMenu.text);
+              setSelectionMenu(null);
+              window.getSelection()?.removeAllRanges();
+            }}
+            type="button"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium rounded-lg shadow-lg cursor-pointer transition-all active:scale-95 border border-white/20"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Aplicar al CV
+          </button>
+        </div>
+      )}
 
       {/* Input / Form Control */}
       <form

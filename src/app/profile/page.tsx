@@ -331,20 +331,7 @@ export default function ProfilePage() {
     }
   ]);
 
-  const [courses, setCourses] = useState([
-    {
-      id: 'c1',
-      titulo: 'Desarrollo Full Stack React & Node',
-      institucion: 'Educación IT',
-      anio: '2024'
-    },
-    {
-      id: 'c2',
-      titulo: 'Inglés Avanzado C1 EF SET',
-      institucion: 'EF Education First',
-      anio: '2023'
-    }
-  ]);
+  const [courses, setCourses] = useState<any[]>([]);
 
   // Estados del modal de educación
   const [isEduModalOpen, setIsEduModalOpen] = useState(false);
@@ -1836,7 +1823,7 @@ export default function ProfilePage() {
                           </div>
                         </div>
                         <p className="education-item-sub">{edu.titulo}</p>
-                        <p className="education-item-years">año {edu.anioInicio}–año {edu.anioFin}</p>
+                        <p className="education-item-years">{edu.anioInicio}{edu.anioInicio && edu.anioFin ? ' - ' : ''}{edu.anioFin}</p>
                       </div>
                     ))}
                   </div>
@@ -1895,7 +1882,7 @@ export default function ProfilePage() {
                           </div>
                         </div>
                         <p className="education-item-sub">{c.institucion}</p>
-                        <p className="education-item-years">Año {c.anio}</p>
+                        <p className="education-item-years">{c.anio}</p>
                       </div>
                     ))}
                   </div>
