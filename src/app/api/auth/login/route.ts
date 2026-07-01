@@ -20,6 +20,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 });
     }
 
+    // Si el usuario no tiene contraseña, es porque se registró mediante OAuth (Google/Facebook)
+    if (!user.password) {
+      const providerName = user.provider ? (user.provider.charAt(0).toUpperCase() + user.provider.slice(1)) : 'un proveedor social';
+      return NextResponse.json(
+        { error: `Esta cuenta está registrada a través de ${providerName}. Por favor, inicia sesión usando el botón correspondiente.` },
+        { status: 400 }
+      );
+    }
+
     // Verificar la contraseña contra el hash en base de datos
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
