@@ -39,13 +39,41 @@ export default function ProfilePage() {
               if (dbData.datos_personales.linkedin) setLinkedin(dbData.datos_personales.linkedin);
               
               if (dbData.datos_personales.ubicacion) {
-                const ciudad = dbData.datos_personales.ubicacion.ciudad || '';
-                const prov = dbData.datos_personales.ubicacion.provincia || '';
-                const ub = `${ciudad}${ciudad && prov ? ', ' : ''}${prov}`;
-                if (ub) setCiudad(ub);
+                const ciudadDB = dbData.datos_personales.ubicacion.ciudad || '';
+                const provDB = dbData.datos_personales.ubicacion.provincia || '';
+                const ub = `${ciudadDB}${ciudadDB && provDB ? ', ' : ''}${provDB}`;
+                
+                if (ub && ub.trim() !== '' && !ub.includes('{{')) {
+                  setCiudad(ub);
+                } else {
+                  // Si no hay ubicación válida, intentar obtenerla automáticamente
+                  fetch('https://ipapi.co/json/')
+                    .then(r => r.json())
+                    .then(geo => {
+                      if (geo && geo.city && geo.country_name) {
+                        setCiudad(`${geo.city}, ${geo.country_name}`);
+                      }
+                    })
+                    .catch(e => console.error("Error obteniendo IP local:", e));
+                }
+              } else {
+                // Si no hay objeto ubicación, intentar obtenerla automáticamente
+                fetch('https://ipapi.co/json/')
+                  .then(r => r.json())
+                  .then(geo => {
+                    if (geo && geo.city && geo.country_name) {
+                      setCiudad(`${geo.city}, ${geo.country_name}`);
+                    }
+                  })
+                  .catch(e => console.error("Error obteniendo IP local:", e));
               }
             }
-            if (dbData.email_registro) setMail(dbData.email_registro);
+            
+            if (dbData.datos_personales?.correo_electronico || dbData.datos_personales?.email) {
+              setMail(dbData.datos_personales.correo_electronico || dbData.datos_personales.email);
+            } else if (dbData.email_registro) {
+              setMail(dbData.email_registro);
+            }
 
             if (dbData.experiencia_laboral && dbData.experiencia_laboral.trabajo_actual) {
               const ta = dbData.experiencia_laboral.trabajo_actual;
@@ -62,14 +90,31 @@ export default function ProfilePage() {
             }
 
             if (dbData.habilidades) {
-              let newSkills = [];
-              if (dbData.habilidades.duras) {
-                newSkills.push(...dbData.habilidades.duras.split(',').map((s: string, i: number) => ({ id: `d${i}`, nombre: s.trim(), descripcion: 'Habilidad Dura' })));
-              }
-              if (dbData.habilidades.blandas) {
-                newSkills.push(...dbData.habilidades.blandas.split(',').map((s: string, i: number) => ({ id: `b${i}`, nombre: s.trim(), descripcion: 'Habilidad Blanda' })));
-              }
-              if (newSkills.length > 0) setSkills(newSkills.filter((s: any) => s.nombre));
+              let newSkills: any[] = [];
+              
+              // Recopilar todas las habilidades duras
+              const duras = [
+                ...(dbData.habilidades.duras ? dbData.habilidades.duras.split(',') : []),
+                ...(dbData.habilidades.duras_seleccionadas ? dbData.habilidades.duras_seleccionadas.split(',') : []),
+                ...(dbData.habilidades.duras_manuales ? dbData.habilidades.duras_manuales.split(',') : [])
+              ].map(s => s.trim()).filter(Boolean);
+              
+              Array.from(new Set(duras)).forEach((s, i) => {
+                newSkills.push({ id: `d${i}`, nombre: s, descripcion: 'Habilidad Dura' });
+              });
+
+              // Recopilar todas las habilidades blandas
+              const blandas = [
+                ...(dbData.habilidades.blandas ? dbData.habilidades.blandas.split(',') : []),
+                ...(dbData.habilidades.blandas_seleccionadas ? dbData.habilidades.blandas_seleccionadas.split(',') : []),
+                ...(dbData.habilidades.blandas_manuales ? dbData.habilidades.blandas_manuales.split(',') : [])
+              ].map(s => s.trim()).filter(Boolean);
+              
+              Array.from(new Set(blandas)).forEach((s, i) => {
+                newSkills.push({ id: `b${i}`, nombre: s, descripcion: 'Habilidad Blanda' });
+              });
+
+              if (newSkills.length > 0) setSkills(newSkills);
             }
             
             if (dbData.educacion) {
@@ -84,6 +129,11 @@ export default function ProfilePage() {
                 edu.push({ id: 's1', institucion: dbData.educacion.secundario.institucion || '', titulo: dbData.educacion.secundario.titulo, anioInicio: '', anioFin: dbData.educacion.secundario.ultimo_ano || '' });
               }
               if (edu.length > 0) setFormalEducation(edu);
+            }
+
+            const dbCursos = dbData.cursos || (dbData.educacion && dbData.educacion.cursos);
+            if (dbCursos && Array.isArray(dbCursos)) {
+              setCourses(dbCursos);
             }
           } else {
             // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
@@ -136,6 +186,7 @@ export default function ProfilePage() {
     const finalExperiences = overrides.nextExperiences !== undefined ? overrides.nextExperiences : experiences;
     const finalFormalEducation = overrides.nextFormalEducation !== undefined ? overrides.nextFormalEducation : formalEducation;
     const finalSkills = overrides.nextSkills !== undefined ? overrides.nextSkills : skills;
+    const finalCourses = overrides.nextCourses !== undefined ? overrides.nextCourses : courses;
 
     const cleanCiudad = finalCiudad.split(',')[0]?.trim() || '';
     const cleanProvincia = finalCiudad.split(',')[1]?.trim() || '';
@@ -162,6 +213,7 @@ export default function ProfilePage() {
       datos_personales: {
         nombre_completo: `${finalNombre} ${finalApellido}`.trim(),
         fecha_nacimiento: finalFechaNacimiento,
+        correo_electronico: finalMail,
         telefono: finalTelefono,
         linkedin: finalLinkedin,
         ubicacion: {
@@ -174,15 +226,15 @@ export default function ProfilePage() {
         trabajo_actual: ta ? {
           empresa: ta.company,
           puesto: ta.position,
-          fecha_inicio: ta.anioInicio,
-          fecha_fin: ta.anioFin,
+          fecha_inicio: ta.anioInicio ? String(ta.anioInicio).toUpperCase() : '',
+          fecha_fin: ta.anioFin ? String(ta.anioFin).toUpperCase() : '',
           descripcion: ta.desc
         } : null,
         historial: hist.map(h => ({
           empresa: h.company,
           puesto: h.position,
-          fecha_inicio: h.anioInicio,
-          fecha_fin: h.anioFin,
+          fecha_inicio: h.anioInicio ? String(h.anioInicio).toUpperCase() : '',
+          fecha_fin: h.anioFin ? String(h.anioFin).toUpperCase() : '',
           descripcion: h.desc
         }))
       },
@@ -205,12 +257,14 @@ export default function ProfilePage() {
           titulo: gradoObj.titulo,
           ano_inicio: gradoObj.anioInicio,
           ano_fin: gradoObj.anioFin
-        } : null
+        } : null,
+        cursos: finalCourses
       },
       habilidades: {
         duras: durasArr.join(', '),
         blandas: blandasArr.join(', ')
-      }
+      },
+      cursos: finalCourses
     };
 
     try {
@@ -1011,14 +1065,12 @@ export default function ProfilePage() {
     docInputRef.current?.click();
   };
 
-  // Simular la subida del archivo e importación por IA
-  const handleUploadFileSelect = (file: File) => {
+  const handleUploadFileSelect = async (file: File) => {
     const fileId = String(Date.now());
     const fileSizeStr = file.size > 1024 * 1024 
       ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
       : `${(file.size / 1024).toFixed(0)} KB`;
 
-    // Agregar el archivo a la lista en carga
     const newUploadFile = {
       id: fileId,
       name: file.name,
@@ -1031,72 +1083,53 @@ export default function ProfilePage() {
 
     let progress = 0;
     const interval = setInterval(() => {
-      progress += Math.floor(Math.random() * 15) + 5;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-        if (activeUploadIntervals.current[fileId]) {
-          delete activeUploadIntervals.current[fileId];
-        }
+      progress += Math.floor(Math.random() * 10) + 5;
+      if (progress > 90) progress = 90;
+      setUploadFiles(prev => prev.map(f => f.id === fileId ? { ...f, progress } : f));
+    }, 200);
 
-        // Actualizar archivo a completado
-        setUploadFiles(prev =>
-          prev.map(f => f.id === fileId ? { ...f, progress: 100, status: 'completed' } : f)
-        );
-
-        // Simular análisis inteligente de IA e incorporar automáticamente a la educación formal/curso
-        setTimeout(() => {
-          // Agregar un curso/certificación de la "IA InnovaCV" al perfil
-          const mockCourses = [
-            { titulo: 'Certificación en JavaScript Moderno y ES6+', institucion: 'Udemy / IA Engine' },
-            { titulo: 'Especialización en Diseño de Experiencia de Usuario (UX)', institucion: 'Coursera / Google AI' },
-            { titulo: 'Desarrollador React Frontend Avanzado', institucion: 'Platzi / AI Analyzer' },
-            { titulo: 'Inglés Profesional y de Negocios C1', institucion: 'EF Education First' }
-          ];
-
-          // Elegir uno aleatorio o basado en el nombre del archivo
-          const cleanName = file.name.toLowerCase();
-          let matchedCourse = mockCourses[0];
-          if (cleanName.includes('ux') || cleanName.includes('design') || cleanName.includes('diseño')) {
-            matchedCourse = mockCourses[1];
-          } else if (cleanName.includes('react') || cleanName.includes('frontend') || cleanName.includes('web')) {
-            matchedCourse = mockCourses[2];
-          } else if (cleanName.includes('ingles') || cleanName.includes('english') || cleanName.includes('c1')) {
-            matchedCourse = mockCourses[3];
-          } else {
-            // Personalizado basado en el archivo
-            matchedCourse = {
-              titulo: `Certificación en ${file.name.replace(/\.[^/.]+$/, "")}`,
-              institucion: 'InnovaCV AI Engine'
-            };
-          }
-
-          const generatedCourseId = `c_ai_${Date.now()}`;
-          const mockCert = {
-            id: generatedCourseId,
-            titulo: matchedCourse.titulo,
-            institucion: matchedCourse.institucion,
-            anio: '2025'
-          };
-
-          // Agregar curso al perfil
-          setCourses((prev) => [mockCert, ...prev]);
-
-          // Vincular el curso creado al archivo cargado para permitir borrado simultáneo
-          setUploadFiles(prev =>
-            prev.map(f => f.id === fileId ? { ...f, courseId: generatedCourseId } : f)
-          );
-        }, 800);
-      } else {
-        // Actualizar progreso
-        setUploadFiles(prev =>
-          prev.map(f => f.id === fileId ? { ...f, progress } : f)
-        );
-      }
-    }, 150);
-
-    // Guardar referencia del temporizador por si se cancela la subida a mitad de camino
     activeUploadIntervals.current[fileId] = interval;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/upload-pdf', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      clearInterval(interval);
+      delete activeUploadIntervals.current[fileId];
+
+      if (response.ok && data.id) {
+        setUploadFiles(prev => prev.map(f => f.id === fileId ? { ...f, progress: 100, status: 'completed', courseId: `c_ai_${fileId}` } : f));
+
+        // Crear el curso/certificación
+        let titulo = `Certificación en ${file.name.replace(/\.[^/.]+$/, "")}`;
+        let institucion = 'InnovaCV';
+
+        const mockCert = {
+          id: `c_ai_${fileId}`,
+          titulo,
+          institucion,
+          anio: new Date().getFullYear().toString(),
+          pdf_id: data.id // Asociar el ID del PDF en la base de datos
+        };
+
+        setCourses(prev => [mockCert, ...prev]);
+      } else {
+        setUploadFiles(prev => prev.filter(f => f.id !== fileId));
+        alert('Error al subir el archivo');
+      }
+    } catch (err) {
+      clearInterval(interval);
+      delete activeUploadIntervals.current[fileId];
+      setUploadFiles(prev => prev.filter(f => f.id !== fileId));
+      alert('Error de conexión al subir el archivo');
+    }
   };
 
   // Manejar cambio en el input de archivo
@@ -1255,7 +1288,7 @@ export default function ProfilePage() {
     return (
       <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc' }}>
         <GooeyLoader />
-        <p style={{ marginTop: '20px', fontFamily: 'Inter, sans-serif', color: isDarkMode ? '#e2e8f0' : '#475569', fontWeight: 500 }}>Sincronizando perfil con la base de datos...</p>
+        <p style={{ marginTop: '20px', fontFamily: 'Inter, sans-serif', color: isDarkMode ? '#e2e8f0' : '#475569', fontWeight: 500 }}>Cargando tu perfil...</p>
       </div>
     );
   }
@@ -1818,6 +1851,29 @@ export default function ProfilePage() {
                         <div className="education-item-header">
                           <h3 className="education-item-name">{c.titulo}</h3>
                           <div className="education-item-actions">
+                            {c.pdf_id && (
+                              <a 
+                                href={`/api/pdf/${c.pdf_id}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="btn-view-pdf-small"
+                                title="Ver Certificado"
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  color: '#3B82F6',
+                                  padding: '4px',
+                                  marginRight: '8px'
+                                }}
+                              >
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z" />
+                                  <path d="M14 2v6h6" />
+                                  <circle cx="12" cy="13" r="3" />
+                                </svg>
+                              </a>
+                            )}
                             <button 
                               className="btn-edit-education-small" 
                               title="Editar curso"
