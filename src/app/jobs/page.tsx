@@ -519,8 +519,8 @@ export default function JobsPage() {
         {/* =========================================
             BARRA DE BÚSQUEDA UNIFICADA FLOTANTE
            ========================================= */}
-        {!isLoading && activeTab !== 'saved' && (
-          <div className={`floating-search-wrapper state-${viewState}`}>
+        {!isLoading && (
+          <div className={`floating-search-wrapper state-${viewState} ${activeTab === 'saved' ? 'hide-search' : ''}`}>
             <h1 className="jobs-hero-title">Encuentra tu próximo empleo</h1>
             <div className="jobs-hero-search-box">
               <div className="hero-input-group">
