@@ -567,7 +567,7 @@ export default function JobsPage() {
         ) : (
           <div key="content" className={`jobs-content-transition state-${activeTab === 'saved' ? 'compact' : viewState}`}>
             {/* Tab Selectors de Sección */}
-            {activeTab !== 'saved' && (
+            {activeTab !== 'saved' && hasSearched && (
               <div className="jobs-section-tabs">
               <button
                 type="button"
