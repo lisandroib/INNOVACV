@@ -91,28 +91,38 @@ export default function ProfilePage() {
 
             if (dbData.habilidades) {
               let newSkills: any[] = [];
+              const toArray = (val: any) => {
+                if (!val) return [];
+                if (Array.isArray(val)) return val;
+                if (typeof val === 'string') return val.split(',');
+                return [];
+              };
               
-              // Recopilar todas las habilidades duras
-              const duras = [
-                ...(dbData.habilidades.duras ? dbData.habilidades.duras.split(',') : []),
-                ...(dbData.habilidades.duras_seleccionadas ? dbData.habilidades.duras_seleccionadas.split(',') : []),
-                ...(dbData.habilidades.duras_manuales ? dbData.habilidades.duras_manuales.split(',') : [])
-              ].map(s => s.trim()).filter(Boolean);
-              
-              Array.from(new Set(duras)).forEach((s, i) => {
-                newSkills.push({ id: `d${i}`, nombre: s, descripcion: 'Habilidad Dura' });
-              });
+              if (dbData.habilidades.detalles && Array.isArray(dbData.habilidades.detalles)) {
+                // Si ya existe la versión detallada, la usamos
+                newSkills = dbData.habilidades.detalles;
+              } else {
+                // Modo retrocompatibilidad
+                const duras = [
+                  ...toArray(dbData.habilidades.duras),
+                  ...toArray(dbData.habilidades.duras_seleccionadas),
+                  ...toArray(dbData.habilidades.duras_manuales)
+                ].map((s: string) => s.trim()).filter(Boolean);
+                
+                Array.from(new Set(duras)).forEach((s, i) => {
+                  newSkills.push({ id: `d${i}`, nombre: s, tipo: 'Dura', origen: '' });
+                });
 
-              // Recopilar todas las habilidades blandas
-              const blandas = [
-                ...(dbData.habilidades.blandas ? dbData.habilidades.blandas.split(',') : []),
-                ...(dbData.habilidades.blandas_seleccionadas ? dbData.habilidades.blandas_seleccionadas.split(',') : []),
-                ...(dbData.habilidades.blandas_manuales ? dbData.habilidades.blandas_manuales.split(',') : [])
-              ].map(s => s.trim()).filter(Boolean);
-              
-              Array.from(new Set(blandas)).forEach((s, i) => {
-                newSkills.push({ id: `b${i}`, nombre: s, descripcion: 'Habilidad Blanda' });
-              });
+                const blandas = [
+                  ...toArray(dbData.habilidades.blandas),
+                  ...toArray(dbData.habilidades.blandas_seleccionadas),
+                  ...toArray(dbData.habilidades.blandas_manuales)
+                ].map((s: string) => s.trim()).filter(Boolean);
+                
+                Array.from(new Set(blandas)).forEach((s, i) => {
+                  newSkills.push({ id: `b${i}`, nombre: s, tipo: 'Blanda', origen: '' });
+                });
+              }
 
               if (newSkills.length > 0) setSkills(newSkills);
             }
@@ -206,8 +216,8 @@ export default function ProfilePage() {
     const terciarioObj = findEdu('t1', 'terciar') || findEdu('t1', 'tecnic') || finalFormalEducation.find(e => e.id === 't1');
     const secundarioObj = findEdu('s1', 'secundar') || findEdu('s1', 'colegio') || finalFormalEducation.find(e => e.id === 's1');
 
-    const durasArr = finalSkills.filter((s: any) => s.descripcion?.toLowerCase().includes('dura') || s.descripcion?.toLowerCase().includes('experiencia') || s.descripcion?.toLowerCase().includes('curso')).map((s: any) => s.nombre);
-    const blandasArr = finalSkills.filter((s: any) => s.descripcion?.toLowerCase().includes('blanda') || s.descripcion?.toLowerCase().includes('educación') || s.descripcion?.toLowerCase().includes('metodologías')).map((s: any) => s.nombre);
+    const durasArr = finalSkills.filter((s: any) => s.tipo === 'Dura').map((s: any) => s.nombre);
+    const blandasArr = finalSkills.filter((s: any) => s.tipo === 'Blanda').map((s: any) => s.nombre);
 
     const payload = {
       datos_personales: {
@@ -262,7 +272,8 @@ export default function ProfilePage() {
       },
       habilidades: {
         duras: durasArr.join(', '),
-        blandas: blandasArr.join(', ')
+        blandas: blandasArr.join(', '),
+        detalles: finalSkills
       },
       cursos: finalCourses
     };
@@ -404,7 +415,8 @@ export default function ProfilePage() {
 
   // Estados temporales de formulario de habilidades
   const [skillNombre, setSkillNombre] = useState('');
-  const [skillDescripcion, setSkillDescripcion] = useState('');
+  const [skillTipo, setSkillTipo] = useState<'Dura' | 'Blanda' | ''>('');
+  const [skillOrigen, setSkillOrigen] = useState('');
 
   // Estados para el dropdown custom de habilidades
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -435,7 +447,7 @@ export default function ProfilePage() {
   }, [isDropdownOpen]);
 
   // Estado de errores para habilidades
-  const [errorsSkill, setErrorsSkill] = useState<{ nombre?: string; descripcion?: string }>({});
+  const [errorsSkill, setErrorsSkill] = useState<{ nombre?: string; tipo?: string; origen?: string }>({});
 
   // --- ESTADOS PARA CONFIRMACIÓN DE ELIMINACIÓN CUSTOMIZADA (MEDIO DE LA PANTALLA) ---
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -1165,7 +1177,8 @@ export default function ProfilePage() {
   const handleOpenAddSkill = () => {
     setEditingSkillId(null);
     setSkillNombre('');
-    setSkillDescripcion('');
+    setSkillTipo('');
+    setSkillOrigen('');
     setIsDropdownOpen(false);
     setErrorsSkill({});
     setIsSkillModalOpen(true);
@@ -1177,7 +1190,8 @@ export default function ProfilePage() {
     if (sk) {
       setEditingSkillId(id);
       setSkillNombre(sk.nombre);
-      setSkillDescripcion(sk.descripcion);
+      setSkillTipo(sk.tipo || '');
+      setSkillOrigen(sk.origen || '');
       setIsDropdownOpen(false);
       setErrorsSkill({});
       setIsSkillModalOpen(true);
@@ -1232,8 +1246,8 @@ export default function ProfilePage() {
     if (!skillNombre.trim()) {
       newErrors.nombre = "El nombre de la habilidad es obligatorio.";
     }
-    if (!skillDescripcion.trim()) {
-      newErrors.descripcion = "La descripción de la habilidad es obligatoria.";
+    if (!skillTipo) {
+      newErrors.tipo = "El tipo de habilidad es obligatorio.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -1247,7 +1261,8 @@ export default function ProfilePage() {
       const newSk = {
         id: String(Date.now()),
         nombre: skillNombre.trim(),
-        descripcion: skillDescripcion.trim()
+        tipo: skillTipo,
+        origen: skillOrigen
       };
       nextSkills = [newSk, ...skills];
       setSkills(nextSkills);
@@ -1258,7 +1273,8 @@ export default function ProfilePage() {
           ? {
               ...s,
               nombre: skillNombre.trim(),
-              descripcion: skillDescripcion.trim()
+              tipo: skillTipo,
+              origen: skillOrigen
             }
           : s
       );
@@ -1952,9 +1968,36 @@ export default function ProfilePage() {
                     </button>
                   </div>
                   <h3 className="skill-name">{sk.nombre}</h3>
-                  <span className={`skill-badge badge-${sk.descripcion.toLowerCase() === 'educación' ? 'educacion' : sk.descripcion.toLowerCase()}`}>
-                    {sk.descripcion}
+                  <span className={`skill-badge badge-${sk.tipo ? sk.tipo.toLowerCase() : 'blanda'}`}>
+                    Habilidad {sk.tipo || 'Blanda'}
                   </span>
+                  
+                  {sk.origen && (
+                    <div 
+                      className={`trigger-icon icon-${sk.origen.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`}
+                      style={{ position: 'absolute', bottom: '16px', right: '16px' }} 
+                      title={`Aplicado en: ${sk.origen}`}
+                    >
+                      {sk.origen === 'Experiencia' && (
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                      )}
+                      {sk.origen === 'Educación' && (
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+                        </svg>
+                      )}
+                      {sk.origen === 'Curso' && (
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="8" r="7"></circle>
+                          <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                        </svg>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -2310,19 +2353,49 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
+                {/* Tipo de Habilidad */}
+                <div className={`form-row ${errorsSkill.tipo ? 'has-error' : ''}`}>
+                  <label>Tipo de habilidad*</label>
+                  <div style={{ display: 'flex', gap: '24px', marginTop: '12px', marginBottom: '8px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 500 }}>
+                      <input 
+                        type="radio" 
+                        name="skillTipo" 
+                        value="Dura" 
+                        checked={skillTipo === 'Dura'} 
+                        onChange={() => { setSkillTipo('Dura'); setErrorsSkill(prev => ({ ...prev, tipo: undefined })) }}
+                        style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)' }}
+                      />
+                      Habilidad Dura
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 500 }}>
+                      <input 
+                        type="radio" 
+                        name="skillTipo" 
+                        value="Blanda" 
+                        checked={skillTipo === 'Blanda'} 
+                        onChange={() => { setSkillTipo('Blanda'); setErrorsSkill(prev => ({ ...prev, tipo: undefined })) }}
+                        style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)' }}
+                      />
+                      Habilidad Blanda
+                    </label>
+                  </div>
+                  {errorsSkill.tipo && <span className="error-message">{errorsSkill.tipo}</span>}
+                </div>
+
                 {/* Dónde se aplicó esta habilidad */}
-                <div className={`form-row ${errorsSkill.descripcion ? 'has-error' : ''}`}>
-                  <label htmlFor="skillDescripcion">¿Dónde aplicó esta habilidad?*</label>
+                <div className={`form-row ${errorsSkill.origen ? 'has-error' : ''}`}>
+                  <label htmlFor="skillOrigen">¿Dónde aplicó esta habilidad? (Opcional)</label>
                   <div className="input-group-wrapper">
                     <div className="custom-dropdown-container" ref={dropdownRef}>
                       <button
                         type="button"
-                        id="skillDescripcion"
+                        id="skillOrigen"
                         className={`custom-dropdown-trigger ${isDropdownOpen ? 'active' : ''}`}
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                       >
                         <div className="trigger-selected-value">
-                          {skillDescripcion === 'Experiencia' && (
+                          {skillOrigen === 'Experiencia' && (
                             <span className="trigger-icon icon-experiencia">
                               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -2330,7 +2403,7 @@ export default function ProfilePage() {
                               </svg>
                             </span>
                           )}
-                          {skillDescripcion === 'Educación' && (
+                          {skillOrigen === 'Educación' && (
                             <span className="trigger-icon icon-educacion">
                               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
@@ -2338,7 +2411,7 @@ export default function ProfilePage() {
                               </svg>
                             </span>
                           )}
-                          {skillDescripcion === 'Curso' && (
+                          {skillOrigen === 'Curso' && (
                             <span className="trigger-icon icon-curso">
                               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="8" r="7"></circle>
@@ -2346,7 +2419,7 @@ export default function ProfilePage() {
                               </svg>
                             </span>
                           )}
-                          {!skillDescripcion && (
+                          {!skillOrigen && (
                             <span className="trigger-icon icon-placeholder">
                               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="10"></circle>
@@ -2356,7 +2429,7 @@ export default function ProfilePage() {
                             </span>
                           )}
                           <span className="trigger-text">
-                            {skillDescripcion || 'Seleccione una opción'}
+                            {skillOrigen || 'Seleccione una opción'}
                           </span>
                         </div>
                         <span className={`trigger-chevron ${isDropdownOpen ? 'rotated' : ''}`}>
@@ -2370,10 +2443,10 @@ export default function ProfilePage() {
                         <div className="custom-dropdown-menu">
                           <button
                             type="button"
-                            className={`custom-dropdown-item item-experiencia ${skillDescripcion === 'Experiencia' ? 'selected' : ''}`}
+                            className={`custom-dropdown-item item-experiencia ${skillOrigen === 'Experiencia' ? 'selected' : ''}`}
                             onClick={() => {
-                              setSkillDescripcion('Experiencia');
-                              setErrorsSkill(prev => ({ ...prev, descripcion: undefined }));
+                              setSkillOrigen(skillOrigen === 'Experiencia' ? '' : 'Experiencia');
+                              setErrorsSkill(prev => ({ ...prev, origen: undefined }));
                               setIsDropdownOpen(false);
                             }}
                           >
@@ -2387,7 +2460,7 @@ export default function ProfilePage() {
                               <span className="item-label">Experiencia</span>
                               <span className="item-sub">Ámbito laboral y desarrollo profesional</span>
                             </div>
-                            {skillDescripcion === 'Experiencia' && (
+                            {skillOrigen === 'Experiencia' && (
                               <span className="item-check">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                   <polyline points="20 6 9 17 4 12"></polyline>
@@ -2398,10 +2471,10 @@ export default function ProfilePage() {
 
                           <button
                             type="button"
-                            className={`custom-dropdown-item item-educacion ${skillDescripcion === 'Educación' ? 'selected' : ''}`}
+                            className={`custom-dropdown-item item-educacion ${skillOrigen === 'Educación' ? 'selected' : ''}`}
                             onClick={() => {
-                              setSkillDescripcion('Educación');
-                              setErrorsSkill(prev => ({ ...prev, descripcion: undefined }));
+                              setSkillOrigen(skillOrigen === 'Educación' ? '' : 'Educación');
+                              setErrorsSkill(prev => ({ ...prev, origen: undefined }));
                               setIsDropdownOpen(false);
                             }}
                           >
@@ -2415,7 +2488,7 @@ export default function ProfilePage() {
                               <span className="item-label">Educación</span>
                               <span className="item-sub">Estudios primarios, secundarios u universitarios</span>
                             </div>
-                            {skillDescripcion === 'Educación' && (
+                            {skillOrigen === 'Educación' && (
                               <span className="item-check">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                   <polyline points="20 6 9 17 4 12"></polyline>
@@ -2426,10 +2499,10 @@ export default function ProfilePage() {
 
                           <button
                             type="button"
-                            className={`custom-dropdown-item item-curso ${skillDescripcion === 'Curso' ? 'selected' : ''}`}
+                            className={`custom-dropdown-item item-curso ${skillOrigen === 'Curso' ? 'selected' : ''}`}
                             onClick={() => {
-                              setSkillDescripcion('Curso');
-                              setErrorsSkill(prev => ({ ...prev, descripcion: undefined }));
+                              setSkillOrigen(skillOrigen === 'Curso' ? '' : 'Curso');
+                              setErrorsSkill(prev => ({ ...prev, origen: undefined }));
                               setIsDropdownOpen(false);
                             }}
                           >
@@ -2443,7 +2516,7 @@ export default function ProfilePage() {
                               <span className="item-label">Curso</span>
                               <span className="item-sub">Certificaciones, bootcamps o cursos cortos</span>
                             </div>
-                            {skillDescripcion === 'Curso' && (
+                            {skillOrigen === 'Curso' && (
                               <span className="item-check">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                   <polyline points="20 6 9 17 4 12"></polyline>
@@ -2454,7 +2527,7 @@ export default function ProfilePage() {
                         </div>
                       )}
                     </div>
-                    {errorsSkill.descripcion && <span className="error-message">{errorsSkill.descripcion}</span>}
+                    {errorsSkill.origen && <span className="error-message">{errorsSkill.origen}</span>}
                   </div>
                 </div>
 
