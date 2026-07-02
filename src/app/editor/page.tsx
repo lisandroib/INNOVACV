@@ -4,6 +4,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
 import RichTextEditor, { RichTextEditorRef } from './components/RichTextEditor';
 import ChatAssistant from './components/ChatAssistant';
+import { GooeyLoader } from '@/components/GooeyLoader';
 import { Trash2, Copy, Clock, FileText, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
 import './editor.css';
 
@@ -350,10 +351,12 @@ export default function EditorPage() {
 
   if (isLoading || isGeneratingProfile) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#f8fafc]">
-        <div className="text-slate-500 flex flex-col items-center">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p>{isGeneratingProfile ? 'Generando tu perfil profesional con IA...' : 'Cargando tus datos del perfil...'}</p>
+      <div className={`flex h-screen w-full items-center justify-center ${isDarkMode ? 'bg-[#0f172a]' : 'bg-[#f8fafc]'}`}>
+        <div className={`flex flex-col items-center ${isDarkMode ? 'text-[#e2e8f0]' : 'text-[#475569]'}`}>
+          <GooeyLoader className="mb-4" />
+          <p style={{ marginTop: '20px', fontFamily: 'Inter, sans-serif', fontWeight: 500 }}>
+            {isGeneratingProfile ? 'Generando tu perfil profesional con IA...' : 'Cargando tus datos del perfil...'}
+          </p>
         </div>
       </div>
     );
