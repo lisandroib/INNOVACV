@@ -185,6 +185,26 @@ export default function EditorPage() {
 
             if (!finalData.sobre_mi && !finalData.resumen) {
               const rolObjetivo = finalData.perfil_profesional?.rol_objetivo || 'profesional';
+              
+              const toArray = (val: any) => {
+                if (!val) return [];
+                if (Array.isArray(val)) return val;
+                if (typeof val === 'string') return val.split(',');
+                return [];
+              };
+              
+              // Recopilar habilidades blandas para incluirlas en el prompt
+              const blandas = [
+                ...toArray(finalData.habilidades?.blandas),
+                ...toArray(finalData.habilidades?.blandas_seleccionadas),
+                ...toArray(finalData.habilidades?.blandas_manuales)
+              ].map((s: string) => s.trim()).filter(Boolean);
+              
+              const uniqueBlandas = Array.from(new Set(blandas));
+              const blandasText = uniqueBlandas.length > 0 
+                ? ` Además, quiero que el perfil destaque sutilmente mis siguientes habilidades blandas: ${uniqueBlandas.join(', ')}.` 
+                : '';
+
               setIsGeneratingProfile(true);
 
               try {
@@ -192,7 +212,7 @@ export default function EditorPage() {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    messages: [{ role: 'user', content: `Actúa como un redactor experto de currículums. Escribe un ÚNICO párrafo persuasivo (máximo 4 líneas) para mi 'Perfil Profesional'. Debe estar redactado en primera persona, sonar natural y profesional. IMPORTANTE: Entrega SOLO el texto del párrafo listo para usar en el CV. NO me des múltiples opciones, NO incluyas títulos, NO incluyas saludos ni explicaciones. Mi rol objetivo es: ${rolObjetivo}.` }],
+                    messages: [{ role: 'user', content: `Actúa como un redactor experto de currículums. Escribe un ÚNICO párrafo persuasivo (máximo 4 líneas) para mi 'Perfil Profesional'. Debe estar redactado en primera persona, sonar natural y profesional.${blandasText} IMPORTANTE: Entrega SOLO el texto del párrafo listo para usar en el CV. NO me des múltiples opciones, NO incluyas títulos, NO incluyas saludos ni explicaciones. Mi rol objetivo es: ${rolObjetivo}.` }],
                   })
                 });
 

@@ -52,6 +52,14 @@ export default function ProfilePage() {
                     .then(geo => {
                       if (geo && geo.city && geo.country_name) {
                         setCiudad(`${geo.city}, ${geo.country_name}`);
+                        fetch('/api/perfil', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ 
+                            "datos_personales.ubicacion.ciudad": geo.city,
+                            "datos_personales.ubicacion.provincia": geo.country_name 
+                          })
+                        }).catch(e => console.error("Error guardando ubicacion:", e));
                       }
                     })
                     .catch(e => console.error("Error obteniendo IP local:", e));
@@ -63,6 +71,14 @@ export default function ProfilePage() {
                   .then(geo => {
                     if (geo && geo.city && geo.country_name) {
                       setCiudad(`${geo.city}, ${geo.country_name}`);
+                      fetch('/api/perfil', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                          "datos_personales.ubicacion.ciudad": geo.city,
+                          "datos_personales.ubicacion.provincia": geo.country_name 
+                        })
+                      }).catch(e => console.error("Error guardando ubicacion:", e));
                     }
                   })
                   .catch(e => console.error("Error obteniendo IP local:", e));
@@ -92,12 +108,19 @@ export default function ProfilePage() {
             if (dbData.habilidades) {
               let newSkills: any[] = [];
               
+              const toArray = (val: any) => {
+                if (!val) return [];
+                if (Array.isArray(val)) return val;
+                if (typeof val === 'string') return val.split(',');
+                return [];
+              };
+              
               // Recopilar todas las habilidades duras
               const duras = [
-                ...(dbData.habilidades.duras ? dbData.habilidades.duras.split(',') : []),
-                ...(dbData.habilidades.duras_seleccionadas ? dbData.habilidades.duras_seleccionadas.split(',') : []),
-                ...(dbData.habilidades.duras_manuales ? dbData.habilidades.duras_manuales.split(',') : [])
-              ].map(s => s.trim()).filter(Boolean);
+                ...toArray(dbData.habilidades.duras),
+                ...toArray(dbData.habilidades.duras_seleccionadas),
+                ...toArray(dbData.habilidades.duras_manuales)
+              ].map((s: string) => s.trim()).filter(Boolean);
               
               Array.from(new Set(duras)).forEach((s, i) => {
                 newSkills.push({ id: `d${i}`, nombre: s, descripcion: 'Habilidad Dura' });
@@ -105,10 +128,10 @@ export default function ProfilePage() {
 
               // Recopilar todas las habilidades blandas
               const blandas = [
-                ...(dbData.habilidades.blandas ? dbData.habilidades.blandas.split(',') : []),
-                ...(dbData.habilidades.blandas_seleccionadas ? dbData.habilidades.blandas_seleccionadas.split(',') : []),
-                ...(dbData.habilidades.blandas_manuales ? dbData.habilidades.blandas_manuales.split(',') : [])
-              ].map(s => s.trim()).filter(Boolean);
+                ...toArray(dbData.habilidades.blandas),
+                ...toArray(dbData.habilidades.blandas_seleccionadas),
+                ...toArray(dbData.habilidades.blandas_manuales)
+              ].map((s: string) => s.trim()).filter(Boolean);
               
               Array.from(new Set(blandas)).forEach((s, i) => {
                 newSkills.push({ id: `b${i}`, nombre: s, descripcion: 'Habilidad Blanda' });
