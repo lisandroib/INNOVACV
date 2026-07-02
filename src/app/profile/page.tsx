@@ -52,6 +52,14 @@ export default function ProfilePage() {
                     .then(geo => {
                       if (geo && geo.city && geo.country_name) {
                         setCiudad(`${geo.city}, ${geo.country_name}`);
+                        fetch('/api/perfil', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ 
+                            "datos_personales.ubicacion.ciudad": geo.city,
+                            "datos_personales.ubicacion.provincia": geo.country_name 
+                          })
+                        }).catch(e => console.error("Error guardando ubicacion:", e));
                       }
                     })
                     .catch(e => console.error("Error obteniendo IP local:", e));
@@ -63,6 +71,14 @@ export default function ProfilePage() {
                   .then(geo => {
                     if (geo && geo.city && geo.country_name) {
                       setCiudad(`${geo.city}, ${geo.country_name}`);
+                      fetch('/api/perfil', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                          "datos_personales.ubicacion.ciudad": geo.city,
+                          "datos_personales.ubicacion.provincia": geo.country_name 
+                        })
+                      }).catch(e => console.error("Error guardando ubicacion:", e));
                     }
                   })
                   .catch(e => console.error("Error obteniendo IP local:", e));

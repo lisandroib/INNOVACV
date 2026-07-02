@@ -519,8 +519,8 @@ export default function JobsPage() {
         {/* =========================================
             BARRA DE BÚSQUEDA UNIFICADA FLOTANTE
            ========================================= */}
-        {!isLoading && activeTab !== 'saved' && (
-          <div className={`floating-search-wrapper state-${viewState}`}>
+        {!isLoading && (
+          <div className={`floating-search-wrapper state-${viewState} ${activeTab === 'saved' ? 'hide-search' : ''}`}>
             <h1 className="jobs-hero-title">Encuentra tu próximo empleo</h1>
             <div className="jobs-hero-search-box">
               <div className="hero-input-group">
@@ -567,7 +567,7 @@ export default function JobsPage() {
         ) : (
           <div key="content" className={`jobs-content-transition state-${activeTab === 'saved' ? 'compact' : viewState}`}>
             {/* Tab Selectors de Sección */}
-            {activeTab !== 'saved' && (
+            {activeTab !== 'saved' && hasSearched && (
               <div className="jobs-section-tabs">
               <button
                 type="button"
@@ -596,7 +596,7 @@ export default function JobsPage() {
 
             {/* Contenido Grid */}
             <div className="jobs-grid-wrapper">
-              {filteredJobs.length > 0 ? (
+              {(hasSearched || activeTab === 'saved') && (filteredJobs.length > 0 ? (
                 <>
                   <div className="jobs-grid">
                     {filteredJobs.map((job) => (
@@ -736,7 +736,7 @@ export default function JobsPage() {
                   <h3>No se encontraron empleos</h3>
                   <p>Prueba ajustando los términos de búsqueda o guarda algunos empleos primero.</p>
                 </div>
-              )}
+              ))}
             </div>
 
           </div>

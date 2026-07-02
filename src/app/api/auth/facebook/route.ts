@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const clientId = process.env.FACEBOOK_CLIENT_ID;
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/+$/, '');
+  const host = request.headers.get('host') || 'localhost:3000';
+  const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https');
+  const appUrl = `${protocol}://${host}`;
 
   if (!clientId || clientId === 'TU_FACEBOOK_CLIENT_ID') {
     return NextResponse.json(
