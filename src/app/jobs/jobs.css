@@ -20,6 +20,7 @@
   overflow-x: hidden;
   position: relative;
   z-index: 1;
+  scrollbar-gutter: stable;
 }
 
 /* 1. PREMIUM DIAGONAL BACKDROP GRADIENT (Versión Aurora Glow Mesh Interactiva de 5 Orbes) */

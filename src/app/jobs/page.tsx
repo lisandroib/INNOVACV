@@ -596,7 +596,7 @@ export default function JobsPage() {
 
             {/* Contenido Grid */}
             <div className="jobs-grid-wrapper">
-              {filteredJobs.length > 0 ? (
+              {(hasSearched || activeTab === 'saved') && (filteredJobs.length > 0 ? (
                 <>
                   <div className="jobs-grid">
                     {filteredJobs.map((job) => (
@@ -736,7 +736,7 @@ export default function JobsPage() {
                   <h3>No se encontraron empleos</h3>
                   <p>Prueba ajustando los términos de búsqueda o guarda algunos empleos primero.</p>
                 </div>
-              )}
+              ))}
             </div>
 
           </div>
