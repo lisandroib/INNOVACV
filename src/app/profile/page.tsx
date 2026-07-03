@@ -392,36 +392,54 @@ export default function ProfilePage() {
   const activeUploadIntervals = useRef<Record<string, NodeJS.Timeout>>({});
 
   // Estados de Habilidades
-  const [skills, setSkills] = useState([
+  const [skills, setSkills] = useState<Array<{
+    id: string;
+    nombre: string;
+    descripcion?: string;
+    tipo?: 'Dura' | 'Blanda' | '';
+    origen?: string;
+  }>>([
     {
       id: 's1',
       nombre: 'React & Next.js',
-      descripcion: 'Experiencia'
+      descripcion: 'Experiencia',
+      tipo: 'Dura',
+      origen: 'Experiencia'
     },
     {
       id: 's2',
       nombre: 'TypeScript',
-      descripcion: 'Educación'
+      descripcion: 'Educación',
+      tipo: 'Dura',
+      origen: 'Educación'
     },
     {
       id: 's3',
       nombre: 'Diseño UX/UI',
-      descripcion: 'Curso'
+      descripcion: 'Curso',
+      tipo: 'Dura',
+      origen: 'Curso'
     },
     {
       id: 's4',
       nombre: 'Metodologías Ágiles',
-      descripcion: 'Experiencia'
+      descripcion: 'Experiencia',
+      tipo: 'Blanda',
+      origen: 'Experiencia'
     },
     {
       id: 's5',
       nombre: 'Node.js & Express',
-      descripcion: 'Curso'
+      descripcion: 'Curso',
+      tipo: 'Dura',
+      origen: 'Curso'
     },
     {
       id: 's6',
       nombre: 'Inglés Profesional',
-      descripcion: 'Educación'
+      descripcion: 'Educación',
+      tipo: 'Blanda',
+      origen: 'Educación'
     }
   ]);
 
