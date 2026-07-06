@@ -12,6 +12,13 @@ export default function SignUp() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  const rules = [
+    { label: 'Mínimo 8 caracteres', satisfied: password.length >= 8 },
+    { label: 'Al menos una letra mayúscula', satisfied: /[A-Z]/.test(password) },
+    { label: 'Al menos una letra minúscula', satisfied: /[a-z]/.test(password) },
+    { label: 'Al menos un carácter especial', satisfied: /[^A-Za-z0-9]/.test(password) },
+  ];
+
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const err = params.get('error');
@@ -34,6 +41,17 @@ export default function SignUp() {
       setError('Las contraseñas no coinciden');
       return;
     }
+
+    const hasMinLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+    if (!hasMinLength || !hasUppercase || !hasLowercase || !hasSpecialChar) {
+      setError('La contraseña debe tener al menos 8 caracteres, incluir al menos una letra mayúscula, una letra minúscula y un carácter especial.');
+      return;
+    }
+
     setError('');
 
     try {
@@ -98,6 +116,22 @@ export default function SignUp() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <div className={`password-rules-container ${password ? 'visible' : ''}`}>
+                {rules.map((rule, idx) => (
+                  <div key={idx} className={`password-rule-item ${rule.satisfied ? 'satisfied' : ''}`}>
+                    {rule.satisfied ? (
+                      <svg className="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <svg className="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                    )}
+                    <span>{rule.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Input Repetir Contraseña */}

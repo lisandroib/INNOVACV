@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 .signup-wrapper {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background-image: url('/fondo_1.jpg');
@@ -10,7 +10,8 @@
   background-repeat: no-repeat;
   font-family: 'Poppins', sans-serif;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+  scrollbar-gutter: stable;
 }
 
 /* Header */
@@ -84,9 +85,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 100px 20px 40px 20px;
+  padding: 60px 20px 20px 20px;
   z-index: 5;
-  transform: translateY(-35px);
+  transform: translateY(-20px);
 }
 
 .signup-title {
@@ -104,12 +105,13 @@
   max-width: 480px;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  padding: 40px;
+  padding: 28px 40px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease-in-out;
 }
 
 /* Subtle decorative shape in top-left of the card */
@@ -128,7 +130,7 @@
 /* Form Inputs */
 .form-group {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
@@ -173,7 +175,7 @@
   cursor: pointer;
   transition: opacity 0.2s;
   width: 45%;
-  margin: 10px auto 20px auto;
+  margin: 10px auto 14px auto;
   display: block;
 }
 
@@ -188,7 +190,7 @@
   text-align: center;
   color: #a0aec0;
   font-size: 12px;
-  margin: 10px 0 24px 0;
+  margin: 8px 0 16px 0;
 }
 
 .divider::before,
@@ -211,7 +213,7 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 30px;
+  margin-bottom: 18px;
 }
 
 .btn-social {
@@ -261,6 +263,11 @@
 
 /* Responsive design */
 @media (max-width: 640px) {
+  .signup-wrapper {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
   .signup-header {
     padding: 20px;
   }
@@ -292,4 +299,47 @@
 
 .forgot-password-link:hover {
   color: #4a5568;
+}
+
+/* Password strength rules */
+.password-rules-container {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 6px;
+  margin-top: 0;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, margin-top 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.password-rules-container.visible {
+  max-height: 120px;
+  opacity: 1;
+  margin-top: 12px;
+  padding: 4px 6px;
+}
+
+.password-rule-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #94a3b8;
+  transition: all 0.25s ease-in-out;
+}
+
+.password-rule-item.satisfied {
+  color: #10b981;
+}
+
+.rule-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.password-rule-item:not(.satisfied) .rule-icon {
+  opacity: 0.6;
 }
