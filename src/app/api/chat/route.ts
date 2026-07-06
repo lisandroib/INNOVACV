@@ -4,7 +4,8 @@ export async function POST(req: Request) {
   try {
     const { messages, currentSection, resumeContext, targetJob } = await req.json();
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    let apiKey = process.env.GEMINI_API_KEY;
+    if (apiKey) apiKey = apiKey.trim().replace(/^"|"$/g, ''); // Limpiar posibles comillas o espacios de Vercel
 
     if (!apiKey) {
       // Si no hay API Key, respondemos con un mensaje instructivo interactivo amigable
