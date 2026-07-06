@@ -116,24 +116,22 @@ export default function SignUp() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              {password && (
-                <div className="password-rules-container">
-                  {rules.map((rule, idx) => (
-                    <div key={idx} className={`password-rule-item ${rule.satisfied ? 'satisfied' : ''}`}>
-                      {rule.satisfied ? (
-                        <svg className="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      ) : (
-                        <svg className="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10" />
-                        </svg>
-                      )}
-                      <span>{rule.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className={`password-rules-container ${password ? 'visible' : ''}`}>
+                {rules.map((rule, idx) => (
+                  <div key={idx} className={`password-rule-item ${rule.satisfied ? 'satisfied' : ''}`}>
+                    {rule.satisfied ? (
+                      <svg className="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <svg className="rule-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                    )}
+                    <span>{rule.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Input Repetir Contraseña */}
