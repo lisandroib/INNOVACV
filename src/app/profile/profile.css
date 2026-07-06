@@ -1190,6 +1190,18 @@ body {
   border-color: #99f6e4;
 }
 
+.badge-dura {
+  background: #eef2ff; /* Indigo tint */
+  color: #3730a3;      /* Indigo text */
+  border-color: #c7d2fe;
+}
+
+.badge-blanda {
+  background: #fff1f2; /* Rose tint */
+  color: #9f1239;      /* Rose text */
+  border-color: #fecdd3;
+}
+
 /* 12. CUSTOM DROPDOWN SELECT STYLES (Dribbble/Pinterest design style) */
 .custom-dropdown-container {
   position: relative;
