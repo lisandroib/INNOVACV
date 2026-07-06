@@ -34,6 +34,17 @@ export default function SignUp() {
       setError('Las contraseñas no coinciden');
       return;
     }
+
+    const hasMinLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+    if (!hasMinLength || !hasUppercase || !hasLowercase || !hasSpecialChar) {
+      setError('La contraseña debe tener al menos 8 caracteres, incluir al menos una letra mayúscula, una letra minúscula y un carácter especial.');
+      return;
+    }
+
     setError('');
 
     try {
