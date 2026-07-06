@@ -1,16 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const CACHE_FILE_PATH = path.join(process.cwd(), '.jobs_cache.json');
-
-interface CacheData {
-  [key: string]: {
-    timestamp: number;
-    results: any[];
-    nextPageToken?: string | null;
-  };
-}
 
 export async function GET(req: Request) {
   try {
@@ -32,36 +20,8 @@ export async function GET(req: Request) {
       );
     }
 
-    // Identificador único para el caché
-    const cacheKey = `${query.toLowerCase().trim()}|${(location || '').toLowerCase().trim()}|token=${pageToken || 'first'}`;
-
-    // 1. Leer caché local
-    let cacheData: CacheData = {};
-    if (fs.existsSync(CACHE_FILE_PATH)) {
-      try {
-        const fileContent = fs.readFileSync(CACHE_FILE_PATH, 'utf-8');
-        cacheData = JSON.parse(fileContent);
-      } catch (err) {
-        console.error('Error leyendo caché:', err);
-      }
-    }
-
-    // 2. Comprobar si existe un caché válido (ej. menos de 24 horas)
-    const cachedEntry = cacheData[cacheKey];
-    if (cachedEntry) {
-      const isFresh = (Date.now() - cachedEntry.timestamp) < 24 * 60 * 60 * 1000; // 24 horas
-      if (isFresh) {
-        console.log(`[Caché HIT] Retornando empleos cacheados para: ${cacheKey}`);
-        return NextResponse.json({ 
-          jobs: cachedEntry.results, 
-          cached: true,
-          nextPageToken: cachedEntry.nextPageToken 
-        });
-      }
-    }
-
-    // 3. Llamada a SerpApi
-    console.log(`[Caché MISS] Consultando a SerpApi para: ${cacheKey}`);
+    // Llamada a SerpApi
+    console.log(`Consultando a SerpApi para: ${query} en ${location || 'cualquier lugar'}`);
     const serpApiUrl = new URL('https://serpapi.com/search.json');
     serpApiUrl.searchParams.append('engine', 'google_jobs');
     serpApiUrl.searchParams.append('q', query);
@@ -83,7 +43,7 @@ export async function GET(req: Request) {
       throw new Error(`Error de SerpApi: ${data.error}`);
     }
 
-    // 4. Formatear resultados
+    // Formatear resultados
     const rawJobs = data.jobs_results || [];
     const limitedJobs = rawJobs.map((job: any, index: number) => {
       // Generar un ID único simple
@@ -117,29 +77,15 @@ export async function GET(req: Request) {
         type: job.detected_extensions?.schedule_type || 'Full-time',
         salary: salaryInfo,
         location: job.location || location || 'Ubicación no especificada',
-        compatibility: Math.floor(Math.random() * 20) + 75, // Algoritmo ficticio 75% - 95%
+        compatibility: null, // Se inicializa en null para que la UI espere el puntaje real de la IA
         saved: false,
         description: job.description || 'Descripción no provista por la plataforma.',
         applyUrl: applyUrl,
       };
     });
 
-    // 5. Guardar en Caché Local
     const nextPageToken = data.serpapi_pagination?.next_page_token || null;
     
-    cacheData[cacheKey] = {
-      timestamp: Date.now(),
-      results: limitedJobs,
-      nextPageToken
-    };
-
-    try {
-      fs.writeFileSync(CACHE_FILE_PATH, JSON.stringify(cacheData, null, 2), 'utf-8');
-      console.log(`[Caché GUARDADO] Resultados cacheados para: ${cacheKey}`);
-    } catch (err) {
-      console.error('Error guardando en caché:', err);
-    }
-
     return NextResponse.json({ jobs: limitedJobs, cached: false, nextPageToken });
 
   } catch (error: any) {
