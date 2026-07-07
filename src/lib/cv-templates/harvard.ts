@@ -73,14 +73,28 @@ export const harvardTemplate: CVTemplate = {
 
     const formatHabilidades = (habilidades: any) => {
       if (typeof habilidades === 'string') return `<p>${habilidades.replace(/\n/g, '<br/>')}</p>`;
-      if (Array.isArray(habilidades)) return `<ul>${habilidades.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      if (Array.isArray(habilidades)) return `<ul style="margin: 0; padding-left: 15px; font-size: 11px;">${habilidades.map(item => `<li>${item}</li>`).join('')}</ul>`;
       if (!habilidades || typeof habilidades !== 'object') return '';
       
-      let html = '<ul>';
-      if (habilidades.duras) html += `<li><strong>Habilidades Técnicas:</strong> ${habilidades.duras}</li>`;
-      if (habilidades.blandas) html += `<li><strong>Habilidades Blandas:</strong> ${habilidades.blandas}</li>`;
+      let html = '<ul style="margin: 0; padding-left: 15px; font-size: 11px;">';
+      
+      const renderSubList = (title: string, value: any) => {
+        if (!value) return '';
+        let items: string[] = [];
+        if (typeof value === 'string') {
+          items = value.split(',').map(s => s.trim()).filter(Boolean);
+        } else if (Array.isArray(value)) {
+          items = value;
+        }
+        if (items.length === 0) return '';
+        
+        return `<li><strong>${title}:</strong><ul style="margin-top: 4px; margin-bottom: 8px; padding-left: 20px; list-style-type: circle;">${items.map(item => `<li>${item}</li>`).join('')}</ul></li>`;
+      };
+
+      html += renderSubList('Habilidades Técnicas', habilidades.duras);
       html += '</ul>';
-      return html === '<ul></ul>' ? '' : html;
+      
+      return html === '<ul style="margin: 0; padding-left: 15px; font-size: 11px;"></ul>' ? '' : html;
     };
 
     const formatEducacion = (educacion: any) => {
@@ -95,14 +109,14 @@ export const harvardTemplate: CVTemplate = {
         if (data.institucion || data.carrera || data.titulo) {
           const dates = [data.ano_inicio, data.ano_fin || data.ultimo_ano].filter(Boolean).join(' - ');
           const title = [data.titulo, data.carrera].filter(Boolean).join(' - ') || labelFallback;
-          const inst = data.institucion || 'Institución';
+          const inst = data.institucion || '';
           
           html += `
           <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
             <strong style="font-size: 13px; text-transform: uppercase;">${title}</strong>
-            <strong style="font-size: 12px;">${dates || 'Fecha'}</strong>
+            <strong style="font-size: 12px;">${dates || ''}</strong>
           </p>
-          <p style="margin: 0 0 15px 0; font-size: 12px;">${inst}</p>
+          ${inst ? `<p style="margin: 0 0 15px 0; font-size: 12px;">${inst}</p>` : ''}
           `;
         }
       };
@@ -120,17 +134,17 @@ export const harvardTemplate: CVTemplate = {
       if (Array.isArray(experiencia)) {
         return experiencia.map(exp => {
           if (typeof exp === 'string') return `<p>${exp}</p>`;
-          const emp = exp.empresa || exp.organizacion || 'Empresa';
-          const cargo = exp.cargo || exp.puesto || exp.titulo || 'Cargo';
+          const emp = exp.empresa || exp.organizacion || '';
+          const cargo = exp.cargo || exp.puesto || exp.titulo || '';
           const fechas = [exp.fecha_inicio || exp.ano_inicio, exp.fecha_fin || exp.ano_fin].filter(Boolean).join(' - ');
           const desc = exp.descripcion || exp.logros || '';
           
           return `
           <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
             <strong style="font-size: 13px;">${emp}</strong>
-            <strong style="font-size: 12px;">${fechas || 'Fechas'}</strong>
+            <strong style="font-size: 12px;">${fechas || ''}</strong>
           </p>
-          <p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">Rol: ${cargo}</p>
+          ${cargo ? `<p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">Rol: ${cargo}</p>` : ''}
           ${desc ? `<p style="margin: 0 0 15px 0; font-size: 11px; white-space: pre-wrap;">${desc}</p>` : '<p style="margin-bottom: 15px;"></p>'}
           `;
         }).join('');
@@ -171,26 +185,15 @@ export const harvardTemplate: CVTemplate = {
         ${formatHabilidades(habilidades)}
         ` : ''}
 
+        ${educacion && (typeof educacion === 'string' || Object.keys(educacion).length > 0) ? `
         <h2 style="${h2Style}">Educación</h2>
-        ${educacion && (typeof educacion === 'string' || Object.keys(educacion).length > 0) ? formatEducacion(educacion) : `
-        <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
-          <strong style="font-size: 13px; text-transform: uppercase;">Título obtenido</strong>
-          <strong style="font-size: 12px;">Fecha de graduación</strong>
-        </p>
-        <p style="margin: 0 0 15px 0; font-size: 12px;">Institución Educativa</p>
-        `}
+        ${formatEducacion(educacion)}
+        ` : ''}
 
+        ${experiencia && (typeof experiencia === 'string' || (Array.isArray(experiencia) && experiencia.length > 0)) ? `
         <h2 style="${h2Style}">Experiencia</h2>
-        ${experiencia && (typeof experiencia === 'string' || (Array.isArray(experiencia) && experiencia.length > 0)) ? formatExperiencia(experiencia) : `
-        <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
-          <strong style="font-size: 13px;">Empresa / Organización</strong>
-          <strong style="font-size: 12px;">Mes Año - Mes Año</strong>
-        </p>
-        <p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">Rol: Cargo o Título</p>
-        <ul style="margin: 0 0 15px 0; padding-left: 15px; font-size: 11px;">
-          <li>Describe tu experiencia, habilidades y logros.</li>
-        </ul>
-        `}
+        ${formatExperiencia(experiencia)}
+        ` : ''}
       </div>
     `;
   }
