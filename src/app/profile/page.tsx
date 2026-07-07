@@ -341,22 +341,7 @@ export default function ProfilePage() {
   }>({});
 
   // Estados de Educación
-  const [formalEducation, setFormalEducation] = useState([
-    {
-      id: 'f1',
-      institucion: 'Universidad Tecnológica Nacional',
-      titulo: 'Ingeniería en Sistemas de Información',
-      anioInicio: '2020',
-      anioFin: 'actualidad'
-    },
-    {
-      id: 'f2',
-      institucion: 'Colegio Superior de Comercio',
-      titulo: 'Educación Secundaria Obligatoria',
-      anioInicio: '2015',
-      anioFin: '2019'
-    }
-  ]);
+  const [formalEducation, setFormalEducation] = useState<any[]>([]);
 
   const [courses, setCourses] = useState<any[]>([]);
 
@@ -398,50 +383,7 @@ export default function ProfilePage() {
     descripcion?: string;
     tipo?: 'Dura' | 'Blanda' | '';
     origen?: string;
-  }>>([
-    {
-      id: 's1',
-      nombre: 'React & Next.js',
-      descripcion: 'Experiencia',
-      tipo: 'Dura',
-      origen: 'Experiencia'
-    },
-    {
-      id: 's2',
-      nombre: 'TypeScript',
-      descripcion: 'Educación',
-      tipo: 'Dura',
-      origen: 'Educación'
-    },
-    {
-      id: 's3',
-      nombre: 'Diseño UX/UI',
-      descripcion: 'Curso',
-      tipo: 'Dura',
-      origen: 'Curso'
-    },
-    {
-      id: 's4',
-      nombre: 'Metodologías Ágiles',
-      descripcion: 'Experiencia',
-      tipo: 'Blanda',
-      origen: 'Experiencia'
-    },
-    {
-      id: 's5',
-      nombre: 'Node.js & Express',
-      descripcion: 'Curso',
-      tipo: 'Dura',
-      origen: 'Curso'
-    },
-    {
-      id: 's6',
-      nombre: 'Inglés Profesional',
-      descripcion: 'Educación',
-      tipo: 'Blanda',
-      origen: 'Educación'
-    }
-  ]);
+  }>>([]);
 
   // Estados de modal de habilidades
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
@@ -692,40 +634,7 @@ export default function ProfilePage() {
   // ----------------------------------------------------
   // ESTADOS Y HANDLERS PARA EXPERIENCIA PROFESIONAL
   // ----------------------------------------------------
-  const [experiences, setExperiences] = useState([
-    {
-      id: '1',
-      anioInicio: '2025',
-      anioFin: 'actualidad',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    },
-    {
-      id: '2',
-      anioInicio: '2019',
-      anioFin: '2024',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    },
-    {
-      id: '3',
-      anioInicio: '2016',
-      anioFin: '2019',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    },
-    {
-      id: '4',
-      anioInicio: '2010',
-      anioFin: '2015',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    }
-  ]);
+  const [experiences, setExperiences] = useState<any[]>([]);
 
   // Estados del modal de experiencia
   const [isExpModalOpen, setIsExpModalOpen] = useState(false);
