@@ -11,6 +11,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Por favor, ingresa correo y contraseña' }, { status: 400 });
     }
 
+    const hasMinLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+    if (!hasMinLength || !hasUppercase || !hasLowercase || !hasSpecialChar) {
+      return NextResponse.json({ 
+        error: 'La contraseña debe tener al menos 8 caracteres, incluir al menos una letra mayúscula, una letra minúscula y un carácter especial' 
+      }, { status: 400 });
+    }
+
     const client = await clientPromise;
     const db = client.db('innovacv_db');
 
