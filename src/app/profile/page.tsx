@@ -161,6 +161,10 @@ export default function ProfilePage() {
             if (dbCursos && Array.isArray(dbCursos)) {
               setCourses(dbCursos);
             }
+
+            if (dbData.proyectos_alternativos) {
+              setProyectosAlternativos(dbData.proyectos_alternativos);
+            }
           } else {
             // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
             window.location.href = '/chat';
@@ -201,6 +205,7 @@ export default function ProfilePage() {
     nextFormalEducation?: any[];
     nextCourses?: any[];
     nextSkills?: any[];
+    nextProyectosAlternativos?: string;
   } = {}) => {
     const finalNombre = overrides.nextNombre !== undefined ? overrides.nextNombre : nombre;
     const finalApellido = overrides.nextApellido !== undefined ? overrides.nextApellido : apellido;
@@ -213,6 +218,7 @@ export default function ProfilePage() {
     const finalFormalEducation = overrides.nextFormalEducation !== undefined ? overrides.nextFormalEducation : formalEducation;
     const finalSkills = overrides.nextSkills !== undefined ? overrides.nextSkills : skills;
     const finalCourses = overrides.nextCourses !== undefined ? overrides.nextCourses : courses;
+    const finalProyectosAlternativos = overrides.nextProyectosAlternativos !== undefined ? overrides.nextProyectosAlternativos : proyectosAlternativos;
 
     const cleanCiudad = finalCiudad.split(',')[0]?.trim() || '';
     const cleanProvincia = finalCiudad.split(',')[1]?.trim() || '';
@@ -291,7 +297,8 @@ export default function ProfilePage() {
         blandas: blandasArr.join(', '),
         detalles: finalSkills
       },
-      cursos: finalCourses
+      cursos: finalCourses,
+      proyectos_alternativos: finalProyectosAlternativos
     };
 
     try {
@@ -316,6 +323,7 @@ export default function ProfilePage() {
   const [mail, setMail] = useState('ejemplo@mail.com');
   const [telefono, setTelefono] = useState('+11 111 111 1111');
   const [linkedin, setLinkedin] = useState('...');
+  const [proyectosAlternativos, setProyectosAlternativos] = useState('');
 
   // Estado del modal de edición personal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1741,6 +1749,48 @@ export default function ProfilePage() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Sección de Proyectos y Experiencia Alternativa */}
+            <div 
+              className="alternative-projects-section" 
+              style={{ 
+                marginTop: '30px', 
+                padding: '24px', 
+                borderRadius: '12px', 
+                background: isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)', 
+                border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)' 
+              }}
+            >
+              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: isDarkMode ? '#fff' : '#1a1a1a' }}>
+                Proyectos y Experiencia Alternativa
+              </h2>
+              <p style={{ fontSize: '13px', color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)', marginBottom: '16px', lineHeight: '1.4' }}>
+                Si no tenés experiencia laboral formal, podés detallar acá tus proyectos académicos, trabajos independientes (freelance) o voluntariados. Esto se usará automáticamente en tu CV en lugar de la experiencia de trabajo.
+              </p>
+              <textarea
+                value={proyectosAlternativos}
+                onChange={async (e) => {
+                  const val = e.target.value;
+                  setProyectosAlternativos(val);
+                  await saveProfileToDB({ nextProyectosAlternativos: val });
+                }}
+                placeholder="Describí brevemente de qué trataban tus proyectos, qué tecnologías o herramientas usaste y qué logros tuviste..."
+                style={{
+                  width: '100%',
+                  height: '140px',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  background: isDarkMode ? 'rgba(0,0,0,0.2)' : '#fff',
+                  border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.15)',
+                  color: isDarkMode ? '#fff' : '#1a1a1a',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  resize: 'vertical',
+                  outline: 'none',
+                  fontFamily: 'inherit'
+                }}
+              />
             </div>
           </>
         )}

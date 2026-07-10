@@ -56,7 +56,26 @@ export const harvardTemplate: CVTemplate = {
     
     // Experiencia puede venir como array, o como objeto { trabajo_actual: {...}, resumen_completo: ... }
     let experiencia = data.experiencia_laboral || data.experiencia || '';
-    if (experiencia && typeof experiencia === 'object' && !Array.isArray(experiencia)) {
+    let usarProyectos = false;
+
+    const hasWorkExperience = (exp: any): boolean => {
+      if (!exp) return false;
+      if (typeof exp === 'string') return exp.trim().length > 0;
+      if (Array.isArray(exp)) return exp.length > 0;
+      if (typeof exp === 'object') {
+        const ta = exp.trabajo_actual;
+        const hist = exp.historial;
+        const hasTa = ta && (ta.empresa?.trim() || ta.puesto?.trim() || ta.descripcion?.trim());
+        const hasHist = Array.isArray(hist) && hist.length > 0;
+        return !!(hasTa || hasHist || exp.resumen_completo?.trim());
+      }
+      return false;
+    };
+
+    if (!hasWorkExperience(experiencia) && data.proyectos_alternativos && data.proyectos_alternativos.trim().length > 0) {
+      experiencia = data.proyectos_alternativos;
+      usarProyectos = true;
+    } else if (experiencia && typeof experiencia === 'object' && !Array.isArray(experiencia)) {
       const exps = [];
       if (experiencia.trabajo_actual) exps.push(experiencia.trabajo_actual);
       if (experiencia.historial) exps.push(...(Array.isArray(experiencia.historial) ? experiencia.historial : []));
@@ -191,7 +210,7 @@ export const harvardTemplate: CVTemplate = {
         ` : ''}
 
         ${experiencia && (typeof experiencia === 'string' || (Array.isArray(experiencia) && experiencia.length > 0)) ? `
-        <h2 style="${h2Style}">Experiencia</h2>
+        <h2 style="${h2Style}">${usarProyectos ? 'Proyectos y Experiencia' : 'Experiencia'}</h2>
         ${formatExperiencia(experiencia)}
         ` : ''}
       </div>
