@@ -1758,8 +1758,8 @@ export default function ProfilePage() {
                 marginTop: '30px', 
                 padding: '24px', 
                 borderRadius: '12px', 
-                background: isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)', 
-                border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)' 
+                background: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)', 
+                border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(0, 0, 0, 0.1)' 
               }}
             >
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: isDarkMode ? '#fff' : '#1a1a1a' }}>
@@ -1781,14 +1781,15 @@ export default function ProfilePage() {
                   height: '140px',
                   padding: '12px 16px',
                   borderRadius: '8px',
-                  background: isDarkMode ? 'rgba(0,0,0,0.2)' : '#fff',
-                  border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.15)',
+                  background: isDarkMode ? 'rgba(0, 0, 0, 0.3)' : '#ffffff',
+                  border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid #cbd5e1',
                   color: isDarkMode ? '#fff' : '#1a1a1a',
                   fontSize: '14px',
                   lineHeight: '1.6',
-                  resize: 'vertical',
+                  resize: 'none',
                   outline: 'none',
-                  fontFamily: 'inherit'
+                  fontFamily: 'inherit',
+                  boxShadow: isDarkMode ? 'none' : '0 1px 3px rgba(0, 0, 0, 0.05)'
                 }}
               />
             </div>
