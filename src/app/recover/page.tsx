@@ -9,7 +9,6 @@ export default function RecoverPassword() {
   const [email, setEmail] = useState('');
   const [step, setStep] = useState(1); // 1: Email, 2: Code, 3: New Password, 4: Success
   const [verificationCode, setVerificationCode] = useState('');
-  const [simulatedCode] = useState('849201'); // Code generated for the simulation
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -23,7 +22,7 @@ export default function RecoverPassword() {
     { label: 'Al menos un carácter especial', satisfied: /[^A-Za-z0-9]/.test(newPassword) },
   ];
 
-  // Paso 1: Comprobar correo
+  // Paso 1: Comprobar correo y enviar código
   const handleCheckEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -50,20 +49,34 @@ export default function RecoverPassword() {
     }
   };
 
-  // Paso 2: Verificar código
-  const handleVerifyCode = (e: React.FormEvent) => {
+  // Paso 2: Verificar código en el servidor
+  const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    if (verificationCode.trim() !== simulatedCode) {
-      setError('El código de verificación ingresado no es válido');
-      return;
+    try {
+      const res = await fetch('/api/auth/recover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: verificationCode, action: 'verify' })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'El código de verificación ingresado no es correcto');
+        return;
+      }
+
+      setStep(3); // Ir al cambio de contraseña
+    } catch (err) {
+      setError('Error de conexión con el servidor');
+    } finally {
+      setLoading(false);
     }
-
-    setStep(3); // Ir al cambio de contraseña
   };
 
-  // Paso 3: Restablecer contraseña
+  // Paso 3: Restablecer contraseña en el servidor
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -90,7 +103,7 @@ export default function RecoverPassword() {
       const res = await fetch('/api/auth/recover', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, newPassword, action: 'reset' })
+        body: JSON.stringify({ email, newPassword, code: verificationCode, action: 'reset' })
       });
       const data = await res.json();
 
@@ -153,20 +166,20 @@ export default function RecoverPassword() {
             </form>
           )}
 
-          {/* PASO 2: Código de verificación simulado */}
+          {/* PASO 2: Ingreso de código enviado */}
           {step === 2 && (
             <form onSubmit={handleVerifyCode}>
-              <div style={{ backgroundColor: 'rgba(97, 71, 255, 0.05)', border: '1px dashed #6147FF', borderRadius: '10px', padding: '15px', marginBottom: '20px', textAlign: 'center' }}>
-                <p style={{ fontSize: '13px', color: '#6147FF', fontWeight: 600, margin: 0 }}>
-                  🔑 Simulación de seguridad para la Tesis:
+              <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.05)', border: '1px dashed #10b981', borderRadius: '10px', padding: '15px', marginBottom: '20px', textAlign: 'center' }}>
+                <p style={{ fontSize: '13px', color: '#10b981', fontWeight: 600, margin: 0 }}>
+                  📩 Código de verificación enviado
                 </p>
-                <p style={{ fontSize: '13px', color: '#1A202C', marginTop: '6px', marginBottom: 0 }}>
-                  Se ha generado el código: <strong style={{ fontSize: '16px', color: '#6A36FF' }}>{simulatedCode}</strong>
+                <p style={{ fontSize: '13px', color: '#718096', marginTop: '6px', marginBottom: 0 }}>
+                  Hemos enviado un código a <strong style={{ color: '#1B2559' }}>{email}</strong>. Por favor, revisa tu bandeja de entrada y spam.
                 </p>
               </div>
 
               <p style={{ fontSize: '14px', color: '#718096', marginBottom: '20px', textAlign: 'center' }}>
-                Ingresa el código de verificación que recibiste.
+                Ingresa el código de 6 dígitos enviado a tu correo.
               </p>
 
               <div className="form-group">
@@ -176,13 +189,13 @@ export default function RecoverPassword() {
                   id="code"
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
-                  placeholder="Ej: 849201"
+                  placeholder="Ej: 123456"
                   required
                 />
               </div>
 
-              <button type="submit" className="btn-submit">
-                Verificar Código
+              <button type="submit" className="btn-submit" disabled={loading}>
+                {loading ? 'Verificando...' : 'Verificar Código'}
               </button>
             </form>
           )}
