@@ -61,21 +61,21 @@ export const harvardTemplate: CVTemplate = {
     const hasWorkExperience = (exp: any): boolean => {
       if (!exp) return false;
       if (typeof exp === 'string') return exp.trim().length > 0;
-      if (Array.isArray(exp)) {
-        return exp.some(e => e && e.tipo !== 'proyecto');
-      }
+      if (Array.isArray(exp)) return exp.length > 0;
       if (typeof exp === 'object') {
         const ta = exp.trabajo_actual;
         const hist = exp.historial;
-        const hasTa = ta && ta.tipo !== 'proyecto' && (ta.empresa?.trim() || ta.puesto?.trim() || ta.descripcion?.trim());
-        const hasHist = Array.isArray(hist) && hist.some(h => h && h.tipo !== 'proyecto');
+        const hasTa = ta && (ta.empresa?.trim() || ta.puesto?.trim() || ta.descripcion?.trim());
+        const hasHist = Array.isArray(hist) && hist.length > 0;
         return !!(hasTa || hasHist || exp.resumen_completo?.trim());
       }
       return false;
     };
 
-    // Primero resolvemos el objeto de experiencia a array/string
-    if (experiencia && typeof experiencia === 'object' && !Array.isArray(experiencia)) {
+    if (!hasWorkExperience(experiencia) && data.proyectos_alternativos && data.proyectos_alternativos.trim().length > 0) {
+      experiencia = data.proyectos_alternativos;
+      usarProyectos = true;
+    } else if (experiencia && typeof experiencia === 'object' && !Array.isArray(experiencia)) {
       const exps = [];
       if (experiencia.trabajo_actual) exps.push(experiencia.trabajo_actual);
       if (experiencia.historial) exps.push(...(Array.isArray(experiencia.historial) ? experiencia.historial : []));
@@ -83,16 +83,6 @@ export const harvardTemplate: CVTemplate = {
         experiencia = exps;
       } else if (experiencia.resumen_completo) {
         experiencia = experiencia.resumen_completo;
-      }
-    }
-
-    // Ahora evaluamos si son proyectos y/o si no hay experiencia laboral
-    if (!hasWorkExperience(experiencia)) {
-      if (Array.isArray(experiencia) && experiencia.some(e => e.tipo === 'proyecto')) {
-        usarProyectos = true;
-      } else if (data.proyectos_alternativos && data.proyectos_alternativos.trim().length > 0) {
-        experiencia = data.proyectos_alternativos;
-        usarProyectos = true;
       }
     }
 
@@ -167,14 +157,13 @@ export const harvardTemplate: CVTemplate = {
           const cargo = exp.cargo || exp.puesto || exp.titulo || '';
           const fechas = [exp.fecha_inicio || exp.ano_inicio, exp.fecha_fin || exp.ano_fin].filter(Boolean).join(' - ');
           const desc = exp.descripcion || exp.logros || '';
-          const esProyecto = exp.tipo === 'proyecto';
           
           return `
           <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
-            <strong style="font-size: 13px;">${emp}${esProyecto ? ' (Proyecto / Voluntariado)' : ''}</strong>
+            <strong style="font-size: 13px;">${emp}</strong>
             <strong style="font-size: 12px;">${fechas || ''}</strong>
           </p>
-          ${cargo ? `<p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">${esProyecto ? 'Rol / Tareas' : 'Rol'}: ${cargo}</p>` : ''}
+          ${cargo ? `<p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">Rol: ${cargo}</p>` : ''}
           ${desc ? `<p style="margin: 0 0 15px 0; font-size: 11px; white-space: pre-wrap;">${desc}</p>` : '<p style="margin-bottom: 15px;"></p>'}
           `;
         }).join('');
@@ -221,7 +210,7 @@ export const harvardTemplate: CVTemplate = {
         ` : ''}
 
         ${experiencia && (typeof experiencia === 'string' || (Array.isArray(experiencia) && experiencia.length > 0)) ? `
-        <h2 style="${h2Style}">${usarProyectos ? 'Proyectos y Experiencia' : 'Experiencia'}</h2>
+        <h2 style="${h2Style}">${usarProyectos ? 'Proyectos y Voluntariados' : 'Experiencia'}</h2>
         ${formatExperiencia(experiencia)}
         ` : ''}
       </div>

@@ -667,7 +667,6 @@ export default function ProfilePage() {
   // Estados del modal de experiencia
   const [isExpModalOpen, setIsExpModalOpen] = useState(false);
   const [editingExpId, setEditingExpId] = useState<string | null>(null);
-  const [editingExpType, setEditingExpType] = useState<'laboral' | 'proyecto'>('laboral');
 
   // Estados temporales del formulario de experiencia
   const [expPosicion, setExpPosicion] = useState('');
@@ -686,7 +685,6 @@ export default function ProfilePage() {
     setExpDescripcion('');
     setExpAnioInicio('');
     setExpAnioFin('');
-    setEditingExpType('laboral');
     setErrorsExp({}); // Limpiar errores
     setIsExpModalOpen(true);
   };
@@ -702,7 +700,6 @@ export default function ProfilePage() {
       setExpDescripcion(exp.desc);
       setExpAnioInicio(exp.anioInicio);
       setExpAnioFin(exp.anioFin);
-      setEditingExpType(exp.tipo || 'laboral');
       setErrorsExp({}); // Limpiar errores
       setIsExpModalOpen(true);
     }
@@ -715,23 +712,13 @@ export default function ProfilePage() {
     const newErrors: typeof errorsExp = {};
 
     if (!expPosicion.trim()) {
-      newErrors.position = editingExpType === 'proyecto' 
-        ? "El título del proyecto o rol es obligatorio." 
-        : "La posición es obligatoria.";
+      newErrors.position = "La posición es obligatoria.";
     }
-    if (editingExpType === 'proyecto') {
-      if (!expEmpresa.trim()) {
-        newErrors.company = "El nombre de la institución u organización es obligatorio.";
-      }
-    } else {
-      if (!expIndependiente && !expEmpresa.trim()) {
-        newErrors.company = "El nombre de la empresa es obligatorio.";
-      }
+    if (!expIndependiente && !expEmpresa.trim()) {
+      newErrors.company = "El nombre de la empresa es obligatorio.";
     }
     if (!expDescripcion.trim()) {
-      newErrors.desc = editingExpType === 'proyecto'
-        ? "La descripción del proyecto o voluntariado es obligatoria."
-        : "La descripción de la posición es obligatoria.";
+      newErrors.desc = "La descripción de la posición es obligatoria.";
     }
 
     // Función helper para extraer el año de 4 dígitos de un string
@@ -773,7 +760,7 @@ export default function ProfilePage() {
       return;
     }
 
-    const finalCompany = editingExpType === 'proyecto' ? expEmpresa.trim() : (expIndependiente ? 'Independiente' : expEmpresa.trim());
+    const finalCompany = expIndependiente ? 'Independiente' : expEmpresa.trim();
 
     let nextExperiences = [...experiences];
     if (editingExpId === null) {
@@ -784,8 +771,7 @@ export default function ProfilePage() {
         anioFin: finalAnioFin,
         position: expPosicion.trim(),
         company: finalCompany,
-        desc: expDescripcion.trim(),
-        tipo: editingExpType
+        desc: expDescripcion.trim()
       };
       nextExperiences = [newExp, ...experiences];
       setExperiences(nextExperiences);
@@ -799,8 +785,7 @@ export default function ProfilePage() {
               anioFin: finalAnioFin,
               position: expPosicion.trim(),
               company: finalCompany,
-              desc: expDescripcion.trim(),
-              tipo: editingExpType
+              desc: expDescripcion.trim()
             }
           : exp
       );
@@ -1758,25 +1743,7 @@ export default function ProfilePage() {
                 <div className="experience-card" key={exp.id}>
                   <div className="experience-time-col">{exp.anioInicio} – {exp.anioFin}</div>
                   <div className="experience-info-col">
-                    <h3 className="experience-position" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      {exp.position}
-                      {exp.tipo === 'proyecto' && (
-                        <span 
-                          className="skill-badge badge-blanda" 
-                          style={{ 
-                            fontSize: '10px', 
-                            padding: '2px 8px', 
-                            borderRadius: '4px',
-                            background: isDarkMode ? 'rgba(122, 90, 248, 0.2)' : 'rgba(122, 90, 248, 0.1)',
-                            border: '1px solid rgba(122, 90, 248, 0.3)',
-                            color: isDarkMode ? '#a78bfa' : '#6d28d9',
-                            fontWeight: '500'
-                          }}
-                        >
-                          Proyecto / Voluntariado
-                        </span>
-                      )}
-                    </h3>
+                    <h3 className="experience-position">{exp.position}</h3>
                     <p className="experience-company">{exp.company}</p>
                     <p className="experience-desc">{exp.desc}</p>
                   </div>
@@ -1804,7 +1771,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            {/* Sección de Proyectos y Experiencia Alternativa */}
+            {/* Sección de Proyectos y Voluntariados */}
             <div 
               className="alternative-projects-section" 
               style={{ 
@@ -1816,7 +1783,7 @@ export default function ProfilePage() {
               }}
             >
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: isDarkMode ? '#fff' : '#1a1a1a' }}>
-                Proyectos y Experiencia Alternativa
+                Proyectos y Voluntariados
               </h2>
               <p style={{ fontSize: '13px', color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)', marginBottom: '16px', lineHeight: '1.4' }}>
                 Si no tenés experiencia laboral formal, podés detallar acá tus proyectos académicos, trabajos independientes (freelance) o voluntariados. Esto se usará automáticamente en tu CV en lugar de la experiencia de trabajo.
@@ -2066,38 +2033,10 @@ export default function ProfilePage() {
                 </button>
               </div>
 
-              {/* Selector de pestañas dinámico dentro del modal (solo visible si se está agregando uno nuevo) */}
-              {editingExpId === null && (
-                <div className="edu-modal-tabs">
-                  <button 
-                    type="button" 
-                    className={`edu-tab-btn ${editingExpType === 'laboral' ? 'active' : ''}`}
-                    onClick={() => {
-                      setEditingExpType('laboral');
-                      setErrorsExp({});
-                    }}
-                  >
-                    Experiencia Laboral
-                  </button>
-                  <button 
-                    type="button" 
-                    className={`edu-tab-btn ${editingExpType === 'proyecto' ? 'active' : ''}`}
-                    onClick={() => {
-                      setEditingExpType('proyecto');
-                      setErrorsExp({});
-                    }}
-                  >
-                    Proyecto / Voluntariado
-                  </button>
-                </div>
-              )}
-
               <form onSubmit={handleSaveExp} className="modal-form">
                 {/* Posición */}
                 <div className={`form-row ${errorsExp.position ? 'has-error' : ''}`}>
-                  <label htmlFor="expPosicion">
-                    {editingExpType === 'proyecto' ? 'Título del proyecto / Voluntariado*' : 'Posición*'}
-                  </label>
+                  <label htmlFor="expPosicion">Posición*</label>
                   <div className="input-group-wrapper">
                     <input 
                       type="text" 
@@ -2107,69 +2046,47 @@ export default function ProfilePage() {
                         setExpPosicion(e.target.value);
                         setErrorsExp(prev => ({ ...prev, position: undefined }));
                       }}
-                      placeholder={editingExpType === 'proyecto' ? 'Ej: Voluntariado de construcción o Proyecto final' : ''}
                     />
                     {errorsExp.position && <span className="error-message">{errorsExp.position}</span>}
                   </div>
                 </div>
 
-                {/* Empresa u Organización */}
-                {editingExpType === 'proyecto' ? (
-                  <div className={`form-row ${errorsExp.company ? 'has-error' : ''}`}>
-                    <label htmlFor="expEmpresa">Institución / Organización*</label>
-                    <div className="input-group-wrapper">
+                {/* Nombre de la empresa */}
+                <div className={`form-row ${errorsExp.company ? 'has-error' : ''}`} style={{ flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}>
+                  <div className="form-row-header-layout">
+                    <label htmlFor="expEmpresa" style={{ flex: 'none' }}>Nombre de la empresa*</label>
+                    <label className="company-checkbox-wrapper">
                       <input 
-                        type="text" 
-                        id="expEmpresa" 
-                        value={expEmpresa} 
+                        type="checkbox" 
+                        checked={expIndependiente} 
                         onChange={(e) => {
-                          setExpEmpresa(e.target.value);
+                          handleCheckboxChange(e);
                           setErrorsExp(prev => ({ ...prev, company: undefined }));
                         }}
-                        placeholder="Ej: Techo Argentina, Universidad, etc."
                       />
-                      {errorsExp.company && <span className="error-message">{errorsExp.company}</span>}
-                    </div>
+                      <span>Independiente</span>
+                    </label>
                   </div>
-                ) : (
-                  <div className={`form-row ${errorsExp.company ? 'has-error' : ''}`} style={{ flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}>
-                    <div className="form-row-header-layout">
-                      <label htmlFor="expEmpresa" style={{ flex: 'none' }}>Nombre de la empresa*</label>
-                      <label className="company-checkbox-wrapper">
-                        <input 
-                          type="checkbox" 
-                          checked={expIndependiente} 
-                          onChange={(e) => {
-                            handleCheckboxChange(e);
-                            setErrorsExp(prev => ({ ...prev, company: undefined }));
-                          }}
-                        />
-                        <span>Independiente</span>
-                      </label>
-                    </div>
-                    <div className="input-group-wrapper">
-                      <input 
-                        type="text" 
-                        id="expEmpresa" 
-                        value={expEmpresa} 
-                        onChange={(e) => {
-                          setExpEmpresa(e.target.value);
-                          setErrorsExp(prev => ({ ...prev, company: undefined }));
-                        }}
-                        disabled={expIndependiente}
-                        placeholder={expIndependiente ? 'Independiente' : ''}
-                        style={{ width: '100%' }}
-                      />
-                      {errorsExp.company && <span className="error-message">{errorsExp.company}</span>}
-                    </div>
+                  <div className="input-group-wrapper">
+                    <input 
+                      type="text" 
+                      id="expEmpresa" 
+                      value={expEmpresa} 
+                      onChange={(e) => {
+                        setExpEmpresa(e.target.value);
+                        setErrorsExp(prev => ({ ...prev, company: undefined }));
+                      }}
+                      disabled={expIndependiente}
+                      placeholder={expIndependiente ? 'Independiente' : ''}
+                      style={{ width: '100%' }}
+                    />
+                    {errorsExp.company && <span className="error-message">{errorsExp.company}</span>}
                   </div>
-                )}
+                </div>
 
-                {/* Descripción de la posición / proyecto */}
+                {/* Descripción de la posición */}
                 <div className={`form-row ${errorsExp.desc ? 'has-error' : ''}`}>
-                  <label htmlFor="expDescripcion">
-                    {editingExpType === 'proyecto' ? 'Descripción del proyecto o tareas*' : 'Descripción de la posición*'}
-                  </label>
+                  <label htmlFor="expDescripcion">Descripción de la posición*</label>
                   <div className="input-group-wrapper">
                     <input 
                       type="text" 
@@ -2179,7 +2096,6 @@ export default function ProfilePage() {
                         setExpDescripcion(e.target.value);
                         setErrorsExp(prev => ({ ...prev, desc: undefined }));
                       }}
-                      placeholder={editingExpType === 'proyecto' ? 'Describí brevemente tus tareas y aportes...' : ''}
                     />
                     {errorsExp.desc && <span className="error-message">{errorsExp.desc}</span>}
                   </div>
