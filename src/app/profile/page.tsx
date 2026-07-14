@@ -91,36 +91,18 @@ export default function ProfilePage() {
               setMail(dbData.email_registro);
             }
 
-            if (dbData.experiencia_laboral) {
-              const loadedExperiences: any[] = [];
-              if (dbData.experiencia_laboral.trabajo_actual) {
-                const ta = dbData.experiencia_laboral.trabajo_actual;
-                if (ta.empresa || ta.puesto) {
-                  loadedExperiences.push({
-                    id: 'db_actual',
-                    anioInicio: ta.fecha_inicio || '',
-                    anioFin: ta.fecha_fin || 'actualidad',
-                    position: ta.puesto || '',
-                    company: ta.empresa || '',
-                    desc: ta.descripcion || '',
-                    tipo: ta.tipo || 'laboral'
-                  });
-                }
+            if (dbData.experiencia_laboral && dbData.experiencia_laboral.trabajo_actual) {
+              const ta = dbData.experiencia_laboral.trabajo_actual;
+              if (ta.empresa && ta.puesto) {
+                setExperiences([{
+                  id: 'db_actual',
+                  anioInicio: ta.fecha_inicio || '',
+                  anioFin: ta.fecha_fin || 'actualidad',
+                  position: ta.puesto,
+                  company: ta.empresa,
+                  desc: ta.descripcion || ''
+                }]);
               }
-              if (Array.isArray(dbData.experiencia_laboral.historial)) {
-                dbData.experiencia_laboral.historial.forEach((h: any, index: number) => {
-                  loadedExperiences.push({
-                    id: `db_hist_${index}`,
-                    anioInicio: h.fecha_inicio || '',
-                    anioFin: h.fecha_fin || '',
-                    position: h.puesto || '',
-                    company: h.empresa || '',
-                    desc: h.descripcion || '',
-                    tipo: h.tipo || 'laboral'
-                  });
-                });
-              }
-              setExperiences(loadedExperiences);
             }
 
             if (dbData.habilidades) {
@@ -278,16 +260,14 @@ export default function ProfilePage() {
           puesto: ta.position,
           fecha_inicio: ta.anioInicio ? String(ta.anioInicio).toUpperCase() : '',
           fecha_fin: ta.anioFin ? String(ta.anioFin).toUpperCase() : '',
-          descripcion: ta.desc,
-          tipo: ta.tipo || 'laboral'
+          descripcion: ta.desc
         } : null,
         historial: hist.map(h => ({
           empresa: h.company,
           puesto: h.position,
           fecha_inicio: h.anioInicio ? String(h.anioInicio).toUpperCase() : '',
           fecha_fin: h.anioFin ? String(h.anioFin).toUpperCase() : '',
-          descripcion: h.desc,
-          tipo: h.tipo || 'laboral'
+          descripcion: h.desc
         }))
       },
       educacion: {
@@ -1771,7 +1751,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            {/* Sección de Proyectos y Voluntariados */}
+            {/* Sección de Proyectos y Experiencia Alternativa */}
             <div 
               className="alternative-projects-section" 
               style={{ 
@@ -1783,7 +1763,7 @@ export default function ProfilePage() {
               }}
             >
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: isDarkMode ? '#fff' : '#1a1a1a' }}>
-                Proyectos y Voluntariados
+                Proyectos y Experiencia Alternativa
               </h2>
               <p style={{ fontSize: '13px', color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)', marginBottom: '16px', lineHeight: '1.4' }}>
                 Si no tenés experiencia laboral formal, podés detallar acá tus proyectos académicos, trabajos independientes (freelance) o voluntariados. Esto se usará automáticamente en tu CV en lugar de la experiencia de trabajo.
