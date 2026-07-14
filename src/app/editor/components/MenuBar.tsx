@@ -33,6 +33,7 @@ interface MenuBarProps {
   editor: Editor;
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
+  onReloadFromProfile?: () => void;
   onSaveCV?: (html: string) => void;
   onOverwriteCV?: (html: string) => void;
   onDownloadPDF?: () => void;
@@ -77,7 +78,7 @@ const PRESET_COLORS = [
   '#805ad5'  // Violeta/Púrpura
 ];
 
-export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, onSaveCV, onOverwriteCV, onDownloadPDF, onShowMyCVs, cvName, onNameChange }: MenuBarProps) {
+export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, onReloadFromProfile, onSaveCV, onOverwriteCV, onDownloadPDF, onShowMyCVs, cvName, onNameChange }: MenuBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
   const [tempSize, setTempSize] = useState('12');
@@ -589,6 +590,21 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
               <div className="px-3 py-1.5 text-[10px] text-slate-400 mt-1 border-t border-slate-100">
                 Próximamente más estilos...
               </div>
+              {onReloadFromProfile && (
+                <button
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    onReloadFromProfile();
+                    setActiveDropdown(null);
+                  }}
+                  className="w-full text-left px-3 py-2 text-violet-600 hover:bg-violet-50 transition-colors font-medium border-t border-slate-100 flex items-center gap-1.5"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5" />
+                  </svg>
+                  Restaurar desde Perfil
+                </button>
+              )}
             </div>
           )}
         </div>

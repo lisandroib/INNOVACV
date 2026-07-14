@@ -163,7 +163,18 @@ export default function EditorPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        // Intentar cargar el último borrador del usuario primero
+        // 1. Cargar datos del perfil del usuario (siempre, para tener userData disponible)
+        let profileData = null;
+        const res = await fetch('/api/perfil');
+        if (res.ok) {
+          const { data } = await res.json();
+          if (data) {
+            profileData = data;
+            setUserData(data);
+          }
+        }
+
+        // 2. Intentar cargar el último borrador del usuario primero
         const draftRes = await fetch('/api/cv/guardar');
         if (draftRes.ok) {
           const { data } = await draftRes.json();
@@ -177,12 +188,9 @@ export default function EditorPage() {
           }
         }
 
-        // Si no hay borrador, auto-generar de perfil
-        const res = await fetch('/api/perfil');
-        if (res.ok) {
-          const { data } = await res.json();
-          if (data) {
-            let finalData = { ...data };
+        // 3. Si no hay borrador, auto-generar de perfil
+        if (profileData) {
+          let finalData = { ...profileData };
 
             if (!finalData.sobre_mi && !finalData.resumen) {
               const rolObjetivo = finalData.perfil_profesional?.rol_objetivo || 'profesional';
@@ -244,7 +252,6 @@ export default function EditorPage() {
             setUserData(finalData);
             setInitialContent(getTemplateById('harvard').generateHTML(finalData));
           }
-        }
       } catch (err) {
         console.error('Error loading data:', err);
       } finally {
@@ -262,6 +269,26 @@ export default function EditorPage() {
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplateId(templateId);
     setInitialContent(getTemplateById(templateId).generateHTML(userData));
+  };
+
+  const handleReloadFromProfile = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/perfil');
+      if (res.ok) {
+        const { data } = await res.json();
+        if (data) {
+          setUserData(data);
+          setInitialContent(getTemplateById(selectedTemplateId).generateHTML(data));
+          showNotification("Currículum restaurado desde tu perfil", "success");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification("Error al restaurar desde el perfil", "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSaveCV = (html: string) => {
@@ -412,6 +439,7 @@ export default function EditorPage() {
           onSectionChange={handleSectionChange}
           selectedTemplateId={selectedTemplateId}
           onTemplateChange={handleTemplateChange}
+          onReloadFromProfile={handleReloadFromProfile}
           onSaveCV={handleSaveCV}
           onOverwriteCV={handleOverwriteCV}
           onShowMyCVs={handleShowMyCVs}

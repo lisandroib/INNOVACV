@@ -50,6 +50,7 @@ interface RichTextEditorProps {
   onSectionChange?: (section: string, textContext: string) => void;
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
+  onReloadFromProfile?: () => void;
   onSaveCV?: (html: string) => void;
   onOverwriteCV?: (html: string) => void;
   onShowMyCVs?: () => void;
@@ -140,6 +141,7 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
   onSectionChange,
   selectedTemplateId,
   onTemplateChange,
+  onReloadFromProfile,
   onSaveCV,
   onOverwriteCV,
   onShowMyCVs,
@@ -244,6 +246,7 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
           editor={editor} 
           selectedTemplateId={selectedTemplateId} 
           onTemplateChange={onTemplateChange} 
+          onReloadFromProfile={onReloadFromProfile}
           onSaveCV={onSaveCV}
           onOverwriteCV={onOverwriteCV}
           onDownloadPDF={handlePrint as () => void}
