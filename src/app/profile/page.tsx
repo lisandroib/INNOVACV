@@ -340,6 +340,7 @@ export default function ProfilePage() {
   };
 
   // Estados de datos personales
+  const [expFilterTab, setExpFilterTab] = useState<'laboral' | 'proyecto'>('laboral');
   const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400');
   const [nombre, setNombre] = useState('Nombre');
   const [apellido, setApellido] = useState('Apellido');
@@ -1855,75 +1856,121 @@ export default function ProfilePage() {
         {activeTab === 'experience' && (
           <>
             <div className="profile-header-container">
-              <h1 className="profile-title-centered">Experiencia profesional</h1>
+              {/* Filtro superior izquierdo para separar Experiencias de Proyectos */}
+              <div className="exp-filter-tabs">
+                <button
+                  type="button"
+                  className={`exp-filter-btn ${expFilterTab === 'laboral' ? 'active' : ''}`}
+                  onClick={() => setExpFilterTab('laboral')}
+                >
+                  <svg className="exp-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                  <span>Experiencia Laboral</span>
+                </button>
+                <button
+                  type="button"
+                  className={`exp-filter-btn ${expFilterTab === 'proyecto' ? 'active' : ''}`}
+                  onClick={() => setExpFilterTab('proyecto')}
+                >
+                  <svg className="exp-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                  </svg>
+                  <span>Proyectos / Voluntariado</span>
+                </button>
+              </div>
+
+              <h1 className="profile-title-centered" style={{ margin: 0 }}>Experiencia profesional</h1>
+
               <button className="btn-add-experience" onClick={handleOpenAddExp}>
                 Agregar experiencia
               </button>
             </div>
 
-            {/* Lista de experiencias profesionales dinámica */}
+            {/* Lista de experiencias profesionales filtrada */}
             <div className="experience-list">
-              {sortedExperiences.map((exp) => (
-                <div className="experience-card" key={exp.id}>
-                  <div className="experience-time-col">{exp.anioInicio} – {exp.anioFin}</div>
-                  <div className="experience-info-col">
-                    <h3 className="experience-position">{exp.position}</h3>
-                    <p className="experience-company">{exp.company}</p>
-                    <p className="experience-desc">{exp.desc}</p>
-                  </div>
-                  <div className="experience-card-actions">
-                    <button 
-                      className="btn-edit-experience" 
-                      title="Editar experiencia"
-                      onClick={() => handleOpenEditExp(exp.id)}
-                    >
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                      </svg>
-                    </button>
-                    <button 
-                      className="btn-delete-experience" 
-                      title="Eliminar experiencia"
-                      onClick={() => handleDeleteExp(exp.id, exp.position, exp.company)}
-                    >
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
+              {expFilterTab === 'laboral' && (
+                <>
+                  {sortedExperiences.length > 0 ? (
+                    sortedExperiences.map((exp) => (
+                      <div className="experience-card" key={exp.id}>
+                        <div className="experience-time-col">{exp.anioInicio} – {exp.anioFin}</div>
+                        <div className="experience-info-col">
+                          <h3 className="experience-position">{exp.position}</h3>
+                          <p className="experience-company">{exp.company}</p>
+                          <p className="experience-desc">{exp.desc}</p>
+                        </div>
+                        <div className="experience-card-actions">
+                          <button 
+                            className="btn-edit-experience" 
+                            title="Editar experiencia"
+                            onClick={() => handleOpenEditExp(exp.id)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                            </svg>
+                          </button>
+                          <button 
+                            className="btn-delete-experience" 
+                            title="Eliminar experiencia"
+                            onClick={() => handleDeleteExp(exp.id, exp.position, exp.company)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b', fontSize: '14px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', width: '100%', boxSizing: 'border-box' }}>
+                      No has agregado experiencias laborales todavía.
+                    </div>
+                  )}
+                </>
+              )}
 
-              {proyectos.map((proj) => (
-                <div className="experience-card" key={proj.id}>
-                  <div className="experience-time-col">{proj.fecha || 'Proyectos / Voluntariado'}</div>
-                  <div className="experience-info-col">
-                    <h3 className="experience-position">{proj.nombre}</h3>
-                    {proj.rol && <p className="experience-company">{proj.rol}</p>}
-                    <p className="experience-desc">{proj.desc}</p>
-                  </div>
-                  <div className="experience-card-actions">
-                    <button 
-                      className="btn-edit-experience" 
-                      title="Editar proyecto o voluntariado"
-                      onClick={() => handleOpenEditProyecto(proj.id)}
-                    >
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                      </svg>
-                    </button>
-                    <button 
-                      className="btn-delete-experience" 
-                      title="Eliminar proyecto o voluntariado"
-                      onClick={() => handleDeleteProyecto(proj.id, proj.nombre)}
-                    >
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
+              {expFilterTab === 'proyecto' && (
+                <>
+                  {proyectos.length > 0 ? (
+                    proyectos.map((proj) => (
+                      <div className="experience-card" key={proj.id}>
+                        <div className="experience-time-col">{proj.fecha || 'Proyectos / Voluntariado'}</div>
+                        <div className="experience-info-col">
+                          <h3 className="experience-position">{proj.nombre}</h3>
+                          {proj.rol && <p className="experience-company">{proj.rol}</p>}
+                          <p className="experience-desc">{proj.desc}</p>
+                        </div>
+                        <div className="experience-card-actions">
+                          <button 
+                            className="btn-edit-experience" 
+                            title="Editar proyecto o voluntariado"
+                            onClick={() => handleOpenEditProyecto(proj.id)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                            </svg>
+                          </button>
+                          <button 
+                            className="btn-delete-experience" 
+                            title="Eliminar proyecto o voluntariado"
+                            onClick={() => handleDeleteProyecto(proj.id, proj.nombre)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b', fontSize: '14px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', width: '100%', boxSizing: 'border-box' }}>
+                      No has agregado proyectos o voluntariados todavía.
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </>
         )}
