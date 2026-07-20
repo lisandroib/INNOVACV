@@ -54,9 +54,35 @@ export const harvardTemplate: CVTemplate = {
     
     const educacion = data.educacion || {};
     
+    let proyectos = (data.proyectos && Array.isArray(data.proyectos) && data.proyectos.length > 0)
+      ? data.proyectos
+      : (data.proyectos_alternativos || '');
+
     // Experiencia puede venir como array, o como objeto { trabajo_actual: {...}, resumen_completo: ... }
     let experiencia = data.experiencia_laboral || data.experiencia || '';
-    if (experiencia && typeof experiencia === 'object' && !Array.isArray(experiencia)) {
+    let usarProyectos = false;
+
+    const hasWorkExperience = (exp: any): boolean => {
+      if (!exp) return false;
+      if (typeof exp === 'string') return exp.trim().length > 0;
+      if (Array.isArray(exp)) return exp.length > 0;
+      if (typeof exp === 'object') {
+        const ta = exp.trabajo_actual;
+        const hist = exp.historial;
+        const hasTa = ta && (ta.empresa?.trim() || ta.puesto?.trim() || ta.descripcion?.trim());
+        const hasHist = Array.isArray(hist) && hist.length > 0;
+        return !!(hasTa || hasHist || exp.resumen_completo?.trim());
+      }
+      return false;
+    };
+
+    const hasExp = hasWorkExperience(experiencia);
+
+    if (!hasExp && proyectos) {
+      experiencia = proyectos;
+      usarProyectos = true;
+      proyectos = '';
+    } else if (experiencia && typeof experiencia === 'object' && !Array.isArray(experiencia)) {
       const exps = [];
       if (experiencia.trabajo_actual) exps.push(experiencia.trabajo_actual);
       if (experiencia.historial) exps.push(...(Array.isArray(experiencia.historial) ? experiencia.historial : []));
@@ -73,14 +99,28 @@ export const harvardTemplate: CVTemplate = {
 
     const formatHabilidades = (habilidades: any) => {
       if (typeof habilidades === 'string') return `<p>${habilidades.replace(/\n/g, '<br/>')}</p>`;
-      if (Array.isArray(habilidades)) return `<ul>${habilidades.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      if (Array.isArray(habilidades)) return `<ul style="margin: 0; padding-left: 15px; font-size: 11px;">${habilidades.map(item => `<li>${item}</li>`).join('')}</ul>`;
       if (!habilidades || typeof habilidades !== 'object') return '';
       
-      let html = '<ul>';
-      if (habilidades.duras) html += `<li><strong>Habilidades Técnicas:</strong> ${habilidades.duras}</li>`;
-      if (habilidades.blandas) html += `<li><strong>Habilidades Blandas:</strong> ${habilidades.blandas}</li>`;
+      let html = '<ul style="margin: 0; padding-left: 15px; font-size: 11px;">';
+      
+      const renderSubList = (title: string, value: any) => {
+        if (!value) return '';
+        let items: string[] = [];
+        if (typeof value === 'string') {
+          items = value.split(',').map(s => s.trim()).filter(Boolean);
+        } else if (Array.isArray(value)) {
+          items = value;
+        }
+        if (items.length === 0) return '';
+        
+        return `<li><strong>${title}:</strong><ul style="margin-top: 4px; margin-bottom: 8px; padding-left: 20px; list-style-type: circle;">${items.map(item => `<li>${item}</li>`).join('')}</ul></li>`;
+      };
+
+      html += renderSubList('Habilidades Técnicas', habilidades.duras);
       html += '</ul>';
-      return html === '<ul></ul>' ? '' : html;
+      
+      return html === '<ul style="margin: 0; padding-left: 15px; font-size: 11px;"></ul>' ? '' : html;
     };
 
     const formatEducacion = (educacion: any) => {
@@ -95,14 +135,14 @@ export const harvardTemplate: CVTemplate = {
         if (data.institucion || data.carrera || data.titulo) {
           const dates = [data.ano_inicio, data.ano_fin || data.ultimo_ano].filter(Boolean).join(' - ');
           const title = [data.titulo, data.carrera].filter(Boolean).join(' - ') || labelFallback;
-          const inst = data.institucion || 'Institución';
+          const inst = data.institucion || '';
           
           html += `
           <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
             <strong style="font-size: 13px; text-transform: uppercase;">${title}</strong>
-            <strong style="font-size: 12px;">${dates || 'Fecha'}</strong>
+            <strong style="font-size: 12px;">${dates || ''}</strong>
           </p>
-          <p style="margin: 0 0 15px 0; font-size: 12px;">${inst}</p>
+          ${inst ? `<p style="margin: 0 0 15px 0; font-size: 12px;">${inst}</p>` : ''}
           `;
         }
       };
@@ -120,17 +160,17 @@ export const harvardTemplate: CVTemplate = {
       if (Array.isArray(experiencia)) {
         return experiencia.map(exp => {
           if (typeof exp === 'string') return `<p>${exp}</p>`;
-          const emp = exp.empresa || exp.organizacion || 'Empresa';
-          const cargo = exp.cargo || exp.puesto || exp.titulo || 'Cargo';
+          const emp = exp.empresa || exp.organizacion || '';
+          const cargo = exp.cargo || exp.puesto || exp.titulo || '';
           const fechas = [exp.fecha_inicio || exp.ano_inicio, exp.fecha_fin || exp.ano_fin].filter(Boolean).join(' - ');
           const desc = exp.descripcion || exp.logros || '';
           
           return `
           <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
             <strong style="font-size: 13px;">${emp}</strong>
-            <strong style="font-size: 12px;">${fechas || 'Fechas'}</strong>
+            <strong style="font-size: 12px;">${fechas || ''}</strong>
           </p>
-          <p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">Rol: ${cargo}</p>
+          ${cargo ? `<p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">Rol: ${cargo}</p>` : ''}
           ${desc ? `<p style="margin: 0 0 15px 0; font-size: 11px; white-space: pre-wrap;">${desc}</p>` : '<p style="margin-bottom: 15px;"></p>'}
           `;
         }).join('');
@@ -143,6 +183,33 @@ export const harvardTemplate: CVTemplate = {
       return '';
     };
 
+    const formatProyectos = (proyectos: any) => {
+      if (!proyectos) return '';
+      if (typeof proyectos === 'string') {
+        if (!proyectos.trim()) return '';
+        return `<p style="font-size: 11px; white-space: pre-wrap; line-height: 1.6; margin: 0 0 15px 0;">${proyectos.replace(/\n/g, '<br/>')}</p>`;
+      }
+      if (Array.isArray(proyectos)) {
+        return proyectos.map(p => {
+          if (typeof p === 'string') return `<p style="font-size: 11px; margin-bottom: 10px;">${p}</p>`;
+          const nombre = p.nombre || p.company || '';
+          const rol = p.rol || p.position || '';
+          const fecha = p.fecha || p.anioFin || '';
+          const desc = p.desc || p.descripcion || '';
+          
+          return `
+          <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
+            <strong style="font-size: 13px; text-transform: uppercase;">${nombre}</strong>
+            <strong style="font-size: 12px;">${fecha}</strong>
+          </p>
+          ${rol ? `<p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">${rol}</p>` : ''}
+          ${desc ? `<p style="margin: 0 0 15px 0; font-size: 11px; white-space: pre-wrap;">${desc}</p>` : '<p style="margin-bottom: 15px;"></p>'}
+          `;
+        }).join('');
+      }
+      return '';
+    };
+
     // Estilo general para los H2
     const h2Style = "font-size: 14px; font-weight: 700; color: #1e293b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; margin-top: 25px; margin-bottom: 15px; letter-spacing: 1px;";
 
@@ -150,7 +217,8 @@ export const harvardTemplate: CVTemplate = {
     if (direccion) contactItems.push(direccion);
     if (telefono) contactItems.push(telefono);
     if (email) contactItems.push(email);
-    // if website exists in the future, push here.
+
+    const proyectosHtml = formatProyectos(proyectos);
 
     return `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b;">
@@ -171,26 +239,20 @@ export const harvardTemplate: CVTemplate = {
         ${formatHabilidades(habilidades)}
         ` : ''}
 
+        ${educacion && (typeof educacion === 'string' || Object.keys(educacion).length > 0) ? `
         <h2 style="${h2Style}">Educación</h2>
-        ${educacion && (typeof educacion === 'string' || Object.keys(educacion).length > 0) ? formatEducacion(educacion) : `
-        <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
-          <strong style="font-size: 13px; text-transform: uppercase;">Título obtenido</strong>
-          <strong style="font-size: 12px;">Fecha de graduación</strong>
-        </p>
-        <p style="margin: 0 0 15px 0; font-size: 12px;">Institución Educativa</p>
-        `}
+        ${formatEducacion(educacion)}
+        ` : ''}
 
-        <h2 style="${h2Style}">Experiencia</h2>
-        ${experiencia && (typeof experiencia === 'string' || (Array.isArray(experiencia) && experiencia.length > 0)) ? formatExperiencia(experiencia) : `
-        <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
-          <strong style="font-size: 13px;">Empresa / Organización</strong>
-          <strong style="font-size: 12px;">Mes Año - Mes Año</strong>
-        </p>
-        <p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">Rol: Cargo o Título</p>
-        <ul style="margin: 0 0 15px 0; padding-left: 15px; font-size: 11px;">
-          <li>Describe tu experiencia, habilidades y logros.</li>
-        </ul>
-        `}
+        ${experiencia && (typeof experiencia === 'string' || (Array.isArray(experiencia) && experiencia.length > 0)) ? `
+        <h2 style="${h2Style}">${usarProyectos ? 'Proyectos y Experiencia' : 'Experiencia'}</h2>
+        ${formatExperiencia(experiencia)}
+        ` : ''}
+
+        ${proyectosHtml ? `
+        <h2 style="${h2Style}">Proyectos y Voluntariados</h2>
+        ${proyectosHtml}
+        ` : ''}
       </div>
     `;
   }

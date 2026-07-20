@@ -18,6 +18,16 @@ export default function ProfilePage() {
     }
   }, []);
 
+  // Cerrar todos los modales cuando el usuario cambia de pestaña/subsección
+  useEffect(() => {
+    setIsModalOpen(false);
+    setIsEduModalOpen(false);
+    setIsExpModalOpen(false);
+    setIsSkillModalOpen(false);
+    setIsUploadModalOpen(false);
+    setIsDeleteModalOpen(false);
+  }, [activeTab]);
+
   // Cargar perfil desde MongoDB
   useEffect(() => {
     async function fetchProfile() {
@@ -161,6 +171,19 @@ export default function ProfilePage() {
             if (dbCursos && Array.isArray(dbCursos)) {
               setCourses(dbCursos);
             }
+
+            if (dbData.proyectos && Array.isArray(dbData.proyectos) && dbData.proyectos.length > 0) {
+              setProyectos(dbData.proyectos);
+            } else if (dbData.proyectos_alternativos && dbData.proyectos_alternativos.trim() !== '') {
+              setProyectosAlternativos(dbData.proyectos_alternativos);
+              setProyectos([{
+                id: 'legacy_p1',
+                nombre: 'Proyectos y Experiencia Alternativa',
+                rol: '',
+                fecha: '',
+                desc: dbData.proyectos_alternativos
+              }]);
+            }
           } else {
             // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
             window.location.href = '/chat';
@@ -201,6 +224,8 @@ export default function ProfilePage() {
     nextFormalEducation?: any[];
     nextCourses?: any[];
     nextSkills?: any[];
+    nextProyectos?: any[];
+    nextProyectosAlternativos?: string;
   } = {}) => {
     const finalNombre = overrides.nextNombre !== undefined ? overrides.nextNombre : nombre;
     const finalApellido = overrides.nextApellido !== undefined ? overrides.nextApellido : apellido;
@@ -213,6 +238,8 @@ export default function ProfilePage() {
     const finalFormalEducation = overrides.nextFormalEducation !== undefined ? overrides.nextFormalEducation : formalEducation;
     const finalSkills = overrides.nextSkills !== undefined ? overrides.nextSkills : skills;
     const finalCourses = overrides.nextCourses !== undefined ? overrides.nextCourses : courses;
+    const finalProyectos = overrides.nextProyectos !== undefined ? overrides.nextProyectos : proyectos;
+    const finalProyectosAlternativos = overrides.nextProyectosAlternativos !== undefined ? overrides.nextProyectosAlternativos : proyectosAlternativos;
 
     const cleanCiudad = finalCiudad.split(',')[0]?.trim() || '';
     const cleanProvincia = finalCiudad.split(',')[1]?.trim() || '';
@@ -291,7 +318,9 @@ export default function ProfilePage() {
         blandas: blandasArr.join(', '),
         detalles: finalSkills
       },
-      cursos: finalCourses
+      cursos: finalCourses,
+      proyectos: finalProyectos,
+      proyectos_alternativos: finalProyectosAlternativos
     };
 
     try {
@@ -302,12 +331,16 @@ export default function ProfilePage() {
         },
         body: JSON.stringify(payload)
       });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('profile_updated', 'true');
+      }
     } catch (err) {
       console.error('Error al guardar perfil en la base de datos:', err);
     }
   };
 
   // Estados de datos personales
+  const [expFilterTab, setExpFilterTab] = useState<'laboral' | 'proyecto'>('laboral');
   const [avatarUrl, setAvatarUrl] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400');
   const [nombre, setNombre] = useState('Nombre');
   const [apellido, setApellido] = useState('Apellido');
@@ -316,6 +349,14 @@ export default function ProfilePage() {
   const [mail, setMail] = useState('ejemplo@mail.com');
   const [telefono, setTelefono] = useState('+11 111 111 1111');
   const [linkedin, setLinkedin] = useState('...');
+  const [proyectosAlternativos, setProyectosAlternativos] = useState('');
+  const [proyectos, setProyectos] = useState<Array<{
+    id: string;
+    nombre: string;
+    rol: string;
+    fecha: string;
+    desc: string;
+  }>>([]);
 
   // Estado del modal de edición personal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -341,22 +382,7 @@ export default function ProfilePage() {
   }>({});
 
   // Estados de Educación
-  const [formalEducation, setFormalEducation] = useState([
-    {
-      id: 'f1',
-      institucion: 'Universidad Tecnológica Nacional',
-      titulo: 'Ingeniería en Sistemas de Información',
-      anioInicio: '2020',
-      anioFin: 'actualidad'
-    },
-    {
-      id: 'f2',
-      institucion: 'Colegio Superior de Comercio',
-      titulo: 'Educación Secundaria Obligatoria',
-      anioInicio: '2015',
-      anioFin: '2019'
-    }
-  ]);
+  const [formalEducation, setFormalEducation] = useState<any[]>([]);
 
   const [courses, setCourses] = useState<any[]>([]);
 
@@ -398,50 +424,7 @@ export default function ProfilePage() {
     descripcion?: string;
     tipo?: 'Dura' | 'Blanda' | '';
     origen?: string;
-  }>>([
-    {
-      id: 's1',
-      nombre: 'React & Next.js',
-      descripcion: 'Experiencia',
-      tipo: 'Dura',
-      origen: 'Experiencia'
-    },
-    {
-      id: 's2',
-      nombre: 'TypeScript',
-      descripcion: 'Educación',
-      tipo: 'Dura',
-      origen: 'Educación'
-    },
-    {
-      id: 's3',
-      nombre: 'Diseño UX/UI',
-      descripcion: 'Curso',
-      tipo: 'Dura',
-      origen: 'Curso'
-    },
-    {
-      id: 's4',
-      nombre: 'Metodologías Ágiles',
-      descripcion: 'Experiencia',
-      tipo: 'Blanda',
-      origen: 'Experiencia'
-    },
-    {
-      id: 's5',
-      nombre: 'Node.js & Express',
-      descripcion: 'Curso',
-      tipo: 'Dura',
-      origen: 'Curso'
-    },
-    {
-      id: 's6',
-      nombre: 'Inglés Profesional',
-      descripcion: 'Educación',
-      tipo: 'Blanda',
-      origen: 'Educación'
-    }
-  ]);
+  }>>([]);
 
   // Estados de modal de habilidades
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
@@ -487,7 +470,7 @@ export default function ProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<string | null>(null);
   const [itemToDeleteName, setItemToDeleteName] = useState('');
-  const [itemToDeleteType, setItemToDeleteType] = useState<'skill' | 'formal' | 'course' | 'experience' | null>(null);
+  const [itemToDeleteType, setItemToDeleteType] = useState<'skill' | 'formal' | 'course' | 'experience' | 'proyecto' | null>(null);
 
   // --- ESTADOS Y CONSTANTES PARA EL DATE PICKER CUSTOMIZADO (FECHA NACIMIENTO) ---
   const MONTHS_ES = [
@@ -692,44 +675,19 @@ export default function ProfilePage() {
   // ----------------------------------------------------
   // ESTADOS Y HANDLERS PARA EXPERIENCIA PROFESIONAL
   // ----------------------------------------------------
-  const [experiences, setExperiences] = useState([
-    {
-      id: '1',
-      anioInicio: '2025',
-      anioFin: 'actualidad',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    },
-    {
-      id: '2',
-      anioInicio: '2019',
-      anioFin: '2024',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    },
-    {
-      id: '3',
-      anioInicio: '2016',
-      anioFin: '2019',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    },
-    {
-      id: '4',
-      anioInicio: '2010',
-      anioFin: '2015',
-      position: 'POSICIÓN',
-      company: 'Nombre de la empresa',
-      desc: 'Descripción del puesto y tareas llevadas a cabo. blah blah blah blah blah blah blah blah blah blah.'
-    }
-  ]);
+  const [experiences, setExperiences] = useState<any[]>([]);
 
   // Estados del modal de experiencia
   const [isExpModalOpen, setIsExpModalOpen] = useState(false);
   const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [editingExpType, setEditingExpType] = useState<'laboral' | 'proyecto'>('laboral');
+  const [tempProyectosAlternativos, setTempProyectosAlternativos] = useState('');
+
+  // Estados temporales para formulario de proyectos/voluntariados
+  const [proyectoNombre, setProyectoNombre] = useState('');
+  const [proyectoRol, setProyectoRol] = useState('');
+  const [proyectoFecha, setProyectoFecha] = useState('');
+  const [proyectoDescripcion, setProyectoDescripcion] = useState('');
 
   // Estados temporales del formulario de experiencia
   const [expPosicion, setExpPosicion] = useState('');
@@ -742,6 +700,12 @@ export default function ProfilePage() {
   // Abrir modal de experiencia para agregar
   const handleOpenAddExp = () => {
     setEditingExpId(null);
+    setEditingExpType('laboral');
+    setTempProyectosAlternativos(proyectosAlternativos);
+    setProyectoNombre('');
+    setProyectoRol('');
+    setProyectoFecha('');
+    setProyectoDescripcion('');
     setExpPosicion('');
     setExpEmpresa('');
     setExpIndependiente(false);
@@ -752,11 +716,51 @@ export default function ProfilePage() {
     setIsExpModalOpen(true);
   };
 
+  // Abrir modal de proyectos para agregar
+  const handleOpenAddProyecto = () => {
+    setEditingExpId(null);
+    setEditingExpType('proyecto');
+    setProyectoNombre('');
+    setProyectoRol('');
+    setProyectoFecha('');
+    setProyectoDescripcion('');
+    setErrorsExp({});
+    setIsExpModalOpen(true);
+  };
+
+  // Abrir modal para editar un proyecto específico
+  const handleOpenEditProyecto = (id: string) => {
+    const proj = proyectos.find((p) => p.id === id);
+    if (proj) {
+      setEditingExpId(id);
+      setEditingExpType('proyecto');
+      setProyectoNombre(proj.nombre || '');
+      setProyectoRol(proj.rol || '');
+      setProyectoFecha(proj.fecha || '');
+      setProyectoDescripcion(proj.desc || '');
+      setErrorsExp({});
+      setIsExpModalOpen(true);
+    }
+  };
+
+  // Abrir modal de eliminación customizada para proyecto
+  const handleDeleteProyecto = (id: string, nombre: string) => {
+    setItemToDeleteId(id);
+    setItemToDeleteName(nombre);
+    setItemToDeleteType('proyecto');
+    setIsDeleteModalOpen(true);
+  };
+
   // Abrir modal de experiencia para editar
   const handleOpenEditExp = (id: string) => {
+    if (id === 'proyectos_alternativos') {
+      handleOpenAddProyecto();
+      return;
+    }
     const exp = experiences.find((e) => e.id === id);
     if (exp) {
       setEditingExpId(id);
+      setEditingExpType('laboral');
       setExpPosicion(exp.position);
       setExpEmpresa(exp.company === 'Independiente' ? '' : exp.company);
       setExpIndependiente(exp.company === 'Independiente');
@@ -771,6 +775,52 @@ export default function ProfilePage() {
   // Guardar experiencia (Agregar o Editar)
   const handleSaveExp = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (editingExpType === 'proyecto') {
+      const projErrors: typeof errorsExp = {};
+      if (!proyectoNombre.trim()) {
+        projErrors.company = "El nombre del proyecto u organización es obligatorio.";
+      }
+      if (!proyectoFecha.trim()) {
+        projErrors.anioInicio = "El año o fecha es obligatorio.";
+      }
+      if (!proyectoDescripcion.trim()) {
+        projErrors.desc = "La descripción del proyecto es obligatoria.";
+      }
+
+      if (Object.keys(projErrors).length > 0) {
+        setErrorsExp(projErrors);
+        return;
+      }
+
+      if (Object.keys(projErrors).length > 0) {
+        setErrorsExp(projErrors);
+        return;
+      }
+
+      let nextProyectos = [...proyectos];
+      const newProj = {
+        id: editingExpId && editingExpId !== 'proyectos_alternativos' ? editingExpId : String(Date.now()),
+        nombre: proyectoNombre.trim(),
+        rol: proyectoRol.trim(),
+        fecha: proyectoFecha.trim(),
+        desc: proyectoDescripcion.trim()
+      };
+
+      if (editingExpId === null || editingExpId === 'proyectos_alternativos') {
+        nextProyectos = [newProj, ...proyectos];
+      } else {
+        nextProyectos = proyectos.map((p) => (p.id === editingExpId ? newProj : p));
+      }
+
+      setProyectos(nextProyectos);
+      setErrorsExp({});
+      setIsExpModalOpen(false);
+
+      const nextText = nextProyectos.map(p => `${p.rol ? p.rol + ' en ' : ''}${p.nombre}${p.fecha ? ' (' + p.fecha + ')' : ''}: ${p.desc}`).join('\n\n');
+      saveProfileToDB({ nextProyectos, nextProyectosAlternativos: nextText });
+      return;
+    }
 
     const newErrors: typeof errorsExp = {};
 
@@ -873,6 +923,13 @@ export default function ProfilePage() {
     setItemToDeleteId(id);
     setItemToDeleteName(`${position} en ${company}`);
     setItemToDeleteType('experience');
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteProyectos = () => {
+    setItemToDeleteId('proyectos_alternativos');
+    setItemToDeleteName('Proyectos y Voluntariados');
+    setItemToDeleteType('proyecto');
     setIsDeleteModalOpen(true);
   };
 
@@ -1264,6 +1321,11 @@ export default function ProfilePage() {
       const nextExperiences = experiences.filter((exp) => exp.id !== itemToDeleteId);
       setExperiences(nextExperiences);
       saveProfileToDB({ nextExperiences });
+    } else if (itemToDeleteType === 'proyecto') {
+      const nextProyectos = proyectos.filter((p) => p.id !== itemToDeleteId);
+      setProyectos(nextProyectos);
+      const nextText = nextProyectos.map(p => `${p.rol ? p.rol + ' en ' : ''}${p.nombre}${p.fecha ? ' (' + p.fecha + ')' : ''}: ${p.desc}`).join('\n\n');
+      saveProfileToDB({ nextProyectos, nextProyectosAlternativos: nextText });
     }
     
     setIsDeleteModalOpen(false);
@@ -1793,45 +1855,122 @@ export default function ProfilePage() {
 
         {activeTab === 'experience' && (
           <>
+            <h1 className="profile-title-centered">Experiencia profesional</h1>
+
             <div className="profile-header-container">
-              <h1 className="profile-title-centered">Experiencia profesional</h1>
+              {/* Filtro superior izquierdo para separar Experiencias de Proyectos */}
+              <div className="exp-filter-tabs">
+                <button
+                  type="button"
+                  className={`exp-filter-btn ${expFilterTab === 'laboral' ? 'active' : ''}`}
+                  onClick={() => setExpFilterTab('laboral')}
+                >
+                  <svg className="exp-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                  <span>Experiencia Laboral</span>
+                </button>
+                <button
+                  type="button"
+                  className={`exp-filter-btn ${expFilterTab === 'proyecto' ? 'active' : ''}`}
+                  onClick={() => setExpFilterTab('proyecto')}
+                >
+                  <svg className="exp-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                  </svg>
+                  <span>Proyectos / Voluntariado</span>
+                </button>
+              </div>
+
               <button className="btn-add-experience" onClick={handleOpenAddExp}>
                 Agregar experiencia
               </button>
             </div>
 
-            {/* Lista de experiencias profesionales dinámica */}
+            {/* Lista de experiencias profesionales filtrada */}
             <div className="experience-list">
-              {sortedExperiences.map((exp) => (
-                <div className="experience-card" key={exp.id}>
-                  <div className="experience-time-col">{exp.anioInicio} – {exp.anioFin}</div>
-                  <div className="experience-info-col">
-                    <h3 className="experience-position">{exp.position}</h3>
-                    <p className="experience-company">{exp.company}</p>
-                    <p className="experience-desc">{exp.desc}</p>
-                  </div>
-                  <div className="experience-card-actions">
-                    <button 
-                      className="btn-edit-experience" 
-                      title="Editar experiencia"
-                      onClick={() => handleOpenEditExp(exp.id)}
-                    >
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                      </svg>
-                    </button>
-                    <button 
-                      className="btn-delete-experience" 
-                      title="Eliminar experiencia"
-                      onClick={() => handleDeleteExp(exp.id, exp.position, exp.company)}
-                    >
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
+              {expFilterTab === 'laboral' && (
+                <>
+                  {sortedExperiences.length > 0 ? (
+                    sortedExperiences.map((exp) => (
+                      <div className="experience-card" key={exp.id}>
+                        <div className="experience-time-col">{exp.anioInicio} – {exp.anioFin}</div>
+                        <div className="experience-info-col">
+                          <h3 className="experience-position">{exp.position}</h3>
+                          <p className="experience-company">{exp.company}</p>
+                          <p className="experience-desc">{exp.desc}</p>
+                        </div>
+                        <div className="experience-card-actions">
+                          <button 
+                            className="btn-edit-experience" 
+                            title="Editar experiencia"
+                            onClick={() => handleOpenEditExp(exp.id)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                            </svg>
+                          </button>
+                          <button 
+                            className="btn-delete-experience" 
+                            title="Eliminar experiencia"
+                            onClick={() => handleDeleteExp(exp.id, exp.position, exp.company)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b', fontSize: '14px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', width: '100%', boxSizing: 'border-box' }}>
+                      No has agregado experiencias laborales todavía.
+                    </div>
+                  )}
+                </>
+              )}
+
+              {expFilterTab === 'proyecto' && (
+                <>
+                  {proyectos.length > 0 ? (
+                    proyectos.map((proj) => (
+                      <div className="experience-card" key={proj.id}>
+                        <div className="experience-time-col">{proj.fecha || 'Proyectos / Voluntariado'}</div>
+                        <div className="experience-info-col">
+                          <h3 className="experience-position">{proj.nombre}</h3>
+                          {proj.rol && <p className="experience-company">{proj.rol}</p>}
+                          <p className="experience-desc">{proj.desc}</p>
+                        </div>
+                        <div className="experience-card-actions">
+                          <button 
+                            className="btn-edit-experience" 
+                            title="Editar proyecto o voluntariado"
+                            onClick={() => handleOpenEditProyecto(proj.id)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                            </svg>
+                          </button>
+                          <button 
+                            className="btn-delete-experience" 
+                            title="Eliminar proyecto o voluntariado"
+                            onClick={() => handleDeleteProyecto(proj.id, proj.nombre)}
+                          >
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b', fontSize: '14px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', width: '100%', boxSizing: 'border-box' }}>
+                      No has agregado proyectos o voluntariados todavía.
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </>
         )}
@@ -2044,7 +2183,9 @@ export default function ProfilePage() {
             <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2 className="modal-title">
-                  {editingExpId === null ? 'Agregar experiencia' : 'Editar experiencia'}
+                  {editingExpId === 'proyectos_alternativos' 
+                    ? 'Editar Proyectos y Voluntariados' 
+                    : (editingExpId === null ? 'Agregar experiencia' : 'Editar experiencia')}
                 </h2>
                 <button className="btn-close-modal" onClick={() => setIsExpModalOpen(false)} title="Cerrar">
                   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -2053,7 +2194,34 @@ export default function ProfilePage() {
                 </button>
               </div>
 
+              {editingExpId === null && (
+                <div className="edu-modal-tabs">
+                  <button 
+                    type="button" 
+                    className={`edu-tab-btn ${editingExpType === 'laboral' ? 'active' : ''}`}
+                    onClick={() => {
+                      setEditingExpType('laboral');
+                      setErrorsExp({});
+                    }}
+                  >
+                    Experiencia Laboral
+                  </button>
+                  <button 
+                    type="button" 
+                    className={`edu-tab-btn ${editingExpType === 'proyecto' ? 'active' : ''}`}
+                    onClick={() => {
+                      setEditingExpType('proyecto');
+                      setErrorsExp({});
+                    }}
+                  >
+                    Proyecto / Voluntariado
+                  </button>
+                </div>
+              )}
+
               <form onSubmit={handleSaveExp} className="modal-form">
+                {editingExpType === 'laboral' ? (
+                  <>
                 {/* Posición */}
                 <div className={`form-row ${errorsExp.position ? 'has-error' : ''}`}>
                   <label htmlFor="expPosicion">Posición*</label>
@@ -2156,6 +2324,91 @@ export default function ProfilePage() {
                     {errorsExp.anioFin && <span className="error-message">{errorsExp.anioFin}</span>}
                   </div>
                 </div>
+
+                  </>
+                ) : (
+                  <>
+                    {/* Nombre del proyecto u organización */}
+                    <div className={`form-row ${errorsExp.company ? 'has-error' : ''}`}>
+                      <label htmlFor="proyectoNombre">Nombre del proyecto u organización*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="proyectoNombre" 
+                          value={proyectoNombre} 
+                          onChange={(e) => {
+                            setProyectoNombre(e.target.value);
+                            setErrorsExp(prev => ({ ...prev, company: undefined }));
+                          }}
+                          placeholder="Ej: Voluntariado ONG Techo / Sistema Web Freelance"
+                        />
+                        {errorsExp.company && <span className="error-message">{errorsExp.company}</span>}
+                      </div>
+                    </div>
+
+                    {/* Rol o Posición */}
+                    <div className="form-row">
+                      <label htmlFor="proyectoRol">Rol o Posición</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="proyectoRol" 
+                          value={proyectoRol} 
+                          onChange={(e) => setProyectoRol(e.target.value)}
+                          placeholder="Ej: Coordinador de construcción / Desarrollador Web"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Año o Fecha */}
+                    <div className={`form-row ${errorsExp.anioInicio ? 'has-error' : ''}`}>
+                      <label htmlFor="proyectoFecha">Año o Fecha*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="proyectoFecha" 
+                          value={proyectoFecha} 
+                          onChange={(e) => {
+                            setProyectoFecha(e.target.value);
+                            setErrorsExp(prev => ({ ...prev, anioInicio: undefined }));
+                          }}
+                          placeholder="Ej: 2024 o marzo 2024 - junio 2024"
+                        />
+                        {errorsExp.anioInicio && <span className="error-message">{errorsExp.anioInicio}</span>}
+                      </div>
+                    </div>
+
+                    {/* Descripción del proyecto */}
+                    <div className={`form-row ${errorsExp.desc ? 'has-error' : ''}`}>
+                      <label htmlFor="proyectoDescripcion">Descripción del proyecto o tareas*</label>
+                      <div className="input-group-wrapper">
+                        <textarea
+                          id="proyectoDescripcion"
+                          value={proyectoDescripcion}
+                          onChange={(e) => {
+                            setProyectoDescripcion(e.target.value);
+                            setErrorsExp(prev => ({ ...prev, desc: undefined }));
+                          }}
+                          placeholder="Describí brevemente de qué trataba el proyecto, las tecnologías usadas y tus logros..."
+                          rows={4}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '14px',
+                            lineHeight: '1.6',
+                            resize: 'none',
+                            fontFamily: 'inherit',
+                            color: '#1a1a1a',
+                            background: '#ffffff'
+                          }}
+                        />
+                        {errorsExp.desc && <span className="error-message">{errorsExp.desc}</span>}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Botón de Enviar */}
                 <div className="modal-footer">

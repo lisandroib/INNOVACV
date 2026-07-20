@@ -161,10 +161,23 @@ export async function POST(req: Request) {
 
     // 4. Preparar el documento (usar el userId de la cookie, o si falla, el que nos devuelve Typebot)
     const finalUserId = userId || data.usuario_id;
+    let finalUserIdObj: ObjectId | null = null;
+
+    if (finalUserId && typeof finalUserId === 'string' && finalUserId.trim() !== '' && finalUserId !== '{{usuario_id}}' && ObjectId.isValid(finalUserId)) {
+      finalUserIdObj = new ObjectId(finalUserId);
+    }
+
+    const emailBuscado = userEmail || data.email || data.datos_personales?.email;
+    if (!finalUserIdObj && emailBuscado && typeof emailBuscado === 'string' && emailBuscado.trim() !== '') {
+      const userDoc = await db.collection('usuarios').findOne({ email: emailBuscado.trim() });
+      if (userDoc) {
+        finalUserIdObj = userDoc._id;
+      }
+    }
     
     const documentoPerfil = {
       ...data,
-      usuario_id: finalUserId ? new ObjectId(finalUserId) : null,
+      usuario_id: finalUserIdObj,
       email_registro: userEmail || data.email, // Por si acaso también recolectas el email en Typebot
       updatedAt: new Date(),
       origen: 'typebot'
@@ -255,9 +268,9 @@ export async function POST(req: Request) {
 
     let result;
     // Si sabemos quién es el usuario, actualizamos su perfil único o lo creamos si no existe (upsert)
-    if (finalUserId) {
+    if (finalUserIdObj) {
       // Mezclamos con el perfil existente para no borrar datos anidados como ubicación o teléfono
-      const perfilExistente = await db.collection('perfiles').findOne({ usuario_id: new ObjectId(finalUserId) });
+      const perfilExistente = await db.collection('perfiles').findOne({ usuario_id: finalUserIdObj });
       
       // Preservar de forma robusta los datos personales existentes (como ubicación o email)
       if (perfilExistente) {
@@ -290,6 +303,15 @@ export async function POST(req: Request) {
               documentoPerfil.datos_personales[campo] = perfilExistente.datos_personales[campo];
             }
           }
+        }
+
+        // 3. Preservar proyectos_alternativos si no vienen o vienen vacíos/placeholders
+        const nuevoProyecto = documentoPerfil.proyectos_alternativos;
+        const proyectoVacio = !nuevoProyecto || 
+                             nuevoProyecto === '{{proyectos_alternativos}}' || 
+                             (typeof nuevoProyecto === 'string' && nuevoProyecto.trim() === '');
+        if (proyectoVacio && perfilExistente.proyectos_alternativos) {
+          documentoPerfil.proyectos_alternativos = perfilExistente.proyectos_alternativos;
         }
       }
 
@@ -326,7 +348,7 @@ export async function POST(req: Request) {
       }
 
       result = await db.collection('perfiles').updateOne(
-        { usuario_id: new ObjectId(finalUserId) },
+        { usuario_id: finalUserIdObj },
         { 
           $set: documentoPerfil,
           $setOnInsert: { createdAt: new Date() } 

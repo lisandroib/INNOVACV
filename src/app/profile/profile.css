@@ -988,7 +988,74 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Responsive queries */
+/* Header container layout for Experience tab */
+.profile-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Sub-filter tabs for Experience section (Upper left as requested) */
+.exp-filter-tabs {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 4px;
+  border-radius: 50px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  gap: 4px;
+}
+
+.exp-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.exp-filter-btn:hover {
+  color: #1e293b;
+}
+
+.exp-filter-btn.active {
+  background: #f5f3ff;
+  color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(97, 71, 255, 0.12);
+}
+
+.exp-filter-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.dark-theme .exp-filter-tabs {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dark-theme .exp-filter-btn {
+  color: #94a3b8;
+}
+
+.dark-theme .exp-filter-btn.active {
+  background: #312e81;
+  color: #c4b5fd;
+}
 @media (max-width: 900px) {
   .education-main-card {
     padding: 32px 20px;

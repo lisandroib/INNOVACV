@@ -22,6 +22,7 @@ interface Job {
   applyUrl?: string;
   isComparing?: boolean;
   isCompared?: boolean;
+  reasoning?: string;
 }
 
 const INITIAL_JOBS: Job[] = [];
@@ -290,7 +291,7 @@ export default function JobsPage() {
           setJobs(prev => prev.map(job => {
             const found = results.find((r: any) => r.id === job.id);
             if (found) {
-              return { ...job, compatibility: found.compatibility, isComparing: false, isCompared: true };
+              return { ...job, compatibility: found.compatibility, reasoning: found.reasoning, isComparing: false, isCompared: true };
             }
             // Si por alguna razón Gemini no lo devolvió, quitamos el flag para evitar infinite loops
             if (needsComparison.find(nc => nc.id === job.id)) {
@@ -786,6 +787,17 @@ export default function JobsPage() {
 
               {/* Detalle extenso */}
               <div className="drawer-body-text">
+                {selectedJob.reasoning && (
+                  <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: isDarkMode ? 'rgba(139, 92, 246, 0.1)' : '#f5f3ff', borderRadius: '12px', borderLeft: '4px solid #8b5cf6' }}>
+                    <h4 style={{ margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '8px', color: isDarkMode ? '#a78bfa' : '#7c3aed' }}>
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+                      Análisis de Compatibilidad (IA)
+                    </h4>
+                    <p style={{ margin: 0, fontSize: '14px', fontStyle: 'italic', color: isDarkMode ? '#cbd5e1' : '#475569', lineHeight: '1.6' }}>
+                      "{selectedJob.reasoning}"
+                    </p>
+                  </div>
+                )}
                 <h4>Descripción del Puesto</h4>
                 <p>{selectedJob.description}</p>
 

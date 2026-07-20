@@ -50,6 +50,8 @@ Descripción: ${job.description}
 ---`;
     }).join('\n\n');
 
+
+
     const prompt = `Actúa como un experto reclutador ATS (Applicant Tracking System).
 A continuación te proporciono el texto del Currículum Vitae de un candidato y una lista de ofertas de empleo.
 Tu tarea es evaluar la compatibilidad del CV con cada oferta de empleo, calculando un porcentaje de 0 a 100.
@@ -68,23 +70,48 @@ INSTRUCCIONES DE SALIDA:
 Debes devolver ÚNICAMENTE un array JSON válido con los resultados, sin bloques de código Markdown ni texto adicional. 
 El formato exacto debe ser:
 [
-  { "id": "id_del_empleo", "compatibility": numero_entero_del_0_al_100 },
+  { "id": "id_del_empleo", "compatibility": numero_entero_del_0_al_100, "reasoning": "Breve justificación de 1 o 2 oraciones del por qué de esa puntuación" },
   ...
 ]`;
 
-    // 3. Llamar a Gemini (usamos gemini-2.5-flash ya que es rápido y excelente para estas tareas)
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          temperature: 0.1, // Baja temperatura para ser consistente
+    // 3. Llamar a Gemini mediante fetch directo (consistente con el resto de la app)
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY no configurada");
+    }
+
+    const payload = {
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: prompt }]
         }
+      ],
+      generationConfig: {
+        temperature: 0.2, // Subimos levemente la temperatura para permitir razonamiento
+        responseMimeType: 'application/json'
+      }
+    };
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    const fetchResponse = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
     });
 
-    const responseText = response.text;
-    console.log("\n====== RESPUESTA DE GEMINI ======\n", responseText, "\n=================================\n");
-    
+    if (!fetchResponse.ok) {
+      const errorText = await fetchResponse.text();
+      console.error('Error de Gemini:', fetchResponse.status, errorText);
+      throw new Error(`Gemini API falló: ${fetchResponse.status}`);
+    }
+
+    const data = await fetchResponse.json();
+    const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        
     if (!responseText) {
       throw new Error("Respuesta vacía de Gemini");
     }
@@ -101,10 +128,17 @@ El formato exacto debe ser:
     }
 
     // Mapear los IDs cortos de vuelta a los IDs reales
-    const finalResults = parsedResults.map((r: any) => ({
-      id: idMap.get(r.id) || r.id,
-      compatibility: r.compatibility
-    }));
+    const finalResults = parsedResults.map((r: any) => {
+      const originalId = idMap.get(r.id) || r.id;
+
+      return {
+        id: originalId,
+        compatibility: r.compatibility,
+        reasoning: r.reasoning
+      };
+    });
+    
+
 
     return NextResponse.json({ success: true, results: finalResults }, { status: 200 });
 

@@ -24,7 +24,8 @@ import {
   Minus,
   ChevronDown,
   Palette,
-  FileText
+  FileText,
+  RotateCcw
 } from 'lucide-react';
 
 import { getAllTemplates, getTemplateById } from '@/lib/cv-templates';
@@ -33,6 +34,8 @@ interface MenuBarProps {
   editor: Editor;
   selectedTemplateId?: string;
   onTemplateChange?: (templateId: string) => void;
+  onReloadFromProfile?: () => void;
+  isProfileModified?: boolean;
   onSaveCV?: (html: string) => void;
   onOverwriteCV?: (html: string) => void;
   onDownloadPDF?: () => void;
@@ -77,7 +80,7 @@ const PRESET_COLORS = [
   '#805ad5'  // Violeta/Púrpura
 ];
 
-export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, onSaveCV, onOverwriteCV, onDownloadPDF, onShowMyCVs, cvName, onNameChange }: MenuBarProps) {
+export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, onReloadFromProfile, isProfileModified, onSaveCV, onOverwriteCV, onDownloadPDF, onShowMyCVs, cvName, onNameChange }: MenuBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
   const [tempSize, setTempSize] = useState('12');
@@ -508,6 +511,23 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
         >
           <Eraser className="w-4 h-4" />
         </button>
+
+        {/* Restaurar Perfil Icon Button con línea separadora */}
+        {onReloadFromProfile && (
+          <div className="flex items-center pl-1.5 border-l border-slate-200">
+            <button
+              onMouseDown={(e) => { e.preventDefault(); onReloadFromProfile(); }}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                isProfileModified 
+                  ? 'bg-red-50 text-red-600 border border-red-200' 
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
+              }`}
+              title="Restaurar el contenido del CV con la información de tu perfil"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 5. Listas y Elementos */}
@@ -592,18 +612,6 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
             </div>
           )}
         </div>
-
-        {/* Mis CVs Button */}
-        <button
-          onClick={(e) => { e.preventDefault(); if (onShowMyCVs) onShowMyCVs(); }}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors cursor-pointer mr-1"
-          title="Ver mis CVs guardados"
-        >
-          <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-          </svg>
-          <span>Mis CVs</span>
-        </button>
 
         {/* Save & Download Options Split Button */}
         <div className="relative flex items-stretch">
