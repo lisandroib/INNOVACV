@@ -2148,7 +2148,7 @@ export default function ProfilePage() {
               </div>
 
               {editingExpId === null && (
-                <div className="edu-tabs-switcher">
+                <div className="edu-modal-tabs">
                   <button 
                     type="button" 
                     className={`edu-tab-btn ${editingExpType === 'laboral' ? 'active' : ''}`}
