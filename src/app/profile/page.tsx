@@ -660,6 +660,12 @@ export default function ProfilePage() {
   const [editingExpType, setEditingExpType] = useState<'laboral' | 'proyecto'>('laboral');
   const [tempProyectosAlternativos, setTempProyectosAlternativos] = useState('');
 
+  // Estados temporales para formulario de proyectos/voluntariados
+  const [proyectoNombre, setProyectoNombre] = useState('');
+  const [proyectoRol, setProyectoRol] = useState('');
+  const [proyectoFecha, setProyectoFecha] = useState('');
+  const [proyectoDescripcion, setProyectoDescripcion] = useState('');
+
   // Estados temporales del formulario de experiencia
   const [expPosicion, setExpPosicion] = useState('');
   const [expEmpresa, setExpEmpresa] = useState('');
@@ -673,6 +679,10 @@ export default function ProfilePage() {
     setEditingExpId(null);
     setEditingExpType('laboral');
     setTempProyectosAlternativos(proyectosAlternativos);
+    setProyectoNombre('');
+    setProyectoRol('');
+    setProyectoFecha('');
+    setProyectoDescripcion('');
     setExpPosicion('');
     setExpEmpresa('');
     setExpIndependiente(false);
@@ -688,6 +698,10 @@ export default function ProfilePage() {
     setEditingExpId('proyectos_alternativos');
     setEditingExpType('proyecto');
     setTempProyectosAlternativos(proyectosAlternativos);
+    setProyectoNombre('');
+    setProyectoRol('');
+    setProyectoFecha('');
+    setProyectoDescripcion(proyectosAlternativos);
     setErrorsExp({});
     setIsExpModalOpen(true);
   };
@@ -718,11 +732,25 @@ export default function ProfilePage() {
     e.preventDefault();
 
     if (editingExpType === 'proyecto') {
-      if (!tempProyectosAlternativos.trim()) {
-        setErrorsExp({ desc: "Debes ingresar una descripción de tus proyectos o voluntariados." });
+      const projErrors: typeof errorsExp = {};
+      if (!proyectoNombre.trim()) {
+        projErrors.company = "El nombre del proyecto u organización es obligatorio.";
+      }
+      if (!proyectoFecha.trim()) {
+        projErrors.anioInicio = "El año o fecha es obligatorio.";
+      }
+      if (!proyectoDescripcion.trim()) {
+        projErrors.desc = "La descripción del proyecto es obligatoria.";
+      }
+
+      if (Object.keys(projErrors).length > 0) {
+        setErrorsExp(projErrors);
         return;
       }
-      const nextProyectos = tempProyectosAlternativos.trim();
+
+      const header = `${proyectoRol.trim() ? proyectoRol.trim() + ' en ' : ''}${proyectoNombre.trim()}${proyectoFecha.trim() ? ' (' + proyectoFecha.trim() + ')' : ''}`;
+      const nextProyectos = `${header}: ${proyectoDescripcion.trim()}`;
+
       setProyectosAlternativos(nextProyectos);
       setErrorsExp({});
       setIsExpModalOpen(false);
@@ -2188,18 +2216,69 @@ export default function ProfilePage() {
                   </>
                 ) : (
                   <>
+                    {/* Nombre del proyecto u organización */}
+                    <div className={`form-row ${errorsExp.company ? 'has-error' : ''}`}>
+                      <label htmlFor="proyectoNombre">Nombre del proyecto u organización*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="proyectoNombre" 
+                          value={proyectoNombre} 
+                          onChange={(e) => {
+                            setProyectoNombre(e.target.value);
+                            setErrorsExp(prev => ({ ...prev, company: undefined }));
+                          }}
+                          placeholder="Ej: Voluntariado ONG Techo / Sistema Web Freelance"
+                        />
+                        {errorsExp.company && <span className="error-message">{errorsExp.company}</span>}
+                      </div>
+                    </div>
+
+                    {/* Rol o Posición */}
+                    <div className="form-row">
+                      <label htmlFor="proyectoRol">Rol o Posición</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="proyectoRol" 
+                          value={proyectoRol} 
+                          onChange={(e) => setProyectoRol(e.target.value)}
+                          placeholder="Ej: Coordinador de construcción / Desarrollador Web"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Año o Fecha */}
+                    <div className={`form-row ${errorsExp.anioInicio ? 'has-error' : ''}`}>
+                      <label htmlFor="proyectoFecha">Año o Fecha*</label>
+                      <div className="input-group-wrapper">
+                        <input 
+                          type="text" 
+                          id="proyectoFecha" 
+                          value={proyectoFecha} 
+                          onChange={(e) => {
+                            setProyectoFecha(e.target.value);
+                            setErrorsExp(prev => ({ ...prev, anioInicio: undefined }));
+                          }}
+                          placeholder="Ej: 2024 o marzo 2024 - junio 2024"
+                        />
+                        {errorsExp.anioInicio && <span className="error-message">{errorsExp.anioInicio}</span>}
+                      </div>
+                    </div>
+
+                    {/* Descripción del proyecto */}
                     <div className={`form-row ${errorsExp.desc ? 'has-error' : ''}`}>
-                      <label htmlFor="expProyectos">Descripción de proyectos o voluntariados*</label>
+                      <label htmlFor="proyectoDescripcion">Descripción del proyecto o tareas*</label>
                       <div className="input-group-wrapper">
                         <textarea
-                          id="expProyectos"
-                          value={tempProyectosAlternativos}
+                          id="proyectoDescripcion"
+                          value={proyectoDescripcion}
                           onChange={(e) => {
-                            setTempProyectosAlternativos(e.target.value);
+                            setProyectoDescripcion(e.target.value);
                             setErrorsExp(prev => ({ ...prev, desc: undefined }));
                           }}
-                          placeholder="Describí brevemente de qué trataban tus proyectos, qué tecnologías o herramientas usaste y qué logros tuviste..."
-                          rows={6}
+                          placeholder="Describí brevemente de qué trataba el proyecto, las tecnologías usadas y tus logros..."
+                          rows={4}
                           style={{
                             width: '100%',
                             padding: '12px',

@@ -24,7 +24,8 @@ import {
   Minus,
   ChevronDown,
   Palette,
-  FileText
+  FileText,
+  RotateCcw
 } from 'lucide-react';
 
 import { getAllTemplates, getTemplateById } from '@/lib/cv-templates';
@@ -594,32 +595,6 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
           )}
         </div>
 
-        {/* Restaurar Perfil Button */}
-        {onReloadFromProfile && (
-          <button
-            onMouseDown={(e) => { e.preventDefault(); onReloadFromProfile(); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white text-violet-700 hover:bg-violet-50 border border-violet-200 rounded-lg transition-colors cursor-pointer mr-1"
-            title="Restaurar el contenido del CV con la información de tu perfil"
-          >
-            <svg className="w-3.5 h-3.5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5" />
-            </svg>
-            <span>Restaurar Perfil</span>
-          </button>
-        )}
-
-        {/* Mis CVs Button */}
-        <button
-          onClick={(e) => { e.preventDefault(); if (onShowMyCVs) onShowMyCVs(); }}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors cursor-pointer mr-1"
-          title="Ver mis CVs guardados"
-        >
-          <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-          </svg>
-          <span>Mis CVs</span>
-        </button>
-
         {/* Save & Download Options Split Button */}
         <div className="relative flex items-stretch">
           <button
@@ -674,6 +649,17 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
             </div>
           )}
         </div>
+
+        {/* Small Restaurar Perfil Icon Button */}
+        {onReloadFromProfile && (
+          <button
+            onMouseDown={(e) => { e.preventDefault(); onReloadFromProfile(); }}
+            className="p-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg transition-colors cursor-pointer flex items-center justify-center ml-1"
+            title="Restaurar el contenido del CV con la información de tu perfil"
+          >
+            <RotateCcw className="w-4 h-4 text-red-600" />
+          </button>
+        )}
       </div>
 
     </div>
