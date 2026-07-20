@@ -1,5 +1,31 @@
 import { NextResponse } from 'next/server';
 
+const SECTION_TIPS: Record<string, string> = {
+  experience: `### TIPS FOR YOUR EXPERIENCE SECTION
+- Your most recent or current job should be listed first. Then, work in reverse chronological order, from your newest to your oldest jobs.
+- When describing your job duties, avoid using personal pronouns like "I," "me", "my" etc.
+- Showcase your skills by using strong action verbs ("led", "organized", "coordinated"). Use figures to add value when possible. For example: "decreased production costs by 20%".
+- Use bullet points to list your job responsibilities in short, direct sentences.`,
+
+  education: `### TIPS FOR YOUR EDUCATION SECTION
+- Start off by listing your degrees from most recent to oldest.
+- If you have still not graduated, list the date you expect to graduate.
+- High school graduation shouldn't be mentioned on your resume unless you haven't gone to college.
+- Mention any scholarships, honors, awards, and professional certifications you have earned.`,
+
+  skills: `### TIPS FOR YOUR SKILLS SECTION
+- List your top skills. The more relevant they are to the job you are applying for, the better.
+- Use one or two keywords, not complete sentences. For example: "Project Management", "Online Marketing", "HTML", "SEO", etc.
+- Make sure to include all important skills for the job you are applying for, even if you are not proficient on some of them.
+- Keep it short. Try to showcase no more than 8 skills.`,
+
+  summary: `### TIPS FOR YOUR SUMMARY SECTION
+- Keep your summary short and straight to the point. You can always elaborate during the interview. The optimal length for a professional summary is between 50 and 100 words.
+- Tailor the summary to the job you are applying for. Show the employer exactly why you're the best fit for this position.
+- Be specific about your background, skills and goals.
+- Remember, the best resume summary should quickly grab recruiters' attention by shouting out: "Hey, I'm who you are looking for!"`
+};
+
 export async function POST(req: Request) {
   try {
     const { messages, currentSection, resumeContext, targetJob } = await req.json();
@@ -42,6 +68,52 @@ Sigue estos sencillos pasos:
 
     if (currentSection) {
       systemPrompt += `\nActualmente el usuario tiene su cursor o está editando la sección de: "${currentSection}".`;
+      
+      // Buscar tips de acuerdo a la sección activa
+      const sectionNormalized = currentSection.toLowerCase();
+      let tips = '';
+      if (
+        sectionNormalized.includes('experience') || 
+        sectionNormalized.includes('experiencia') || 
+        sectionNormalized.includes('trayectoria') || 
+        sectionNormalized.includes('laboral') || 
+        sectionNormalized.includes('trabajo') || 
+        sectionNormalized.includes('leadership') ||
+        sectionNormalized.includes('liderazgo')
+      ) {
+        tips = SECTION_TIPS.experience;
+      } else if (
+        sectionNormalized.includes('education') || 
+        sectionNormalized.includes('educacion') || 
+        sectionNormalized.includes('educación') || 
+        sectionNormalized.includes('estudios') || 
+        sectionNormalized.includes('formacion') || 
+        sectionNormalized.includes('formación')
+      ) {
+        tips = SECTION_TIPS.education;
+      } else if (
+        sectionNormalized.includes('skills') || 
+        sectionNormalized.includes('habilidades') || 
+        sectionNormalized.includes('aptitudes') || 
+        sectionNormalized.includes('conocimientos') || 
+        sectionNormalized.includes('idiomas') || 
+        sectionNormalized.includes('languages')
+      ) {
+        tips = SECTION_TIPS.skills;
+      } else if (
+        sectionNormalized.includes('summary') || 
+        sectionNormalized.includes('resumen') || 
+        sectionNormalized.includes('perfil') || 
+        sectionNormalized.includes('sobre mi') || 
+        sectionNormalized.includes('sobre mí') || 
+        sectionNormalized.includes('objetivo')
+      ) {
+        tips = SECTION_TIPS.summary;
+      }
+
+      if (tips) {
+        systemPrompt += `\n\nPor favor, asegúrate de aplicar estrictamente los siguientes lineamientos y tips al dar tus sugerencias o mejoras para esta sección:\n${tips}`;
+      }
     }
 
     if (resumeContext) {

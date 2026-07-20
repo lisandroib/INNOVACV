@@ -46,9 +46,9 @@ export default function EditorPage() {
   const [isGeneratingProfile, setIsGeneratingProfile] = useState(false);
   const editorRef = useRef<RichTextEditorRef>(null);
 
-  const handleApplySuggestion = (text: string) => {
+  const handleApplySuggestion = (text: string, mode: 'insert' | 'replace') => {
     if (editorRef.current) {
-      editorRef.current.insertText(text);
+      editorRef.current.insertText(text, mode);
     }
   };
 

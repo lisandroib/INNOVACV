@@ -58,7 +58,7 @@ interface RichTextEditorProps {
 }
 
 export interface RichTextEditorRef {
-  insertText: (text: string) => void;
+  insertText: (text: string, mode?: 'insert' | 'replace') => void;
 }
 
 const DEFAULT_CV_CONTENT = `
@@ -170,10 +170,47 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
   });
 
   useImperativeHandle(ref, () => ({
-    insertText: (text: string) => {
+    insertText: (text: string, mode: 'insert' | 'replace' = 'replace') => {
       if (editor) {
-        const formattedText = text.replace(/\n/g, '<br>');
-        editor.chain().focus().insertContent(formattedText).run();
+        const isHtml = /<[a-z][\s\S]*>/i.test(text);
+        const formattedText = isHtml ? text : text.replace(/\n/g, '<br>');
+        if (mode === 'insert') {
+          const { to } = editor.state.selection;
+          editor.chain().focus().insertContentAt(to, formattedText).run();
+        } else {
+          // Reemplazar el contenido completo de la sección activa (entre encabezados h2)
+          const { state } = editor;
+          const { $from } = state.selection;
+
+          let sectionHeadingPos = -1;
+          let headingNodeSize = 0;
+          let nextHeadingPos = state.doc.content.size;
+
+          state.doc.descendants((node, pos) => {
+            if (node.type.name === 'heading' && node.attrs.level === 2) {
+              if (pos < $from.pos) {
+                sectionHeadingPos = pos;
+                headingNodeSize = node.nodeSize;
+              } else if (pos >= $from.pos && nextHeadingPos === state.doc.content.size) {
+                nextHeadingPos = pos;
+              }
+            }
+            return true;
+          });
+
+          if (sectionHeadingPos !== -1) {
+            const startPos = sectionHeadingPos + headingNodeSize;
+            const endPos = nextHeadingPos;
+            editor.chain()
+              .focus()
+              .deleteRange({ from: startPos, to: endPos })
+              .insertContentAt(startPos, formattedText)
+              .run();
+          } else {
+            // Si está en la cabecera (General) o no hay h2 anterior, se comporta como reemplazo de selección tradicional
+            editor.chain().focus().insertContent(formattedText).run();
+          }
+        }
       }
     }
   }));

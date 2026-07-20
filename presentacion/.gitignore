@@ -1,0 +1,10 @@
+# Slidev temporary and build files
+node_modules
+dist
+.slidev
+.DS_Store
+
+# Exports
+*.pdf
+*.png
+*.mp4

@@ -1,0 +1,14 @@
+{
+  "name": "tesis-presentacion",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.17.0",
+    "@slidev/theme-default": "^0.25.0"
+  }
+}

@@ -12,7 +12,7 @@ interface ChatAssistantProps {
   activeSection: string;
   resumeContext: string;
   isDarkMode?: boolean;
-  onApplySuggestion?: (text: string) => void;
+  onApplySuggestion?: (text: string, mode: 'insert' | 'replace') => void;
   targetJob: string;
   onTargetJobChange: (job: string) => void;
 }
@@ -86,9 +86,30 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [selectionMenu, setSelectionMenu] = useState<{ text: string; top: number; left: number } | null>(null);
+  const [selectionMenu, setSelectionMenu] = useState<{ text: string; html: string; top: number; left: number } | null>(null);
+
+  // Cargar el historial desde localStorage al montar el componente
+  useEffect(() => {
+    const saved = localStorage.getItem('chat_history');
+    if (saved) {
+      try {
+        setMessages(JSON.parse(saved));
+      } catch (e) {
+        console.error('Error al cargar el historial del chat desde localStorage:', e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Guardar el historial en localStorage cada vez que cambien los mensajes
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('chat_history', JSON.stringify(messages));
+    }
+  }, [messages, isLoaded]);
 
   useEffect(() => {
     const handleSelectionChange = () => {
@@ -107,9 +128,16 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
       const text = sel.toString().trim();
       if (text) {
         const range = sel.getRangeAt(0);
+
+        // Clonar el contenido de la selección para conservar etiquetas HTML (viñetas, negritas, etc.)
+        const container = document.createElement('div');
+        container.appendChild(range.cloneContents());
+        const html = container.innerHTML;
+
         const rect = range.getBoundingClientRect();
         setSelectionMenu({
           text,
+          html,
           top: rect.top - 40,
           left: rect.left + rect.width / 2,
         });
@@ -286,22 +314,42 @@ export default function ChatAssistant({ activeSection, resumeContext, isDarkMode
       {/* Selection Action Menu */}
       {selectionMenu && onApplySuggestion && (
         <div 
-          className="fixed z-50 transform -translate-x-1/2 -translate-y-full mb-2"
+          className="fixed z-50 transform -translate-x-1/2 -translate-y-full mb-2 animate-in fade-in slide-in-from-bottom-2 duration-200"
           style={{ top: selectionMenu.top, left: selectionMenu.left }}
         >
-          <button
-            onMouseDown={(e) => {
-              e.preventDefault();
-              onApplySuggestion(selectionMenu.text);
-              setSelectionMenu(null);
-              window.getSelection()?.removeAllRanges();
-            }}
-            type="button"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium rounded-lg shadow-lg cursor-pointer transition-all active:scale-95 border border-white/20"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Aplicar al CV
-          </button>
+          <div className={`flex items-center gap-0.5 p-1 rounded-full border shadow-lg backdrop-blur-md transition-all ${
+            isDarkMode 
+              ? 'bg-slate-900/75 border-slate-700/50 text-white' 
+              : 'bg-white/75 border-slate-200/50 text-slate-800'
+          }`}>
+            <button
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onApplySuggestion(selectionMenu.html, 'insert');
+                setSelectionMenu(null);
+                window.getSelection()?.removeAllRanges();
+              }}
+              type="button"
+              className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-violet-500/10 active:bg-violet-500/20 text-[11px] font-medium rounded-full transition-colors cursor-pointer text-violet-600 dark:text-violet-400"
+            >
+              <Send className="w-3 h-3 rotate-90" />
+              <span>Insertar</span>
+            </button>
+            <div className={`w-[1px] h-4 ${isDarkMode ? 'bg-slate-700/50' : 'bg-slate-200/60'}`} />
+            <button
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onApplySuggestion(selectionMenu.html, 'replace');
+                setSelectionMenu(null);
+                window.getSelection()?.removeAllRanges();
+              }}
+              type="button"
+              className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-violet-500/10 active:bg-violet-500/20 text-[11px] font-medium rounded-full transition-colors cursor-pointer text-violet-600 dark:text-violet-400"
+            >
+              <Sparkles className="w-3 h-3" />
+              <span>Reemplazar</span>
+            </button>
+          </div>
         </div>
       )}
 

@@ -1,0 +1,420 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --slidev-theme-primary: #6147FF;
+  --slidev-theme-primary-light: #eff6ff;
+  --slidev-theme-text: #090e24;
+  --slidev-theme-text-muted: #2c3a57;
+  --color-primary: #6147FF;
+  --color-primary-light: #eff6ff;
+  --color-text-dark: #090e24;
+  --color-text-gray: #2c3a57;
+  --color-bg: #f8fafc;
+  --color-logo-innova: #1B2559;
+  --color-logo-cv: #4a5568;
+}
+
+/* Dark Mode Overrides */
+html.dark {
+  --slidev-theme-text: #ededed;
+  --slidev-theme-text-muted: #94a3b8;
+  --color-text-dark: #ffffff;
+  --color-text-gray: #94a3b8;
+  --color-bg: #080c14;
+  --color-logo-innova: #ffffff;
+  --color-logo-cv: #a3b1cc;
+}
+
+/* Force Slidev page wrappers to be transparent so our global background is visible */
+html, body, #app, .slidev-slide-container, .slide-wrapper, .slidev-page, .slidev-layout {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Base styles for all layouts */
+.slidev-layout {
+  font-family: 'Poppins', sans-serif !important;
+  color: var(--color-text-dark) !important;
+  padding: 3rem 4rem;
+}
+
+/* Headings styling */
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4,
+.slidev-layout h5,
+.slidev-layout h6 {
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 800 !important;
+  color: var(--color-text-dark) !important;
+  letter-spacing: -0.5px;
+}
+
+.slidev-layout h1 {
+  font-size: 2.2rem !important;
+  line-height: 1.15 !important;
+  margin-bottom: 0.8rem !important;
+}
+
+.slidev-layout h2 {
+  font-size: 1.7rem !important;
+  margin-bottom: 0.8rem !important;
+}
+
+/* Paragraphs & lists */
+.slidev-layout p,
+.slidev-layout li {
+  color: var(--color-text-gray) !important;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.slidev-layout ul {
+  list-style-type: none !important;
+  padding-left: 0 !important;
+}
+
+.slidev-layout li {
+  position: relative;
+  padding-left: 1.5rem !important;
+  margin-bottom: 0.4rem;
+}
+
+.slidev-layout li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-size: 1.3rem;
+  line-height: 1;
+  top: 0.05rem;
+}
+
+.slidev-layout strong,
+.slidev-layout b {
+  color: var(--color-text-dark) !important;
+  font-weight: 700;
+}
+
+/* Code block adjustments */
+.slidev-layout code {
+  font-family: 'Fira Code', 'Courier New', Courier, monospace !important;
+  font-size: 0.9em;
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  padding: 0.15em 0.4em;
+  border-radius: 6px;
+}
+
+html.dark .slidev-layout code {
+  background-color: rgba(97, 71, 255, 0.18);
+  color: #c084fc;
+}
+
+.slidev-layout pre code {
+  color: inherit;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Custom premium layouts matching InnovaCV landing */
+.slidev-layout.bg-hero {
+  background-image: linear-gradient(rgba(27, 37, 89, 0.75), rgba(27, 37, 89, 0.85)), url('./Fondo_landing.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  color: #ffffff !important;
+}
+
+.slidev-layout.bg-hero h1,
+.slidev-layout.bg-hero h3,
+.slidev-layout.bg-hero p,
+.slidev-layout.bg-hero span,
+.slidev-layout.bg-hero kbd {
+  color: #ffffff !important;
+}
+
+.slidev-layout.bg-hero p {
+  opacity: 0.9;
+}
+
+.slidev-layout.bg-dark-section {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)), url('./Fondo_landing.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+/* Benefit Cards styling */
+.benefit-card-slides {
+  background-image: url('./benefit-card.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(97, 71, 255, 0.04);
+  border: 1px solid #edf2f7;
+  transition: transform 0.2s;
+  background-color: #ffffff;
+}
+
+html.dark .benefit-card-slides {
+  background-color: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .benefit-card-slides .font-bold {
+  color: #ffffff !important;
+}
+
+html.dark .benefit-card-slides p {
+  color: #94a3b8 !important;
+}
+
+/* Button style */
+.btn-gradient {
+  background: linear-gradient(90deg, #6A36FF 0%, #AC5FE6 100%) !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  padding: 12px 28px !important;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(106, 54, 255, 0.4);
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(106, 54, 255, 0.6);
+}
+
+/* Mockup cards styles */
+.mockup-card-slides {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(27, 37, 89, 0.08);
+  border: 1px solid #edf2f7;
+  overflow: hidden;
+}
+
+html.dark .mockup-card-slides {
+  background: #111c44;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.mockup-card-slides img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ==========================================================================
+   INTERACTIVE AURORA GLOW MESH BACKGROUND (Replicado de InnovaCV)
+   ========================================================================== */
+
+.profile-decor-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-bg) !important;
+  z-index: -10 !important; /* Send to the very back, behind everything */
+  pointer-events: none;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+/* Base de los orbes interactivos */
+.profile-decor-backdrop .aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+  opacity: 0.9;
+}
+
+/* Orbe Violeta - Superior Izquierdo a Derecho */
+.profile-decor-backdrop .orb-violet {
+  top: -10%;
+  left: 15%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(97, 71, 255, 0.45) 0%, rgba(131, 91, 245, 0.12) 60%, transparent 100%);
+  animation: driftSlow1 12s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-violet {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.50) 0%, rgba(167, 139, 250, 0.15) 60%, transparent 100%);
+}
+
+/* Orbe Fucsia/Cálido - Centro Derecho */
+.profile-decor-backdrop .orb-fuchsia {
+  top: 25%;
+  right: -5%;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.42) 0%, rgba(244, 63, 94, 0.11) 60%, transparent 100%);
+  animation: driftSlow2 14s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-fuchsia {
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.48) 0%, rgba(219, 39, 119, 0.14) 60%, transparent 100%);
+}
+
+/* Orbe Azul Turquesa - Inferior Izquierdo */
+.profile-decor-backdrop .orb-cyan {
+  bottom: -10%;
+  left: 20%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(6, 182, 212, 0.12) 60%, transparent 100%);
+  animation: driftSlow3 16s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-cyan {
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.50) 0%, rgba(103, 232, 249, 0.15) 60%, transparent 100%);
+}
+
+/* Orbe Índigo Profundo - Superior Derecho */
+.profile-decor-backdrop .orb-indigo {
+  top: -15%;
+  right: 5%;
+  width: 48vw;
+  height: 48vw;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.42) 0%, rgba(99, 102, 241, 0.11) 60%, transparent 100%);
+  animation: driftSlow4 18s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-indigo {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.48) 0%, rgba(129, 140, 248, 0.14) 60%, transparent 100%);
+}
+
+/* Orbe Rosado - Centro Izquierdo */
+.profile-decor-backdrop .orb-pink {
+  top: 50%;
+  left: -10%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.40) 0%, rgba(244, 63, 94, 0.10) 60%, transparent 100%);
+  animation: driftSlow5 11s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-pink {
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.45) 0%, rgba(251, 113, 133, 0.12) 60%, transparent 100%);
+}
+
+/* Orbe Esmeralda - Inferior Derecho */
+.profile-decor-backdrop .orb-emerald {
+  bottom: 10%;
+  right: 10%;
+  width: 35vw;
+  height: 35vw;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.38) 0%, rgba(20, 184, 166, 0.08) 60%, transparent 100%);
+  animation: driftSlow6 13s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-emerald {
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.42) 0%, rgba(45, 212, 191, 0.10) 60%, transparent 100%);
+}
+
+/* Orbe Celeste Suave - Superior Centro (Anteriormente Ámbar/Marroncito) */
+.profile-decor-backdrop .orb-amber {
+  top: 10%;
+  left: 45%;
+  width: 38vw;
+  height: 38vw;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.42) 0%, rgba(99, 102, 241, 0.10) 60%, transparent 100%);
+  animation: driftSlow7 15s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-amber {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.48) 0%, rgba(79, 70, 229, 0.12) 60%, transparent 100%);
+}
+
+/* Orbe Púrpura Profundo - Centro Abajo */
+.profile-decor-backdrop .orb-purple {
+  bottom: 25%;
+  left: 40%;
+  width: 42vw;
+  height: 42vw;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.42) 0%, rgba(124, 58, 237, 0.11) 60%, transparent 100%);
+  animation: driftSlow8 17s infinite alternate ease-in-out;
+}
+
+html.dark .profile-decor-backdrop .orb-purple {
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.48) 0%, rgba(139, 92, 246, 0.14) 60%, transparent 100%);
+}
+
+/* Keyframes de deriva rápida (Aumentados notablemente usando vw/vh) */
+@keyframes driftSlow1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(80vw, 45vh) scale(1.25); }
+  100% { transform: translate(-30vw, 75vh) scale(0.9); }
+}
+
+@keyframes driftSlow2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-60vw, -30vh) scale(0.85); }
+  100% { transform: translate(45vw, 35vh) scale(1.3); }
+}
+
+@keyframes driftSlow3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(50vw, -60vh) scale(1.1); }
+  100% { transform: translate(-45vw, 30vh) scale(0.9); }
+}
+
+@keyframes driftSlow4 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-45vw, 50vh) scale(0.85); }
+  100% { transform: translate(60vw, -45vh) scale(1.2); }
+}
+
+@keyframes driftSlow5 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-35vw, 60vh) scale(1.2); }
+  100% { transform: translate(35vw, -35vh) scale(0.8); }
+}
+
+@keyframes driftSlow6 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(50vw, -45vh) scale(0.8); }
+  100% { transform: translate(-50vw, 45vh) scale(1.3); }
+}
+
+@keyframes driftSlow7 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-45vw, -50vh) scale(1.2); }
+  100% { transform: translate(45vw, 45vh) scale(0.85); }
+}
+
+@keyframes driftSlow8 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(45vw, 45vh) scale(0.8); }
+  100% { transform: translate(-45vw, -35vh) scale(1.25); }
+}
+
+/* Logo cover styling matching Sidebar logo */
+.logo-title-cover {
+  display: inline-block !important;
+  font-size: 5rem !important;
+  font-weight: 800 !important;
+  color: var(--color-logo-innova) !important;
+  letter-spacing: 0.5px !important;
+  line-height: 1.1 !important;
+  font-family: 'Poppins', sans-serif !important;
+  text-align: center;
+}
+
+.logo-title-cover .logo-cv-cover {
+  font-weight: 300 !important;
+  color: var(--color-logo-cv) !important;
+  opacity: 1 !important;
+}
