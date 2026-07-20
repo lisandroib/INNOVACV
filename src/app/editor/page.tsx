@@ -19,6 +19,7 @@ export default function EditorPage() {
     }
     return false;
   });
+  const [isProfileModified, setIsProfileModified] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
 
   useLayoutEffect(() => {
@@ -280,6 +281,7 @@ export default function EditorPage() {
         if (data) {
           setUserData(data);
           setInitialContent(getTemplateById(selectedTemplateId).generateHTML(data));
+          setIsProfileModified(false);
           showNotification("Currículum restaurado desde tu perfil", "success");
         }
       }
@@ -440,6 +442,7 @@ export default function EditorPage() {
           selectedTemplateId={selectedTemplateId}
           onTemplateChange={handleTemplateChange}
           onReloadFromProfile={handleReloadFromProfile}
+          isProfileModified={isProfileModified}
           onSaveCV={handleSaveCV}
           onOverwriteCV={handleOverwriteCV}
           onShowMyCVs={handleShowMyCVs}
