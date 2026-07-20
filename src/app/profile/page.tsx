@@ -172,8 +172,17 @@ export default function ProfilePage() {
               setCourses(dbCursos);
             }
 
-            if (dbData.proyectos_alternativos) {
+            if (dbData.proyectos && Array.isArray(dbData.proyectos) && dbData.proyectos.length > 0) {
+              setProyectos(dbData.proyectos);
+            } else if (dbData.proyectos_alternativos && dbData.proyectos_alternativos.trim() !== '') {
               setProyectosAlternativos(dbData.proyectos_alternativos);
+              setProyectos([{
+                id: 'legacy_p1',
+                nombre: 'Proyectos y Experiencia Alternativa',
+                rol: '',
+                fecha: '',
+                desc: dbData.proyectos_alternativos
+              }]);
             }
           } else {
             // Si el usuario no tiene perfil guardado en Mongo, lo obligamos a ir al chat
@@ -215,6 +224,7 @@ export default function ProfilePage() {
     nextFormalEducation?: any[];
     nextCourses?: any[];
     nextSkills?: any[];
+    nextProyectos?: any[];
     nextProyectosAlternativos?: string;
   } = {}) => {
     const finalNombre = overrides.nextNombre !== undefined ? overrides.nextNombre : nombre;
@@ -228,6 +238,7 @@ export default function ProfilePage() {
     const finalFormalEducation = overrides.nextFormalEducation !== undefined ? overrides.nextFormalEducation : formalEducation;
     const finalSkills = overrides.nextSkills !== undefined ? overrides.nextSkills : skills;
     const finalCourses = overrides.nextCourses !== undefined ? overrides.nextCourses : courses;
+    const finalProyectos = overrides.nextProyectos !== undefined ? overrides.nextProyectos : proyectos;
     const finalProyectosAlternativos = overrides.nextProyectosAlternativos !== undefined ? overrides.nextProyectosAlternativos : proyectosAlternativos;
 
     const cleanCiudad = finalCiudad.split(',')[0]?.trim() || '';
@@ -308,6 +319,7 @@ export default function ProfilePage() {
         detalles: finalSkills
       },
       cursos: finalCourses,
+      proyectos: finalProyectos,
       proyectos_alternativos: finalProyectosAlternativos
     };
 
@@ -334,6 +346,13 @@ export default function ProfilePage() {
   const [telefono, setTelefono] = useState('+11 111 111 1111');
   const [linkedin, setLinkedin] = useState('...');
   const [proyectosAlternativos, setProyectosAlternativos] = useState('');
+  const [proyectos, setProyectos] = useState<Array<{
+    id: string;
+    nombre: string;
+    rol: string;
+    fecha: string;
+    desc: string;
+  }>>([]);
 
   // Estado del modal de edición personal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -693,23 +712,45 @@ export default function ProfilePage() {
     setIsExpModalOpen(true);
   };
 
-  // Abrir modal para editar proyectos / voluntariados
-  const handleOpenEditProyectos = () => {
-    setEditingExpId('proyectos_alternativos');
+  // Abrir modal de proyectos para agregar
+  const handleOpenAddProyecto = () => {
+    setEditingExpId(null);
     setEditingExpType('proyecto');
-    setTempProyectosAlternativos(proyectosAlternativos);
     setProyectoNombre('');
     setProyectoRol('');
     setProyectoFecha('');
-    setProyectoDescripcion(proyectosAlternativos);
+    setProyectoDescripcion('');
     setErrorsExp({});
     setIsExpModalOpen(true);
+  };
+
+  // Abrir modal para editar un proyecto específico
+  const handleOpenEditProyecto = (id: string) => {
+    const proj = proyectos.find((p) => p.id === id);
+    if (proj) {
+      setEditingExpId(id);
+      setEditingExpType('proyecto');
+      setProyectoNombre(proj.nombre || '');
+      setProyectoRol(proj.rol || '');
+      setProyectoFecha(proj.fecha || '');
+      setProyectoDescripcion(proj.desc || '');
+      setErrorsExp({});
+      setIsExpModalOpen(true);
+    }
+  };
+
+  // Abrir modal de eliminación customizada para proyecto
+  const handleDeleteProyecto = (id: string, nombre: string) => {
+    setItemToDeleteId(id);
+    setItemToDeleteName(nombre);
+    setItemToDeleteType('proyecto');
+    setIsDeleteModalOpen(true);
   };
 
   // Abrir modal de experiencia para editar
   const handleOpenEditExp = (id: string) => {
     if (id === 'proyectos_alternativos') {
-      handleOpenEditProyectos();
+      handleOpenAddProyecto();
       return;
     }
     const exp = experiences.find((e) => e.id === id);
@@ -748,13 +789,32 @@ export default function ProfilePage() {
         return;
       }
 
-      const header = `${proyectoRol.trim() ? proyectoRol.trim() + ' en ' : ''}${proyectoNombre.trim()}${proyectoFecha.trim() ? ' (' + proyectoFecha.trim() + ')' : ''}`;
-      const nextProyectos = `${header}: ${proyectoDescripcion.trim()}`;
+      if (Object.keys(projErrors).length > 0) {
+        setErrorsExp(projErrors);
+        return;
+      }
 
-      setProyectosAlternativos(nextProyectos);
+      let nextProyectos = [...proyectos];
+      const newProj = {
+        id: editingExpId && editingExpId !== 'proyectos_alternativos' ? editingExpId : String(Date.now()),
+        nombre: proyectoNombre.trim(),
+        rol: proyectoRol.trim(),
+        fecha: proyectoFecha.trim(),
+        desc: proyectoDescripcion.trim()
+      };
+
+      if (editingExpId === null || editingExpId === 'proyectos_alternativos') {
+        nextProyectos = [newProj, ...proyectos];
+      } else {
+        nextProyectos = proyectos.map((p) => (p.id === editingExpId ? newProj : p));
+      }
+
+      setProyectos(nextProyectos);
       setErrorsExp({});
       setIsExpModalOpen(false);
-      saveProfileToDB({ nextProyectosAlternativos: nextProyectos });
+
+      const nextText = nextProyectos.map(p => `${p.rol ? p.rol + ' en ' : ''}${p.nombre}${p.fecha ? ' (' + p.fecha + ')' : ''}: ${p.desc}`).join('\n\n');
+      saveProfileToDB({ nextProyectos, nextProyectosAlternativos: nextText });
       return;
     }
 
@@ -1258,8 +1318,10 @@ export default function ProfilePage() {
       setExperiences(nextExperiences);
       saveProfileToDB({ nextExperiences });
     } else if (itemToDeleteType === 'proyecto') {
-      setProyectosAlternativos('');
-      saveProfileToDB({ nextProyectosAlternativos: '' });
+      const nextProyectos = proyectos.filter((p) => p.id !== itemToDeleteId);
+      setProyectos(nextProyectos);
+      const nextText = nextProyectos.map(p => `${p.rol ? p.rol + ' en ' : ''}${p.nombre}${p.fecha ? ' (' + p.fecha + ')' : ''}: ${p.desc}`).join('\n\n');
+      saveProfileToDB({ nextProyectos, nextProyectosAlternativos: nextText });
     }
     
     setIsDeleteModalOpen(false);
@@ -1829,19 +1891,19 @@ export default function ProfilePage() {
                 </div>
               ))}
 
-              {proyectosAlternativos && proyectosAlternativos.trim() !== '' && (
-                <div className="experience-card" key="proyectos_alternativos_card">
-                  <div className="experience-time-col">Proyectos / Voluntariado</div>
+              {proyectos.map((proj) => (
+                <div className="experience-card" key={proj.id}>
+                  <div className="experience-time-col">{proj.fecha || 'Proyectos / Voluntariado'}</div>
                   <div className="experience-info-col">
-                    <h3 className="experience-position">Proyectos y Experiencia Alternativa</h3>
-                    <p className="experience-company">Trabajos independientes, voluntariados o proyectos académicos</p>
-                    <p className="experience-desc">{proyectosAlternativos}</p>
+                    <h3 className="experience-position">{proj.nombre}</h3>
+                    {proj.rol && <p className="experience-company">{proj.rol}</p>}
+                    <p className="experience-desc">{proj.desc}</p>
                   </div>
                   <div className="experience-card-actions">
                     <button 
                       className="btn-edit-experience" 
-                      title="Editar proyectos y voluntariados"
-                      onClick={handleOpenEditProyectos}
+                      title="Editar proyecto o voluntariado"
+                      onClick={() => handleOpenEditProyecto(proj.id)}
                     >
                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
@@ -1849,8 +1911,8 @@ export default function ProfilePage() {
                     </button>
                     <button 
                       className="btn-delete-experience" 
-                      title="Eliminar proyectos y voluntariados"
-                      onClick={handleDeleteProyectos}
+                      title="Eliminar proyecto o voluntariado"
+                      onClick={() => handleDeleteProyecto(proj.id, proj.nombre)}
                     >
                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
@@ -1858,7 +1920,7 @@ export default function ProfilePage() {
                     </button>
                   </div>
                 </div>
-              )}
+              ))}
             </div>
           </>
         )}

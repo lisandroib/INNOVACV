@@ -54,10 +54,9 @@ export const harvardTemplate: CVTemplate = {
     
     const educacion = data.educacion || {};
     
-    let proyectos = '';
-    if (data.proyectos_alternativos && data.proyectos_alternativos.trim().length > 0) {
-      proyectos = data.proyectos_alternativos;
-    }
+    let proyectos = (data.proyectos && Array.isArray(data.proyectos) && data.proyectos.length > 0)
+      ? data.proyectos
+      : (data.proyectos_alternativos || '');
 
     // Experiencia puede venir como array, o como objeto { trabajo_actual: {...}, resumen_completo: ... }
     let experiencia = data.experiencia_laboral || data.experiencia || '';
@@ -184,6 +183,33 @@ export const harvardTemplate: CVTemplate = {
       return '';
     };
 
+    const formatProyectos = (proyectos: any) => {
+      if (!proyectos) return '';
+      if (typeof proyectos === 'string') {
+        if (!proyectos.trim()) return '';
+        return `<p style="font-size: 11px; white-space: pre-wrap; line-height: 1.6; margin: 0 0 15px 0;">${proyectos.replace(/\n/g, '<br/>')}</p>`;
+      }
+      if (Array.isArray(proyectos)) {
+        return proyectos.map(p => {
+          if (typeof p === 'string') return `<p style="font-size: 11px; margin-bottom: 10px;">${p}</p>`;
+          const nombre = p.nombre || p.company || '';
+          const rol = p.rol || p.position || '';
+          const fecha = p.fecha || p.anioFin || '';
+          const desc = p.desc || p.descripcion || '';
+          
+          return `
+          <p style="display: flex; justify-content: space-between; margin: 0 0 2px 0; align-items: baseline;">
+            <strong style="font-size: 13px; text-transform: uppercase;">${nombre}</strong>
+            <strong style="font-size: 12px;">${fecha}</strong>
+          </p>
+          ${rol ? `<p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;">${rol}</p>` : ''}
+          ${desc ? `<p style="margin: 0 0 15px 0; font-size: 11px; white-space: pre-wrap;">${desc}</p>` : '<p style="margin-bottom: 15px;"></p>'}
+          `;
+        }).join('');
+      }
+      return '';
+    };
+
     // Estilo general para los H2
     const h2Style = "font-size: 14px; font-weight: 700; color: #1e293b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; margin-top: 25px; margin-bottom: 15px; letter-spacing: 1px;";
 
@@ -191,7 +217,8 @@ export const harvardTemplate: CVTemplate = {
     if (direccion) contactItems.push(direccion);
     if (telefono) contactItems.push(telefono);
     if (email) contactItems.push(email);
-    // if website exists in the future, push here.
+
+    const proyectosHtml = formatProyectos(proyectos);
 
     return `
       <div style="font-family: 'Inter', sans-serif; color: #1e293b;">
@@ -222,9 +249,9 @@ export const harvardTemplate: CVTemplate = {
         ${formatExperiencia(experiencia)}
         ` : ''}
 
-        ${proyectos ? `
+        ${proyectosHtml ? `
         <h2 style="${h2Style}">Proyectos y Voluntariados</h2>
-        <p style="font-size: 11px; white-space: pre-wrap; line-height: 1.6; margin: 0 0 15px 0;">${proyectos.replace(/\n/g, '<br/>')}</p>
+        ${proyectosHtml}
         ` : ''}
       </div>
     `;

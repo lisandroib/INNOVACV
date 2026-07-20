@@ -510,6 +510,17 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
         >
           <Eraser className="w-4 h-4" />
         </button>
+
+        {/* Restaurar Perfil Icon Button */}
+        {onReloadFromProfile && (
+          <button
+            onMouseDown={(e) => { e.preventDefault(); onReloadFromProfile(); }}
+            className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer ml-1"
+            title="Restaurar el contenido del CV con la información de tu perfil"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* 5. Listas y Elementos */}
@@ -649,17 +660,6 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
             </div>
           )}
         </div>
-
-        {/* Small Restaurar Perfil Icon Button */}
-        {onReloadFromProfile && (
-          <button
-            onMouseDown={(e) => { e.preventDefault(); onReloadFromProfile(); }}
-            className="p-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg transition-colors cursor-pointer flex items-center justify-center ml-1"
-            title="Restaurar el contenido del CV con la información de tu perfil"
-          >
-            <RotateCcw className="w-4 h-4 text-red-600" />
-          </button>
-        )}
       </div>
 
     </div>
