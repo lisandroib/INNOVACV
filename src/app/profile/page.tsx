@@ -331,6 +331,9 @@ export default function ProfilePage() {
         },
         body: JSON.stringify(payload)
       });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('profile_updated', 'true');
+      }
     } catch (err) {
       console.error('Error al guardar perfil en la base de datos:', err);
     }

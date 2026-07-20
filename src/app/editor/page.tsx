@@ -19,7 +19,7 @@ export default function EditorPage() {
     }
     return false;
   });
-  const [isProfileModified, setIsProfileModified] = useState(true);
+  const [isProfileModified, setIsProfileModified] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useLayoutEffect(() => {
@@ -175,6 +175,12 @@ export default function EditorPage() {
           }
         }
 
+        if (typeof window !== 'undefined' && localStorage.getItem('profile_updated') === 'true') {
+          setIsProfileModified(true);
+        } else {
+          setIsProfileModified(false);
+        }
+
         // 2. Intentar cargar el último borrador del usuario primero
         const draftRes = await fetch('/api/cv/guardar');
         if (draftRes.ok) {
@@ -281,6 +287,9 @@ export default function EditorPage() {
         if (data) {
           setUserData(data);
           setInitialContent(getTemplateById(selectedTemplateId).generateHTML(data));
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('profile_updated', 'false');
+          }
           setIsProfileModified(false);
           showNotification("Currículum restaurado desde tu perfil", "success");
         }
