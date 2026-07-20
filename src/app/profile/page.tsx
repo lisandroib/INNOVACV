@@ -18,6 +18,16 @@ export default function ProfilePage() {
     }
   }, []);
 
+  // Cerrar todos los modales cuando el usuario cambia de pestaña/subsección
+  useEffect(() => {
+    setIsModalOpen(false);
+    setIsEduModalOpen(false);
+    setIsExpModalOpen(false);
+    setIsSkillModalOpen(false);
+    setIsUploadModalOpen(false);
+    setIsDeleteModalOpen(false);
+  }, [activeTab]);
+
   // Cargar perfil desde MongoDB
   useEffect(() => {
     async function fetchProfile() {
@@ -437,7 +447,7 @@ export default function ProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<string | null>(null);
   const [itemToDeleteName, setItemToDeleteName] = useState('');
-  const [itemToDeleteType, setItemToDeleteType] = useState<'skill' | 'formal' | 'course' | 'experience' | null>(null);
+  const [itemToDeleteType, setItemToDeleteType] = useState<'skill' | 'formal' | 'course' | 'experience' | 'proyecto' | null>(null);
 
   // --- ESTADOS Y CONSTANTES PARA EL DATE PICKER CUSTOMIZADO (FECHA NACIMIENTO) ---
   const MONTHS_ES = [
@@ -647,6 +657,8 @@ export default function ProfilePage() {
   // Estados del modal de experiencia
   const [isExpModalOpen, setIsExpModalOpen] = useState(false);
   const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [editingExpType, setEditingExpType] = useState<'laboral' | 'proyecto'>('laboral');
+  const [tempProyectosAlternativos, setTempProyectosAlternativos] = useState('');
 
   // Estados temporales del formulario de experiencia
   const [expPosicion, setExpPosicion] = useState('');
@@ -659,6 +671,8 @@ export default function ProfilePage() {
   // Abrir modal de experiencia para agregar
   const handleOpenAddExp = () => {
     setEditingExpId(null);
+    setEditingExpType('laboral');
+    setTempProyectosAlternativos(proyectosAlternativos);
     setExpPosicion('');
     setExpEmpresa('');
     setExpIndependiente(false);
@@ -669,11 +683,25 @@ export default function ProfilePage() {
     setIsExpModalOpen(true);
   };
 
+  // Abrir modal para editar proyectos / voluntariados
+  const handleOpenEditProyectos = () => {
+    setEditingExpId('proyectos_alternativos');
+    setEditingExpType('proyecto');
+    setTempProyectosAlternativos(proyectosAlternativos);
+    setErrorsExp({});
+    setIsExpModalOpen(true);
+  };
+
   // Abrir modal de experiencia para editar
   const handleOpenEditExp = (id: string) => {
+    if (id === 'proyectos_alternativos') {
+      handleOpenEditProyectos();
+      return;
+    }
     const exp = experiences.find((e) => e.id === id);
     if (exp) {
       setEditingExpId(id);
+      setEditingExpType('laboral');
       setExpPosicion(exp.position);
       setExpEmpresa(exp.company === 'Independiente' ? '' : exp.company);
       setExpIndependiente(exp.company === 'Independiente');
@@ -688,6 +716,19 @@ export default function ProfilePage() {
   // Guardar experiencia (Agregar o Editar)
   const handleSaveExp = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (editingExpType === 'proyecto') {
+      if (!tempProyectosAlternativos.trim()) {
+        setErrorsExp({ desc: "Debes ingresar una descripción de tus proyectos o voluntariados." });
+        return;
+      }
+      const nextProyectos = tempProyectosAlternativos.trim();
+      setProyectosAlternativos(nextProyectos);
+      setErrorsExp({});
+      setIsExpModalOpen(false);
+      saveProfileToDB({ nextProyectosAlternativos: nextProyectos });
+      return;
+    }
 
     const newErrors: typeof errorsExp = {};
 
@@ -790,6 +831,13 @@ export default function ProfilePage() {
     setItemToDeleteId(id);
     setItemToDeleteName(`${position} en ${company}`);
     setItemToDeleteType('experience');
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteProyectos = () => {
+    setItemToDeleteId('proyectos_alternativos');
+    setItemToDeleteName('Proyectos y Voluntariados');
+    setItemToDeleteType('proyecto');
     setIsDeleteModalOpen(true);
   };
 
@@ -1181,6 +1229,9 @@ export default function ProfilePage() {
       const nextExperiences = experiences.filter((exp) => exp.id !== itemToDeleteId);
       setExperiences(nextExperiences);
       saveProfileToDB({ nextExperiences });
+    } else if (itemToDeleteType === 'proyecto') {
+      setProyectosAlternativos('');
+      saveProfileToDB({ nextProyectosAlternativos: '' });
     }
     
     setIsDeleteModalOpen(false);
@@ -1749,49 +1800,37 @@ export default function ProfilePage() {
                   </div>
                 </div>
               ))}
-            </div>
 
-            {/* Sección de Proyectos y Experiencia Alternativa */}
-            <div 
-              className="alternative-projects-section" 
-              style={{ 
-                marginTop: '30px', 
-                padding: '24px', 
-                borderRadius: '12px', 
-                background: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)', 
-                border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(0, 0, 0, 0.1)' 
-              }}
-            >
-              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: isDarkMode ? '#fff' : '#1a1a1a' }}>
-                Proyectos y Experiencia Alternativa
-              </h2>
-              <p style={{ fontSize: '13px', color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)', marginBottom: '16px', lineHeight: '1.4' }}>
-                Si no tenés experiencia laboral formal, podés detallar acá tus proyectos académicos, trabajos independientes (freelance) o voluntariados. Esto se usará automáticamente en tu CV en lugar de la experiencia de trabajo.
-              </p>
-              <textarea
-                value={proyectosAlternativos}
-                onChange={async (e) => {
-                  const val = e.target.value;
-                  setProyectosAlternativos(val);
-                  await saveProfileToDB({ nextProyectosAlternativos: val });
-                }}
-                placeholder="Describí brevemente de qué trataban tus proyectos, qué tecnologías o herramientas usaste y qué logros tuviste..."
-                style={{
-                  width: '100%',
-                  height: '140px',
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  background: isDarkMode ? 'rgba(0, 0, 0, 0.3)' : '#ffffff',
-                  border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid #cbd5e1',
-                  color: isDarkMode ? '#fff' : '#1a1a1a',
-                  fontSize: '14px',
-                  lineHeight: '1.6',
-                  resize: 'none',
-                  outline: 'none',
-                  fontFamily: 'inherit',
-                  boxShadow: isDarkMode ? 'none' : '0 1px 3px rgba(0, 0, 0, 0.05)'
-                }}
-              />
+              {proyectosAlternativos && proyectosAlternativos.trim() !== '' && (
+                <div className="experience-card" key="proyectos_alternativos_card">
+                  <div className="experience-time-col">Proyectos / Voluntariado</div>
+                  <div className="experience-info-col">
+                    <h3 className="experience-position">Proyectos y Experiencia Alternativa</h3>
+                    <p className="experience-company">Trabajos independientes, voluntariados o proyectos académicos</p>
+                    <p className="experience-desc">{proyectosAlternativos}</p>
+                  </div>
+                  <div className="experience-card-actions">
+                    <button 
+                      className="btn-edit-experience" 
+                      title="Editar proyectos y voluntariados"
+                      onClick={handleOpenEditProyectos}
+                    >
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                      </svg>
+                    </button>
+                    <button 
+                      className="btn-delete-experience" 
+                      title="Eliminar proyectos y voluntariados"
+                      onClick={handleDeleteProyectos}
+                    >
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}
@@ -2004,7 +2043,9 @@ export default function ProfilePage() {
             <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2 className="modal-title">
-                  {editingExpId === null ? 'Agregar experiencia' : 'Editar experiencia'}
+                  {editingExpId === 'proyectos_alternativos' 
+                    ? 'Editar Proyectos y Voluntariados' 
+                    : (editingExpId === null ? 'Agregar experiencia' : 'Editar experiencia')}
                 </h2>
                 <button className="btn-close-modal" onClick={() => setIsExpModalOpen(false)} title="Cerrar">
                   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -2013,7 +2054,34 @@ export default function ProfilePage() {
                 </button>
               </div>
 
+              {editingExpId === null && (
+                <div className="edu-tabs-switcher">
+                  <button 
+                    type="button" 
+                    className={`edu-tab-btn ${editingExpType === 'laboral' ? 'active' : ''}`}
+                    onClick={() => {
+                      setEditingExpType('laboral');
+                      setErrorsExp({});
+                    }}
+                  >
+                    Experiencia Laboral
+                  </button>
+                  <button 
+                    type="button" 
+                    className={`edu-tab-btn ${editingExpType === 'proyecto' ? 'active' : ''}`}
+                    onClick={() => {
+                      setEditingExpType('proyecto');
+                      setErrorsExp({});
+                    }}
+                  >
+                    Proyecto / Voluntariado
+                  </button>
+                </div>
+              )}
+
               <form onSubmit={handleSaveExp} className="modal-form">
+                {editingExpType === 'laboral' ? (
+                  <>
                 {/* Posición */}
                 <div className={`form-row ${errorsExp.position ? 'has-error' : ''}`}>
                   <label htmlFor="expPosicion">Posición*</label>
@@ -2116,6 +2184,40 @@ export default function ProfilePage() {
                     {errorsExp.anioFin && <span className="error-message">{errorsExp.anioFin}</span>}
                   </div>
                 </div>
+
+                  </>
+                ) : (
+                  <>
+                    <div className={`form-row ${errorsExp.desc ? 'has-error' : ''}`}>
+                      <label htmlFor="expProyectos">Descripción de proyectos o voluntariados*</label>
+                      <div className="input-group-wrapper">
+                        <textarea
+                          id="expProyectos"
+                          value={tempProyectosAlternativos}
+                          onChange={(e) => {
+                            setTempProyectosAlternativos(e.target.value);
+                            setErrorsExp(prev => ({ ...prev, desc: undefined }));
+                          }}
+                          placeholder="Describí brevemente de qué trataban tus proyectos, qué tecnologías o herramientas usaste y qué logros tuviste..."
+                          rows={6}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '14px',
+                            lineHeight: '1.6',
+                            resize: 'none',
+                            fontFamily: 'inherit',
+                            color: '#1a1a1a',
+                            background: '#ffffff'
+                          }}
+                        />
+                        {errorsExp.desc && <span className="error-message">{errorsExp.desc}</span>}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Botón de Enviar */}
                 <div className="modal-footer">

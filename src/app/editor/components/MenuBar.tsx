@@ -590,24 +590,23 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
               <div className="px-3 py-1.5 text-[10px] text-slate-400 mt-1 border-t border-slate-100">
                 Próximamente más estilos...
               </div>
-              {onReloadFromProfile && (
-                <button
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    onReloadFromProfile();
-                    setActiveDropdown(null);
-                  }}
-                  className="w-full text-left px-3 py-2 text-violet-600 hover:bg-violet-50 transition-colors font-medium border-t border-slate-100 flex items-center gap-1.5"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5" />
-                  </svg>
-                  Restaurar desde Perfil
-                </button>
-              )}
             </div>
           )}
         </div>
+
+        {/* Restaurar Perfil Button */}
+        {onReloadFromProfile && (
+          <button
+            onMouseDown={(e) => { e.preventDefault(); onReloadFromProfile(); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white text-violet-700 hover:bg-violet-50 border border-violet-200 rounded-lg transition-colors cursor-pointer mr-1"
+            title="Restaurar el contenido del CV con la información de tu perfil"
+          >
+            <svg className="w-3.5 h-3.5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5" />
+            </svg>
+            <span>Restaurar Perfil</span>
+          </button>
+        )}
 
         {/* Mis CVs Button */}
         <button
