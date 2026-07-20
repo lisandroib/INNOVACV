@@ -1855,6 +1855,8 @@ export default function ProfilePage() {
 
         {activeTab === 'experience' && (
           <>
+            <h1 className="profile-title-centered">Experiencia profesional</h1>
+
             <div className="profile-header-container">
               {/* Filtro superior izquierdo para separar Experiencias de Proyectos */}
               <div className="exp-filter-tabs">
@@ -1880,8 +1882,6 @@ export default function ProfilePage() {
                   <span>Proyectos / Voluntariado</span>
                 </button>
               </div>
-
-              <h1 className="profile-title-centered" style={{ margin: 0 }}>Experiencia profesional</h1>
 
               <button className="btn-add-experience" onClick={handleOpenAddExp}>
                 Agregar experiencia
