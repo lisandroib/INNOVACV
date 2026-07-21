@@ -460,7 +460,7 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
       </div>
 
       {/* 4. Formato de Texto */}
-      <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5">
+      <div className="flex items-center gap-0.5 pr-1.5">
         <button
           onMouseDown={(e) => { e.preventDefault(); editor.chain().focus().toggleBold().run(); }}
           className={`p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer ${editor.isActive('bold') ? 'bg-slate-100 text-violet-600' : ''}`}
