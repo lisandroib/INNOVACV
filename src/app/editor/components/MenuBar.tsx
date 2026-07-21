@@ -25,7 +25,8 @@ import {
   ChevronDown,
   Palette,
   FileText,
-  RotateCcw
+  RotateCcw,
+  Folder
 } from 'lucide-react';
 
 import { getAllTemplates, getTemplateById } from '@/lib/cv-templates';
@@ -612,6 +613,16 @@ export default function MenuBar({ editor, selectedTemplateId, onTemplateChange, 
             </div>
           )}
         </div>
+
+        {/* Mis CVs Button */}
+        <button
+          onClick={(e) => { e.preventDefault(); if (onShowMyCVs) onShowMyCVs(); }}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors cursor-pointer"
+          title="Ver mis CVs guardados"
+        >
+          <Folder className="w-3.5 h-3.5 text-slate-500" />
+          <span>Mis CVs</span>
+        </button>
 
         {/* Save & Download Options Split Button */}
         <div className="relative flex items-stretch">
