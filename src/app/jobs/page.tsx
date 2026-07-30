@@ -411,14 +411,18 @@ export default function JobsPage() {
   // Filtrado de búsquedas
   const jobsSource = activeTab === 'saved' ? savedJobs : jobs;
   const filteredJobs = jobsSource.filter(job => {
-    if (activeTab === 'saved') return true;
+    if (activeTab === 'saved') {
+      if (!searchQuery.trim()) return true;
+      return (
+        job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.location.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
     
-    const matchesSearch =
-      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.location.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesSearch;
+    // Para empleos de la API, mantenemos todos los resultados devueltos por la búsqueda
+    // ya que Google Jobs/SerpApi incluye sinónimos e inglés ("Developer", "Programador")
+    return true;
   });
 
   return (
@@ -444,7 +448,16 @@ export default function JobsPage() {
 
         {/* Cabecera Superior */}
         <header className="jobs-top-header">
-          <h1 className="jobs-page-title">Lista de Empleos</h1>
+          <h1 
+            className="jobs-page-title"
+            style={{ 
+              opacity: (hasSearched || activeTab === 'saved') ? 1 : 0,
+              visibility: (hasSearched || activeTab === 'saved') ? 'visible' : 'hidden',
+              transition: 'opacity 0.4s ease, visibility 0.4s ease'
+            }}
+          >
+            Lista de Empleos
+          </h1>
 
           <div className="jobs-header-actions">
             {/* Iconos de cabecera */}
@@ -568,7 +581,7 @@ export default function JobsPage() {
         ) : (
           <div key="content" className={`jobs-content-transition state-${activeTab === 'saved' ? 'compact' : viewState}`}>
             {/* Tab Selectors de Sección */}
-            {activeTab !== 'saved' && hasSearched && (
+            {(hasSearched || activeTab === 'saved') && (
               <div className="jobs-section-tabs">
               <button
                 type="button"

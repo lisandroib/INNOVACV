@@ -28,10 +28,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'CV no encontrado o sin contenido' }, { status: 404 });
     }
 
-    // Limpiar el HTML básico para ahorrar tokens (Gemini igual entiende HTML, pero es mejor limpiar un poco)
+    // Limpiar el HTML básico y remover información de contacto (PII) para ahorrar tokens y mitigar sesgos en la IA
     const cvText = cv.html_content
-      .replace(/<style[^>]*>.*<\/style>/gm, '') // Remover estilos
+      .replace(/<h1[^>]*>.*?<\/h1>/i, '') // 1. Remover el primer <h1> completo (el Nombre del candidato) para asegurar anonimato
+      .replace(/<style[^>]*>.*<\/style>/gm, '') // Remover estilos CSS
       .replace(/<[^>]*>?/gm, ' ') // Remover etiquetas HTML
+      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '') // Remover Emails
+      .replace(/(?:\+?\d{1,3}[\s-]?)?\(?\d{2,4}\)?[\s-]?\d{3,4}[\s-]?\d{3,4}/g, '') // Remover Teléfonos
+      .replace(/https?:\/\/\S+/g, '') // Remover URLs (LinkedIn, GitHub, Portafolios)
       .replace(/\s+/g, ' ') // Normalizar espacios
       .trim();
 
@@ -79,6 +83,18 @@ El formato exacto debe ser:
     if (!apiKey) {
       throw new Error("GEMINI_API_KEY no configurada");
     }
+
+    console.log('\n==================================================');
+    console.log('🤖 [COMPARE-BATCH] ENVIANDO SOLICITUD A GEMINI');
+    console.log('==================================================');
+    console.log(`📄 CV ID: ${cv_id}`);
+    console.log(`📄 Texto del CV (${cvText.length} caracteres): "${cvText.slice(0, 200)}..."`);
+    console.log(`💼 Cantidad de empleos a evaluar: ${jobs.length}`);
+    console.log('📋 Lista de empleos enviados:');
+    jobs.forEach((job: any, index: number) => {
+      console.log(`   [${index + 1}] (job_${index}) -> ID: ${job.id} | ${job.title} - ${job.company}`);
+    });
+    console.log('--------------------------------------------------\n');
 
     const payload = {
       contents: [
@@ -137,8 +153,18 @@ El formato exacto debe ser:
         reasoning: r.reasoning
       };
     });
-    
 
+    console.log('\n==================================================');
+    console.log('🎯 [COMPARE-BATCH] RESULTADOS DE COMPATIBILIDAD GEMINI');
+    console.log('==================================================');
+    finalResults.forEach((res: any, index: number) => {
+      const originalJob = jobs.find((j: any) => j.id === res.id);
+      console.log(`   [${index + 1}] ${res.compatibility}% | ${originalJob?.title || 'Empleo'} (${originalJob?.company || 'Empresa'})`);
+      if (res.reasoning) {
+        console.log(`       💡 Razonamiento: ${res.reasoning}`);
+      }
+    });
+    console.log('==================================================\n');
 
     return NextResponse.json({ success: true, results: finalResults }, { status: 200 });
 
